@@ -28,6 +28,7 @@ import { BirthdayFireworks } from "@/components/birthday-fireworks";
 import { BirthdayHat } from "@/components/birthday-hat";
 import { VisitorCounter } from "@/components/lazy-client";
 import { SocialGlowLink } from "@/components/social-glow-link";
+import { GitHubCalendarSection } from "@/components/github-calendar-section";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -230,8 +231,10 @@ export default function Page() {
           </div>
         </section>
 
-
-        
+        {/* ─── GITHUB ACTIVITY ─── */}
+        <section id="github-activity">
+          <GitHubCalendarSection />
+        </section>
 
 {/* ─── SKILLS ─── */}
         <section id="skills">
