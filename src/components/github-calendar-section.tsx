@@ -1,30 +1,51 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import GitHubCalendar from "react-github-calendar";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import BlurFade from "@/components/magicui/blur-fade";
-import { Flame, Zap, BookOpen, GitCommitHorizontal, Users, UserPlus } from "lucide-react";
+import { BorderBeam } from "@/components/magicui/border-beam";
+import { Flame, Zap, BookOpen, GitCommitHorizontal, ArrowUpRight, Activity } from "lucide-react";
 import { DATA } from "@/data/resume";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import { useTheme } from "next-themes";
 
 const YEARS = ["last", "2026", "2025"];
 
 export function GitHubCalendarSection() {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [selectedYear, setSelectedYear] = useState<string>("last");
-  
+
+  // Interactive mouse spotlight position
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
   // States for GitHub API data
   const [reposCount, setReposCount] = useState<number | null>(null);
-  const [followers, setFollowers] = useState<number | null>(null);
-  const [following, setFollowing] = useState<number | null>(null);
-  
+
   // States for streak calculation
   const [totalContributions, setTotalContributions] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
   const [maxContributions, setMaxContributions] = useState(0);
   const [peakDate, setPeakDate] = useState("");
+  const [activeDays, setActiveDays] = useState(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
 
   // Fetch GitHub User data
   useEffect(() => {
@@ -36,8 +57,6 @@ export function GitHubCalendarSection() {
         const data = await res.json();
         if (data.public_repos !== undefined) {
           setReposCount(data.public_repos);
-          setFollowers(data.followers);
-          setFollowing(data.following);
         }
       } catch (err) {
         console.error("Failed to fetch GitHub data:", err);
@@ -55,12 +74,16 @@ export function GitHubCalendarSection() {
     let tempStreak = 0;
     let maxCount = 0;
     let pDate = "";
+    let activeDaysCount = 0;
 
-    // Calculate streaks
-    // Contributions are usually sorted by date
+    // Calculate streaks & peaks
     for (const day of contributions) {
       total += day.count;
-      
+
+      if (day.count > 0) {
+        activeDaysCount++;
+      }
+
       if (day.count > maxCount) {
         maxCount = day.count;
         pDate = day.date;
@@ -75,8 +98,8 @@ export function GitHubCalendarSection() {
         tempStreak = 0;
       }
     }
-    
-    // For current streak, we count backwards from today or last available day
+
+    // For current streak, count backwards from today or last available day
     let currentTemp = 0;
     for (let i = contributions.length - 1; i >= 0; i--) {
       if (contributions[i].count > 0) {
@@ -89,13 +112,14 @@ export function GitHubCalendarSection() {
       }
     }
 
-    // Wrap in setTimeout to avoid updating state during render of GitHubCalendar
+    // Wrap in setTimeout to avoid updating state during render
     setTimeout(() => {
       setTotalContributions(total);
       setCurrentStreak(currentTemp);
       setLongestStreak(longest);
       setMaxContributions(maxCount);
       setPeakDate(pDate);
+      setActiveDays(activeDaysCount);
     }, 0);
 
     return contributions;
@@ -103,54 +127,118 @@ export function GitHubCalendarSection() {
 
   const username = DATA.contact.social.GitHub.url.split("/").pop() || "ErenYea9er69";
 
-  const formattedPeakDate = peakDate ? new Date(peakDate).toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  }) : "";
+  const formattedPeakDate = useMemo(() => {
+    if (!peakDate) return "";
+    try {
+      return new Date(peakDate + "T00:00:00").toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch {
+      return peakDate;
+    }
+  }, [peakDate]);
+
+  // Color schemes for calendar
+  const calendarTheme = useMemo(() => {
+    const isDark = !mounted || resolvedTheme === "dark";
+    return {
+      dark: [
+        "rgba(255, 255, 255, 0.05)", // level 0: deep frosted glass
+        "#0e4429",                   // level 1: forest emerald
+        "#006d32",                   // level 2: vibrant emerald
+        "#26a641",                   // level 3: bright cyber green
+        "#39d353",                   // level 4: luminous neon green
+      ],
+      light: [
+        "rgba(0, 0, 0, 0.06)",       // level 0: clean subtle tint
+        "#a7f3d0",                   // level 1: mint
+        "#34d399",                   // level 2: jade
+        "#059669",                   // level 3: emerald
+        "#064e3b",                   // level 4: deep forest
+      ],
+    };
+  }, [mounted, resolvedTheme]);
 
   return (
     <div className="flex flex-col gap-y-3">
       <BlurFade delay={0.04 * 14}>
         <span className="inline-block text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60">
-          OPEN SOURCE
+          OPEN SOURCE TELEMETRY
         </span>
         <h2 className="mt-1.5 text-xl font-bold tracking-tight">GitHub Contributions</h2>
       </BlurFade>
-      
+
       <BlurFade delay={0.04 * 14.5}>
-        <div className="relative overflow-hidden rounded-xl border border-border/50 bg-card p-6 shadow-sm">
-          {/* Header Row */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background/50 border border-border/50">
-                <Icons.github className="h-5 w-5" />
+        <div
+          ref={containerRef}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className="group/section relative overflow-hidden rounded-2xl border border-white/10 dark:border-white/[0.08] bg-gradient-to-b from-card/85 via-card/55 to-card/30 dark:from-zinc-950/80 dark:via-zinc-900/60 dark:to-zinc-950/85 p-6 sm:p-7 backdrop-blur-2xl shadow-[0_12px_40px_-10px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300"
+        >
+          {/* Subtle Silver/Chrome Edge Beam */}
+          <BorderBeam size={160} duration={12} colorFrom="hsl(var(--muted-foreground) / 0.35)" colorTo="transparent" />
+
+          {/* Ambient Gray Theme Corner Lighting */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-zinc-500/[0.06] dark:bg-zinc-400/[0.06] blur-3xl transition-opacity duration-700"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-zinc-600/[0.04] dark:bg-zinc-500/[0.05] blur-3xl transition-opacity duration-700"
+          />
+
+          {/* Dynamic Interactive Cursor Spotlight (Monochrome Frosted Glass) */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover/section:opacity-100"
+            style={{
+              background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, hsl(var(--foreground) / 0.04), transparent 45%)`,
+            }}
+          />
+
+          {/* ─── Header: Profile & Controls ─── */}
+          <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-7">
+            <div className="flex items-center gap-3.5">
+              <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-background/90 to-background/50 border border-border/80 shadow-inner group/icon">
+                <Icons.github className="h-5 w-5 transition-transform duration-300 group-hover/icon:scale-110" />
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-background" />
+                </span>
               </div>
-              <div>
-                <a 
-                  href={DATA.contact.social.GitHub.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="font-semibold hover:underline flex items-center gap-1.5"
-                >
-                  @{username}
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                </a>
-                <p className="text-xs text-muted-foreground">GitHub Activity</p>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <a
+                    href={DATA.contact.social.GitHub.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold text-foreground hover:text-emerald-500 transition-colors flex items-center gap-1 group/link text-base tracking-tight"
+                  >
+                    <span>@{username}</span>
+                    <ArrowUpRight className="h-3.5 w-3.5 opacity-50 group-hover/link:opacity-100 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-all" />
+                  </a>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-mono font-medium text-emerald-600 dark:text-emerald-400">
+                    LIVE FEED
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">GitHub Open Source Activity</p>
               </div>
             </div>
 
-            {/* Year Toggles */}
-            <div className="flex items-center rounded-md border border-border/50 bg-background/30 p-1">
+            {/* Segmented Year Switcher */}
+            <div className="inline-flex items-center rounded-full border border-border/60 bg-background/50 p-1 backdrop-blur-md shadow-sm">
               {YEARS.map((year) => (
                 <button
                   key={year}
                   onClick={() => setSelectedYear(year)}
                   className={cn(
-                    "rounded-sm px-3 py-1.5 text-xs font-medium transition-all duration-200",
-                    selectedYear === year 
-                      ? "bg-muted text-foreground shadow-sm" 
+                    "relative rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200",
+                    selectedYear === year
+                      ? "bg-background text-foreground shadow-sm shadow-black/10 font-semibold border border-border/60"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
@@ -160,80 +248,242 @@ export function GitHubCalendarSection() {
             </div>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 mb-8">
-            <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/30 p-4">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <GitCommitHorizontal className="h-4 w-4" />
-                <span className="text-xs font-medium">Contributions</span>
+          {/* ─── Stats Grid (4 Focused Cards) ─── */}
+          <div className="relative z-10 grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-4 mb-7">
+            {/* 1. Contributions */}
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/60 to-background/20 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-500/5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-muted-foreground">Contributions</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500 transition-transform duration-300 group-hover/stat:scale-110">
+                  <GitCommitHorizontal className="h-4 w-4" />
+                </div>
               </div>
-              <span className="text-2xl font-bold">{totalContributions.toLocaleString()}</span>
+              <div className="mt-3 flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+                  {totalContributions.toLocaleString()}
+                </span>
+              </div>
+              <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span>{selectedYear === "last" ? "Past 365 days" : `Year ${selectedYear}`}</span>
+              </div>
             </div>
 
-            <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/30 p-4">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Flame className="h-4 w-4 text-orange-500" />
-                <span className="text-xs font-medium">Current Streak</span>
+            {/* 2. Current Streak */}
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/60 to-background/20 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-500/5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-muted-foreground">Current streak</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500 transition-transform duration-300 group-hover/stat:scale-110">
+                  <Flame className="h-4 w-4" />
+                </div>
               </div>
-              <span className="text-2xl font-bold text-orange-500">{currentStreak} days</span>
+              <div className="mt-3 flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+                  {currentStreak}
+                </span>
+                <span className="text-xs font-medium text-muted-foreground">days</span>
+              </div>
+              <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
+                <span
+                  className={cn(
+                    "inline-block h-1.5 w-1.5 rounded-full",
+                    currentStreak > 0 ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/40"
+                  )}
+                />
+                <span>{currentStreak > 0 ? "Streak active 🔥" : "Ready to commit"}</span>
+              </div>
             </div>
 
-            <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/30 p-4">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Zap className="h-4 w-4 text-green-500" />
-                <span className="text-xs font-medium">Longest Streak</span>
+            {/* 3. Longest Streak */}
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/60 to-background/20 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/40 hover:shadow-lg hover:shadow-cyan-500/5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-muted-foreground">Longest streak</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-500 transition-transform duration-300 group-hover/stat:scale-110">
+                  <Zap className="h-4 w-4" />
+                </div>
               </div>
-              <span className="text-2xl font-bold text-green-500">{longestStreak} days</span>
+              <div className="mt-3 flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+                  {longestStreak}
+                </span>
+                <span className="text-xs font-medium text-muted-foreground">days</span>
+              </div>
+              <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-cyan-500" />
+                <span>Personal record</span>
+              </div>
             </div>
 
-            <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/30 p-4">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <BookOpen className="h-4 w-4" />
-                <span className="text-xs font-medium">Repositories</span>
+            {/* 4. Repositories */}
+            <a
+              href={`${DATA.contact.social.GitHub.url}?tab=repositories`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/60 to-background/20 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/40 hover:shadow-lg hover:shadow-violet-500/5 cursor-pointer block"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-muted-foreground">Repositories</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 text-violet-500 transition-transform duration-300 group-hover/stat:scale-110">
+                  <BookOpen className="h-4 w-4" />
+                </div>
               </div>
-              <span className="text-2xl font-bold">{reposCount ?? "-"}</span>
-            </div>
+              <div className="mt-3 flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+                  {reposCount ?? "—"}
+                </span>
+                <ArrowUpRight className="h-3.5 w-3.5 opacity-40 group-hover/stat:opacity-100 transition-opacity text-violet-400 ml-1" />
+              </div>
+              <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-violet-500" />
+                <span>Public codebases</span>
+              </div>
+            </a>
           </div>
 
-          {/* Calendar */}
-          <div className="overflow-x-auto pb-2 [&_article]:!w-full [&_article]:!max-w-none relative">
-            <div className="flex justify-between items-center mb-4 text-xs text-muted-foreground">
-              <span>{totalContributions.toLocaleString()} contributions in the {selectedYear === "last" ? "last year" : selectedYear}{peakDate ? ` • Peak: ${maxContributions} in a day (${formattedPeakDate})` : ""}</span>
-              <span>Hover squares for details</span>
-            </div>
-            <div className="min-w-[750px]">
-              <GitHubCalendar
-                username={username}
-                year={selectedYear === "last" ? "last" : parseInt(selectedYear)}
-                colorScheme="dark"
-                transformData={selectData}
-                hideTotalCount
-                hideColorLegend={false}
-                renderBlock={(block, activity) => (
-                  React.cloneElement(block as any, {
-                    "data-tooltip-id": "react-tooltip",
-                    "data-tooltip-content": `${activity.count} contributions on ${activity.date}`,
-                  })
+          {/* ─── The Contribution Matrix Card ─── */}
+          <div className="relative z-10 rounded-xl border border-border/50 bg-background/35 dark:bg-zinc-950/40 p-4 sm:p-5 backdrop-blur-md overflow-hidden shadow-inner">
+            {/* Micro grid watermark pattern */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
+              style={{
+                backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)",
+                backgroundSize: "18px 18px",
+              }}
+            />
+
+            {/* Matrix Telemetry Top Bar */}
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 mb-4 text-xs">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Activity className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
+                <span className="font-semibold text-foreground">{totalContributions.toLocaleString()}</span>
+                <span>contributions in {selectedYear === "last" ? "the past year" : selectedYear}</span>
+                {peakDate && (
+                  <span className="hidden sm:inline-flex items-center gap-1.5 rounded-md bg-muted/60 dark:bg-zinc-900/80 px-2 py-0.5 text-[11px] text-muted-foreground border border-border/40">
+                    <span className="text-emerald-500">★</span> Peak: {maxContributions} on {formattedPeakDate}
+                  </span>
                 )}
-                theme={{
-                  dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
-                }}
-              />
-              <ReactTooltip
-                id="react-tooltip"
-                style={{
-                  backgroundColor: "hsl(var(--popover))",
-                  color: "hsl(var(--popover-foreground))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "var(--radius)",
-                  fontSize: "12px",
-                  zIndex: 50,
-                  padding: "8px 12px",
-                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-                }}
-              />
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/80 font-mono">
+                <span>INTERACTIVE MATRIX</span>
+              </div>
+            </div>
+
+            {/* Calendar Canvas */}
+            <div className="github-calendar-wrapper overflow-x-auto scrollbar-none pb-2 min-w-full">
+              <div className="min-w-[780px] p-1">
+                <GitHubCalendar
+                  username={username}
+                  year={selectedYear === "last" ? "last" : parseInt(selectedYear)}
+                  colorScheme={mounted && resolvedTheme === "light" ? "light" : "dark"}
+                  transformData={selectData}
+                  hideTotalCount
+                  hideColorLegend={false}
+                  blockRadius={3.5}
+                  blockMargin={4}
+                  blockSize={12}
+                  fontSize={11}
+                  renderBlock={(block, activity) =>
+                    React.cloneElement(block as any, {
+                      "data-tooltip-id": "github-tooltip",
+                      "data-tooltip-content": JSON.stringify({
+                        date: activity.date,
+                        count: activity.count,
+                        level: activity.level,
+                      }),
+                    })
+                  }
+                  theme={calendarTheme}
+                />
+              </div>
+            </div>
+
+            {/* Matrix Telemetry Footer Bar */}
+            <div className="mt-3 pt-3 border-t border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-muted-foreground">
+              <div className="flex items-center gap-3">
+                <span>
+                  Active Days: <strong className="text-foreground">{activeDays}</strong>
+                </span>
+                <span>•</span>
+                <span>
+                  Consistency: <strong className="text-foreground">{((activeDays / 365) * 100).toFixed(0)}%</strong>
+                </span>
+              </div>
+              <a
+                href={DATA.contact.social.GitHub.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-emerald-500 transition-colors flex items-center gap-1 w-fit group/btn font-medium"
+              >
+                <span>Inspect full graph on GitHub</span>
+                <ArrowUpRight className="h-3 w-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+              </a>
             </div>
           </div>
+
+          {/* ─── Ultra-Modern Frosted Glass Tooltip ─── */}
+          <ReactTooltip
+            id="github-tooltip"
+            place="top"
+            offset={8}
+            delayShow={30}
+            delayHide={50}
+            className="!bg-popover/95 !backdrop-blur-2xl !border !border-border/80 !rounded-xl !p-3 !shadow-2xl !z-50 !opacity-100"
+            render={({ content }) => {
+              if (!content) return null;
+              if (typeof content !== "string") return <span>{content}</span>;
+              try {
+                const data = JSON.parse(content);
+                const dateObj = new Date(data.date + "T00:00:00");
+                const formattedDate = dateObj.toLocaleDateString("en-US", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                });
+
+                const levelColors = [
+                  "bg-muted-foreground/30",
+                  "bg-emerald-700",
+                  "bg-emerald-600",
+                  "bg-emerald-500",
+                  "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]",
+                ];
+
+                const levelColor = levelColors[data.level] || levelColors[0];
+
+                return (
+                  <div className="flex flex-col gap-1.5 min-w-[155px] text-foreground">
+                    <div className="flex items-center justify-between gap-3 border-b border-border/50 pb-1.5">
+                      <span className="text-[11px] font-medium text-muted-foreground">
+                        {formattedDate}
+                      </span>
+                      <span className={cn("h-2 w-2 rounded-full", levelColor)} />
+                    </div>
+                    <div className="flex items-baseline gap-1.5 pt-0.5">
+                      <span className="text-xl font-extrabold text-foreground leading-none">
+                        {data.count}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {data.count === 1 ? "contribution" : "contributions"}
+                      </span>
+                    </div>
+                    <div className="text-[10px] font-medium tracking-wide text-emerald-500">
+                      {data.count === 0
+                        ? "No commits recorded"
+                        : data.count >= 15
+                        ? "🔥 Exceptional output"
+                        : data.count >= 8
+                        ? "⚡ High activity"
+                        : "✨ Steady progress"}
+                    </div>
+                  </div>
+                );
+              } catch {
+                return <span>{content}</span>;
+              }
+            }}
+          />
         </div>
       </BlurFade>
     </div>
