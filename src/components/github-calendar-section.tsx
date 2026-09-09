@@ -161,7 +161,7 @@ export function GitHubCalendarSection() {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 mb-8">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 mb-8">
             <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/30 p-4">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <GitCommitHorizontal className="h-4 w-4" />
@@ -192,22 +192,6 @@ export function GitHubCalendarSection() {
                 <span className="text-xs font-medium">Repositories</span>
               </div>
               <span className="text-2xl font-bold">{reposCount ?? "-"}</span>
-            </div>
-
-            <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/30 p-4">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Users className="h-4 w-4" />
-                <span className="text-xs font-medium">Followers</span>
-              </div>
-              <span className="text-2xl font-bold">{followers ?? "-"}</span>
-            </div>
-
-            <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/30 p-4">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <UserPlus className="h-4 w-4" />
-                <span className="text-xs font-medium">Following</span>
-              </div>
-              <span className="text-2xl font-bold">{following ?? "-"}</span>
             </div>
           </div>
 
