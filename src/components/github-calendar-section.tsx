@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import GitHubCalendar from "react-github-calendar";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import BlurFade from "@/components/magicui/blur-fade";
 import { Flame, Zap, BookOpen, GitCommitHorizontal } from "lucide-react";
 import { DATA } from "@/data/resume";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const YEARS = ["last", "2026", "2025"];
 
@@ -18,6 +19,8 @@ export function GitHubCalendarSection() {
   const [totalContributions, setTotalContributions] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
+  const [maxContributions, setMaxContributions] = useState(0);
+  const [peakDate, setPeakDate] = useState("");
 
   // Fetch repos count
   useEffect(() => {
@@ -44,11 +47,19 @@ export function GitHubCalendarSection() {
     let current = 0;
     let longest = 0;
     let tempStreak = 0;
+    let maxCount = 0;
+    let pDate = "";
 
     // Calculate streaks
     // Contributions are usually sorted by date
     for (const day of contributions) {
       total += day.count;
+      
+      if (day.count > maxCount) {
+        maxCount = day.count;
+        pDate = day.date;
+      }
+
       if (day.count > 0) {
         tempStreak++;
         if (tempStreak > longest) {
@@ -77,12 +88,21 @@ export function GitHubCalendarSection() {
       setTotalContributions(total);
       setCurrentStreak(currentTemp);
       setLongestStreak(longest);
+      setMaxContributions(maxCount);
+      setPeakDate(pDate);
     }, 0);
 
     return contributions;
   };
 
   const username = DATA.contact.social.GitHub.url.split("/").pop() || "ErenYea9er69";
+
+  const formattedPeakDate = peakDate ? new Date(peakDate).toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  }) : "";
 
   return (
     <div className="flex flex-col gap-y-3">
@@ -170,17 +190,35 @@ export function GitHubCalendarSection() {
           </div>
 
           {/* Calendar */}
-          <div className="overflow-x-auto pb-2 [&_article]:!w-full [&_article]:!max-w-none">
+          <div className="overflow-x-auto pb-2 [&_article]:!w-full [&_article]:!max-w-none relative">
+            <div className="flex justify-between items-center mb-4 text-xs text-muted-foreground">
+              <span>{totalContributions.toLocaleString()} contributions in the {selectedYear === "last" ? "last year" : selectedYear}{peakDate ? ` • Peak: ${maxContributions} in a day (${formattedPeakDate})` : ""}</span>
+              <span>Hover squares for details</span>
+            </div>
             <div className="min-w-[750px]">
-              <GitHubCalendar
-                username={username}
-                year={selectedYear === "last" ? "last" : parseInt(selectedYear)}
-                colorScheme="dark"
-                transformData={selectData}
-                theme={{
-                  dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
-                }}
-              />
+              <TooltipProvider delayDuration={50}>
+                <GitHubCalendar
+                  username={username}
+                  year={selectedYear === "last" ? "last" : parseInt(selectedYear)}
+                  colorScheme="dark"
+                  transformData={selectData}
+                  hideTotalCount
+                  hideColorLegend={false}
+                  renderBlock={(block, activity) => (
+                    <Tooltip key={activity.date}>
+                      <TooltipTrigger asChild>
+                        {block}
+                      </TooltipTrigger>
+                      <TooltipContent side="top">
+                        <p>{activity.count} contributions on {activity.date}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  theme={{
+                    dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
+                  }}
+                />
+              </TooltipProvider>
             </div>
           </div>
         </div>
