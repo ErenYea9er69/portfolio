@@ -5,15 +5,19 @@ import GitHubCalendar from "react-github-calendar";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import BlurFade from "@/components/magicui/blur-fade";
-import { Flame, Zap, BookOpen, GitCommitHorizontal } from "lucide-react";
+import { Flame, Zap, BookOpen, GitCommitHorizontal, Users, UserPlus } from "lucide-react";
 import { DATA } from "@/data/resume";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 const YEARS = ["last", "2026", "2025"];
 
 export function GitHubCalendarSection() {
   const [selectedYear, setSelectedYear] = useState<string>("last");
+  
+  // States for GitHub API data
   const [reposCount, setReposCount] = useState<number | null>(null);
+  const [followers, setFollowers] = useState<number | null>(null);
+  const [following, setFollowing] = useState<number | null>(null);
   
   // States for streak calculation
   const [totalContributions, setTotalContributions] = useState(0);
@@ -22,22 +26,24 @@ export function GitHubCalendarSection() {
   const [maxContributions, setMaxContributions] = useState(0);
   const [peakDate, setPeakDate] = useState("");
 
-  // Fetch repos count
+  // Fetch GitHub User data
   useEffect(() => {
-    async function fetchRepos() {
+    async function fetchGitHubData() {
       try {
         const username = DATA.contact.social.GitHub.url.split("/").pop();
         if (!username) return;
         const res = await fetch(`https://api.github.com/users/${username}`);
         const data = await res.json();
-        if (data.public_repos) {
+        if (data.public_repos !== undefined) {
           setReposCount(data.public_repos);
+          setFollowers(data.followers);
+          setFollowing(data.following);
         }
       } catch (err) {
-        console.error("Failed to fetch repo count:", err);
+        console.error("Failed to fetch GitHub data:", err);
       }
     }
-    fetchRepos();
+    fetchGitHubData();
   }, []);
 
   const selectData = (contributions: any[]) => {
@@ -155,7 +161,7 @@ export function GitHubCalendarSection() {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 mb-8">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 mb-8">
             <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/30 p-4">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <GitCommitHorizontal className="h-4 w-4" />
@@ -187,6 +193,22 @@ export function GitHubCalendarSection() {
               </div>
               <span className="text-2xl font-bold">{reposCount ?? "-"}</span>
             </div>
+
+            <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/30 p-4">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Users className="h-4 w-4" />
+                <span className="text-xs font-medium">Followers</span>
+              </div>
+              <span className="text-2xl font-bold">{followers ?? "-"}</span>
+            </div>
+
+            <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/30 p-4">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <UserPlus className="h-4 w-4" />
+                <span className="text-xs font-medium">Following</span>
+              </div>
+              <span className="text-2xl font-bold">{following ?? "-"}</span>
+            </div>
           </div>
 
           {/* Calendar */}
@@ -196,29 +218,36 @@ export function GitHubCalendarSection() {
               <span>Hover squares for details</span>
             </div>
             <div className="min-w-[750px]">
-              <TooltipProvider delayDuration={50}>
-                <GitHubCalendar
-                  username={username}
-                  year={selectedYear === "last" ? "last" : parseInt(selectedYear)}
-                  colorScheme="dark"
-                  transformData={selectData}
-                  hideTotalCount
-                  hideColorLegend={false}
-                  renderBlock={(block, activity) => (
-                    <Tooltip key={activity.date}>
-                      <TooltipTrigger asChild>
-                        {block}
-                      </TooltipTrigger>
-                      <TooltipContent side="top">
-                        <p>{activity.count} contributions on {activity.date}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                  theme={{
-                    dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
-                  }}
-                />
-              </TooltipProvider>
+              <GitHubCalendar
+                username={username}
+                year={selectedYear === "last" ? "last" : parseInt(selectedYear)}
+                colorScheme="dark"
+                transformData={selectData}
+                hideTotalCount
+                hideColorLegend={false}
+                renderBlock={(block, activity) => (
+                  React.cloneElement(block as any, {
+                    "data-tooltip-id": "react-tooltip",
+                    "data-tooltip-content": `${activity.count} contributions on ${activity.date}`,
+                  })
+                )}
+                theme={{
+                  dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
+                }}
+              />
+              <ReactTooltip
+                id="react-tooltip"
+                style={{
+                  backgroundColor: "hsl(var(--popover))",
+                  color: "hsl(var(--popover-foreground))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "var(--radius)",
+                  fontSize: "12px",
+                  zIndex: 50,
+                  padding: "8px 12px",
+                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+                }}
+              />
             </div>
           </div>
         </div>
