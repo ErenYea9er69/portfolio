@@ -107,50 +107,57 @@ export const Meteors = ({ number = 15 }: MeteorsProps) => {
           return;
         }
 
+        // Determine if dark mode or light mode is active
+        const isDark = document.documentElement.classList.contains("dark");
+
         // Draw the trail
         const tailX = m.x - dx * m.length;
         const tailY = m.y + dy * m.length;
 
         const gradient = ctx.createLinearGradient(m.x, m.y, tailX, tailY);
-        gradient.addColorStop(
-          0,
-          `rgba(220, 230, 255, ${m.opacity})`
-        );
-        gradient.addColorStop(
-          0.3,
-          `rgba(200, 215, 245, ${m.opacity * 0.5})`
-        );
-        gradient.addColorStop(1, "rgba(200, 215, 245, 0)");
+        if (isDark) {
+          gradient.addColorStop(0, `rgba(220, 230, 255, ${m.opacity})`);
+          gradient.addColorStop(0.3, `rgba(200, 215, 245, ${m.opacity * 0.5})`);
+          gradient.addColorStop(1, "rgba(200, 215, 245, 0)");
+        } else {
+          // Sapphire meteor trails for light mode
+          gradient.addColorStop(0, `rgba(29, 78, 216, ${Math.min(m.opacity * 1.3, 0.95)})`); // sapphire-700
+          gradient.addColorStop(0.25, `rgba(37, 99, 235, ${m.opacity * 0.85})`); // sapphire-600
+          gradient.addColorStop(0.65, `rgba(96, 165, 250, ${m.opacity * 0.45})`); // sapphire-400
+          gradient.addColorStop(1, "rgba(191, 219, 254, 0)");
+        }
 
         ctx.beginPath();
         ctx.moveTo(m.x, m.y);
         ctx.lineTo(tailX, tailY);
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = m.width;
+        ctx.lineWidth = isDark ? m.width : m.width * 1.4;
         ctx.lineCap = "round";
         ctx.stroke();
 
         // Draw the glowing head
+        const headRadius = m.width * (isDark ? 4 : 5);
         const headGlow = ctx.createRadialGradient(
           m.x,
           m.y,
           0,
           m.x,
           m.y,
-          m.width * 4
+          headRadius
         );
-        headGlow.addColorStop(
-          0,
-          `rgba(240, 245, 255, ${m.opacity * 0.9})`
-        );
-        headGlow.addColorStop(
-          0.5,
-          `rgba(200, 220, 255, ${m.opacity * 0.3})`
-        );
-        headGlow.addColorStop(1, "rgba(200, 220, 255, 0)");
+        if (isDark) {
+          headGlow.addColorStop(0, `rgba(240, 245, 255, ${m.opacity * 0.9})`);
+          headGlow.addColorStop(0.5, `rgba(200, 220, 255, ${m.opacity * 0.3})`);
+          headGlow.addColorStop(1, "rgba(200, 220, 255, 0)");
+        } else {
+          // Sapphire nucleus for light mode
+          headGlow.addColorStop(0, `rgba(30, 58, 138, ${Math.min(m.opacity * 1.4, 1)})`); // deep sapphire core
+          headGlow.addColorStop(0.4, `rgba(37, 99, 235, ${m.opacity * 0.7})`); // sapphire radiant glow
+          headGlow.addColorStop(1, "rgba(147, 197, 253, 0)");
+        }
 
         ctx.beginPath();
-        ctx.arc(m.x, m.y, m.width * 4, 0, Math.PI * 2);
+        ctx.arc(m.x, m.y, headRadius, 0, Math.PI * 2);
         ctx.fillStyle = headGlow;
         ctx.fill();
       });

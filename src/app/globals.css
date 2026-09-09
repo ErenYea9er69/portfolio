@@ -53,13 +53,15 @@
       --ghibli-element-fill: 210 11.1% 85%;
       --ghibli-element-opacity: 0.6;
 
-      /* Atmospheric background tokens */
-      --ghibli-cloud-core: 0 0% 70%;
-      --spirit-glow-core: 0 0% 60% / 0.4;
-      --spirit-glow-mid: 0 0% 50% / 0.15;
-      --spirit-body-bright: 0 0% 80%;
-      --spirit-body-dim: 0 0% 55%;
-      --spirit-eye: 210 10% 20%;
+      /* Atmospheric background tokens (Light Mode) */
+      --ghibli-cloud-core: 215 35% 78%;
+      --cloud-opacity-core: 0.55;
+      --cloud-opacity-mid: 0.22;
+      --spirit-glow-core: 210 30% 75% / 0.5;
+      --spirit-glow-mid: 220 20% 60% / 0.2;
+      --spirit-body-bright: 210 15% 85%;
+      --spirit-body-dim: 220 10% 60%;
+      --spirit-eye: 0 0% 10%;
     }
 
     .dark {
@@ -99,8 +101,10 @@
       --ghibli-element-fill: 0 0% 100%;
       --ghibli-element-opacity: 0.9;
 
-      /* Atmospheric background tokens */
+      /* Atmospheric background tokens (Dark Mode) */
       --ghibli-cloud-core: 220 15% 60%;
+      --cloud-opacity-core: 0.35;
+      --cloud-opacity-mid: 0.12;
       --spirit-glow-core: 210 30% 75% / 0.5;
       --spirit-glow-mid: 220 20% 60% / 0.2;
       --spirit-body-bright: 210 15% 85%;
