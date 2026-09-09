@@ -29,6 +29,7 @@ import { BirthdayHat } from "@/components/birthday-hat";
 import { VisitorCounter } from "@/components/lazy-client";
 import { SocialGlowLink } from "@/components/social-glow-link";
 import { GitHubCalendarSection } from "@/components/github-calendar-section";
+import { TechStackSection } from "@/components/tech-stack-section";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -238,31 +239,7 @@ export default function Page() {
 
 {/* ─── SKILLS ─── */}
         <section id="skills">
-          <div className="flex min-h-0 flex-col gap-y-3">
-            <BlurFade delay={BLUR_FADE_DELAY * 10}>
-              <SectionLabel label="Technologies" />
-              <h2 className="mt-1.5 text-xl font-bold tracking-tight">Tech Stack</h2>
-            </BlurFade>
-            <BlurFade delay={BLUR_FADE_DELAY * 10.5}>
-              <div className="flex flex-wrap gap-2">
-                {DATA.skills.map((skill) => (
-                  <Badge
-                    key={skill.name}
-                    variant="secondary"
-                    className="skill-badge inline-flex items-center gap-1.5 border border-border/50 px-3 py-1.5 text-sm cursor-default"
-                    style={{ '--skill-color': (skill as any).color || 'transparent' } as React.CSSProperties}
-                  >
-                    {"customIcon" in skill ? (
-                      <skill.customIcon className="skill-icon size-4 transition-all duration-200" />
-                    ) : (
-                      <FontAwesomeIcon icon={skill.icon} className="skill-icon size-4 transition-all duration-200" />
-                    )}
-                    {skill.name}
-                  </Badge>
-                ))}
-              </div>
-            </BlurFade>
-          </div>
+          <TechStackSection />
         </section>
 
 

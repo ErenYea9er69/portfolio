@@ -67,7 +67,7 @@ const COMMANDS = {
     'gui      (g)    - Switch to GUI mode\n\n' +
     'Tip: Use Tab for command completion and ↑↓ for command history',
   about: () => `${DATA.name}\n${DATA.description}\n\n${DATA.summary}`,
-  skills: () => `Skills:\n${DATA.skills.join(', ')}`,
+  skills: () => `Skills:\n${DATA.skills.map((s: any) => typeof s === 'string' ? s : s.name).join(', ')}`,
   projects: () => DATA.projects.map(project => 
     `\n${project.title}\n${project.description}\nTech: ${project.technologies.join(', ')}\n`
   ).join('\n'),
