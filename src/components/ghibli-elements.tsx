@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 /* ─────────────────────────────────────────────
  *  Atmospheric Cloud
@@ -52,16 +53,25 @@ export function FloatingCloud({
  *  Glowing orb-body with a faint pulsing aura
  *  and two tiny luminous "eyes". No cartoon SVG.
  * ───────────────────────────────────────────── */
-export function GhibliSpirit({ className }: { className?: string }) {
+export function GhibliSpirit({
+  className,
+  delay = 0,
+  duration = 5,
+}: {
+  className?: string;
+  delay?: number;
+  duration?: number;
+}) {
   return (
     <motion.div
-      className={`${className} relative`}
-      animate={{ y: [0, -8, 0] }}
+      className={cn("pointer-events-none", className)}
+      animate={{ y: [0, -9, 0] }}
       transition={{
-        duration: 5,
+        duration,
         repeat: Infinity,
         repeatType: "reverse",
         ease: "easeInOut",
+        delay,
       }}
     >
       {/* Outer aura glow */}
@@ -352,9 +362,17 @@ export function GhibliSkyBackground() {
         )}
       </AnimatePresence>
 
-      {/* Layer 4: Ethereal spirits */}
-      <GhibliSpirit className="absolute top-[20%] right-[15%]" />
-      <GhibliSpirit className="absolute bottom-[30%] left-[10%] scale-75" />
+      {/* Layer 4: Ethereal spirits positioned on opposite sides and staggered heights (not on same line) */}
+      <GhibliSpirit
+        className="absolute top-[18%] sm:top-[22%] left-4 sm:left-8 md:left-12 lg:left-16 xl:left-24"
+        duration={5.2}
+        delay={0}
+      />
+      <GhibliSpirit
+        className="absolute top-[50%] sm:top-[54%] right-4 sm:right-8 md:right-12 lg:right-16 xl:right-24 scale-90"
+        duration={6.2}
+        delay={1.8}
+      />
     </div>
   );
 }
