@@ -1,0 +1,34 @@
+# llms.txt - AI discoverability
+
+> Rayen Ben Aissa's personal portfolio and projects.
+
+## About
+
+Rayen Ben Aissa is a Full Stack Developer from Tunisia specializing in React, Next.js, TypeScript, and Node.js. He builds modern web applications and tools.
+
+## Pages
+
+- [Home](https://github.com/ErenYea9er69/3D-portfolio-winxp): Portfolio homepage with projects, skills, work experience, and social links.
+- [Blog](/blog): Technical articles about web development.
+- [Projects](/projects): Web applications and open source projects.
+
+## Key Projects
+
+- [MyNet](https://github.com/ErenYea9er69/MyNet): Windows networking tool (C# / .NET 8) that scans your local network, discovers devices, and lets you block or throttle their bandwidth using ARP spoofing / Layer-2 techniques.
+- [ScopyAI](https://github.com/ErenYea9er69/ScopyAI): Next.js web app for Scopy (AI-powered product). Uses OpenAI, Supabase, Tavily search, and PDF generation.
+- [anime-site (Tsune)](https://anime-site-d5x9.vercel.app/): Next.js anime streaming / browsing site that pulls data via Consumet API, with video player support (Vidstack/HLS), Prisma, auth, and a modern UI.
+- [3D-portfolio-winxp](https://3d-portfolio-winxp.vercel.app): Interactive Windows XP-themed personal portfolio built with Next.js.
+- [AnyBook](https://any-book.vercel.app): Next.js app for browsing structured book summaries.
+
+## Technical Stack
+
+Frontend: React, Next.js, TypeScript, TailwindCSS, Framer Motion, CSS3, HTML5
+Backend & Databases: Node.js, Express.js, Neon PostgreSQL, REST APIs, MongoDB, Prisma
+Tools & DevOps: Git, GitHub, Vercel, VS Code, Vite, Docker
+Exploring: Rust, Tauri, AI/ML, WebSockets, PWA
+
+## Social
+
+- GitHub: https://github.com/ErenYea9er69
+- X (Twitter): https://x.com/ErenYea9er
+- Portfolio Source: https://github.com/ErenYea9er69/3D-portfolio-winxp

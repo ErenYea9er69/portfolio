@@ -1,0 +1,248 @@
+import { Icons } from "@/components/icons";
+import { HomeIcon, NotebookIcon, FolderIcon, Settings, Wrench, Zap } from "lucide-react";
+import { faReact, faNodeJs, faGitAlt, faTypescript, faTailwindCss, faDocker, faFigma, faGithub, faFirefoxBrowser, faBrave, faNotion, faPython, faJava, faJs, faHtml5, faCss3Alt } from "@fortawesome/free-brands-svg-icons";
+import { faLeaf, faPlug, faBolt, faTerminal, faRocket, faServer, faDatabase, faCode } from "@fortawesome/free-solid-svg-icons";
+
+export const DATA = {
+  name: "Rayen Ben Aissa",
+  initials: "RB",
+  url: "https://github.com/ErenYea9er69/3D-portfolio-winxp",
+  location: "Tunisia",
+  locationLink: "https://www.google.com/maps/place/Tunisia",
+  description:
+    "Full Stack Developer",
+  summary:
+    "Status: Available for work",
+
+  avatarUrl: "/prasen.webp",
+  skills: [
+    { name: "React", icon: faReact, category: "Frontend", color: "#61dafb" },
+    { name: "Next.js", customIcon: Icons.nextjs, category: "Frontend", color: "#ffffff" },
+    { name: "TypeScript", icon: faTypescript, category: "Frontend", color: "#3178c6" },
+    { name: "TailwindCSS", icon: faTailwindCss, category: "Frontend", color: "#06b6d4" },
+    { name: "Framer Motion", icon: faBolt, category: "Frontend", color: "#e945ff" },
+    { name: "CSS3", icon: faCss3Alt, category: "Frontend", color: "#1572B6" },
+    { name: "HTML5", icon: faHtml5, category: "Frontend", color: "#E34F26" },
+    { name: "Node.js", icon: faNodeJs, category: "Backend", color: "#68a063" },
+    { name: "Express.js", icon: faServer, category: "Backend", color: "#eeeeee" },
+    { name: "Neon PostgreSQL", icon: faDatabase, category: "Backend", color: "#336791" },
+    { name: "REST APIs", icon: faPlug, category: "Backend", color: "#ffffff" },
+    { name: "MongoDB", icon: faLeaf, category: "Backend", color: "#47a248" },
+    { name: "Prisma", icon: faDatabase, category: "Backend", color: "#2d3748" },
+    { name: "Git", icon: faGitAlt, category: "Tools", color: "#f05032" },
+    { name: "GitHub", icon: faGithub, category: "Tools", color: "#ffffff" },
+    { name: "Vercel", icon: faRocket, category: "Tools", color: "#ffffff" },
+    { name: "VS Code", customIcon: Icons.vscode, category: "Tools", color: "#007acc" },
+    { name: "Vite", icon: faBolt, category: "Tools", color: "#646cff" },
+    { name: "Docker", icon: faDocker, category: "Tools", color: "#2496ed" },
+    { name: "Rust", icon: faCode, category: "Exploring", color: "#dea584" },
+    { name: "Tauri", icon: faCode, category: "Exploring", color: "#ffc131" },
+    { name: "AI/ML", icon: faCode, category: "Exploring", color: "#ffffff" },
+    { name: "WebSockets", icon: faPlug, category: "Exploring", color: "#ffffff" },
+    { name: "PWA", icon: faCode, category: "Exploring", color: "#5a0fc8" },
+  ],
+  tools: [],
+  navbar: [
+    { href: "/", icon: HomeIcon, label: "Home" },
+    { href: "/projects", icon: FolderIcon, label: "Projects" },
+  ],
+  contact: {
+    email: "none",
+    social: {
+      GitHub: {
+        name: "GitHub",
+        url: "https://github.com/ErenYea9er69",
+        icon: Icons.github,
+        navbar: true,
+      },
+      LinkedIn: {
+        name: "LinkedIn",
+        url: "none",
+        icon: Icons.linkedin,
+        navbar: false,
+      },
+      X: {
+        name: "X",
+        url: "https://x.com/ErenYea9er",
+        icon: Icons.x,
+        navbar: true,
+      },
+      Youtube: {
+        name: "Youtube",
+        url: "none",
+        icon: Icons.youtube,
+        navbar: false,
+      },
+      Instagram: {
+        name: "Instagram",
+        url: "none",
+        icon: Icons.instagram,
+        navbar: false,
+      },
+      Steam: {
+        name: "Steam",
+        url: "none",
+        icon: Icons.steam,
+        navbar: false,
+      },
+      CodePen: {
+        name: "CodePen",
+        url: "none",
+        icon: Icons.codepen,
+        navbar: false,
+      },
+      Discord: {
+        name: "Discord",
+        url: "none",
+        icon: Icons.discord,
+        navbar: false,
+      },
+      buyMeACoffee: {
+        name: "buyMeACoffee",
+        url: "none",
+        icon: Icons.buyMeACoffee,
+        navbar: false,
+      },
+      email: {
+        name: "Send Email",
+        url: "none",
+        icon: Icons.email,
+        navbar: false,
+      },
+    },
+  },
+
+  work: [
+    {
+      company: "Freelance",
+      href: "",
+      badges: [],
+      location: "Tunisia",
+      title: "Freelance Developer",
+      logoUrl: "",
+      start: "",
+      end: "Present",
+      description:
+        "Freelance Developer.",
+    },
+  ],
+  education: [
+    {
+      school: "B.Tech in CS & IT",
+      href: "",
+      degree: "B.Tech in CS & IT",
+      logoUrl: "",
+      start: "",
+      end: "",
+    },
+  ],
+  projects: [
+    {
+      title: "MyNet",
+      href: "https://github.com/ErenYea9er69/MyNet",
+      dates: "",
+      active: true,
+      description:
+        "Windows networking tool (C# / .NET 8) that scans your local network, discovers devices, and lets you block or throttle their bandwidth using ARP spoofing / Layer-2 techniques.",
+      technologies: ["C#", ".NET 8"],
+      links: [
+        {
+          type: "Source",
+          href: "https://github.com/ErenYea9er69/MyNet",
+          icon: <Icons.github className="size-3" />,
+        },
+      ],
+      image: "",
+      video: "",
+    },
+    {
+      title: "ScopyAI",
+      href: "https://github.com/ErenYea9er69/ScopyAI",
+      dates: "",
+      active: true,
+      description:
+        "Next.js web app for Scopy (AI-powered product). Uses OpenAI, Supabase, Tavily search, and PDF generation — an AI assistant / research or content tool.",
+      technologies: ["Next.js", "OpenAI", "Supabase", "Tavily"],
+      links: [
+        {
+          type: "Source",
+          href: "https://github.com/ErenYea9er69/ScopyAI",
+          icon: <Icons.github className="size-3" />,
+        },
+      ],
+      image: "",
+      video: "",
+    },
+    {
+      title: "anime-site (Tsune)",
+      href: "https://anime-site-d5x9.vercel.app/",
+      dates: "",
+      active: true,
+      description:
+        "Next.js anime streaming / browsing site that pulls data via Consumet API, with video player support (Vidstack/HLS), Prisma, auth, and a modern UI.",
+      technologies: ["Next.js", "Consumet API", "Vidstack", "Prisma"],
+      links: [
+        {
+          type: "Website",
+          href: "https://anime-site-d5x9.vercel.app/",
+          icon: <Icons.globe className="size-3" />,
+        },
+        {
+          type: "Source",
+          href: "https://github.com/ErenYea9er69/anime-site",
+          icon: <Icons.github className="size-3" />,
+        },
+      ],
+      image: "",
+      video: "",
+    },
+    {
+      title: "3D-portfolio-winxp",
+      href: "https://3d-portfolio-winxp.vercel.app",
+      dates: "",
+      active: true,
+      description:
+        "Interactive Windows XP-themed personal portfolio built with Next.js. Features a full desktop experience with draggable windows, Start menu, classic apps (Notepad, Paint, Minesweeper, Solitaire, etc.), and portfolio sections.",
+      technologies: ["Next.js"],
+      links: [
+        {
+          type: "Website",
+          href: "https://3d-portfolio-winxp.vercel.app",
+          icon: <Icons.globe className="size-3" />,
+        },
+        {
+          type: "Source",
+          href: "https://github.com/ErenYea9er69/3D-portfolio-winxp",
+          icon: <Icons.github className="size-3" />,
+        },
+      ],
+      image: "",
+      video: "",
+    },
+    {
+      title: "AnyBook",
+      href: "https://any-book.vercel.app",
+      dates: "",
+      active: true,
+      description:
+        "Next.js app for browsing structured book summaries. Designed as a healthier alternative to doomscrolling — search books, explore key angles (arguments, quotes, chapters, etc.), and request new titles.",
+      technologies: ["Next.js"],
+      links: [
+        {
+          type: "Website",
+          href: "https://any-book.vercel.app",
+          icon: <Icons.globe className="size-3" />,
+        },
+        {
+          type: "Source",
+          href: "https://github.com/ErenYea9er69/AnyBook",
+          icon: <Icons.github className="size-3" />,
+        },
+      ],
+      image: "",
+      video: "",
+    },
+  ],
+  hackathons: [],
+} as const;
+
