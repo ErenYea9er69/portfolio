@@ -6,12 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "build:worker": "node scripts/build-worker.mjs",
-    "preview": "npm run build:worker && opennextjs-cloudflare preview",
-    "deploy": "npm run build:worker && opennextjs-cloudflare deploy",
-    "upload": "npm run build:worker && opennextjs-cloudflare upload",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "lint": "next lint"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
@@ -19,7 +14,6 @@
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.3.0",
     "@next/third-parties": "^15.5.24",
-    "@opennextjs/cloudflare": "^1.20.3",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dialog": "^1.1.23",
     "@radix-ui/react-hover-card": "^1.1.15",
@@ -68,7 +62,6 @@
     "eslint-config-next": "^15.5.24",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5",
-    "wrangler": "^4.126.0"
+    "typescript": "^5"
   }
 }
