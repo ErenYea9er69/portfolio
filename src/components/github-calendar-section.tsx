@@ -33,6 +33,44 @@ export function GitHubCalendarSection() {
   const [maxContributions, setMaxContributions] = useState(0);
   const [peakDate, setPeakDate] = useState("");
   const [activeDays, setActiveDays] = useState(0);
+  const [todayContributions, setTodayContributions] = useState<number | null>(null);
+
+  // Calendar scroll ref to ensure today's date is always visible
+  const calendarScrollRef = useRef<HTMLDivElement>(null);
+
+  // Today's date string in YYYY-MM-DD
+  const todayStr = useMemo(() => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }, []);
+
+  const scrollToLatest = () => {
+    if (calendarScrollRef.current) {
+      calendarScrollRef.current.scrollTo({
+        left: calendarScrollRef.current.scrollWidth,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  // Automatically scroll to today's date on mount or when data/year updates
+  useEffect(() => {
+    const scrollToEnd = () => {
+      if (calendarScrollRef.current) {
+        calendarScrollRef.current.scrollLeft = calendarScrollRef.current.scrollWidth;
+      }
+    };
+    scrollToEnd();
+    const t1 = setTimeout(scrollToEnd, 100);
+    const t2 = setTimeout(scrollToEnd, 300);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [mounted, selectedYear, totalContributions]);
 
   useEffect(() => {
     setMounted(true);
@@ -112,6 +150,10 @@ export function GitHubCalendarSection() {
       }
     }
 
+    // Check today's contributions count
+    const todayItem = contributions.find((d: any) => d.date === todayStr);
+    const todayCount = todayItem ? todayItem.count : (contributions[contributions.length - 1]?.count ?? 0);
+
     // Wrap in setTimeout to avoid updating state during render
     setTimeout(() => {
       setTotalContributions(total);
@@ -120,6 +162,7 @@ export function GitHubCalendarSection() {
       setMaxContributions(maxCount);
       setPeakDate(pDate);
       setActiveDays(activeDaysCount);
+      setTodayContributions(todayCount);
     }, 0);
 
     return contributions;
@@ -364,14 +407,26 @@ export function GitHubCalendarSection() {
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/80 font-mono">
-                <span>INTERACTIVE MATRIX</span>
+              <div className="flex items-center gap-2 text-[11px] font-mono">
+                <button
+                  type="button"
+                  onClick={scrollToLatest}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 transition-all border border-emerald-500/20 cursor-pointer text-[10px] font-semibold tracking-tight"
+                  title="Jump to Today's contributions"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Today ({todayContributions !== null ? `${todayContributions} commits` : "10/09"})</span>
+                </button>
+                <span className="text-muted-foreground/60 hidden sm:inline">INTERACTIVE MATRIX</span>
               </div>
             </div>
 
             {/* Calendar Canvas */}
-            <div className="github-calendar-wrapper overflow-x-auto scrollbar-none pb-2 min-w-full">
-              <div className="min-w-[780px] p-1">
+            <div
+              ref={calendarScrollRef}
+              className="github-calendar-wrapper overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 pb-2.5 min-w-full"
+            >
+              <div className="min-w-fit w-full flex justify-center sm:justify-start lg:justify-center p-1">
                 <GitHubCalendar
                   username={username}
                   year={selectedYear === "last" ? "last" : parseInt(selectedYear)}
@@ -379,20 +434,32 @@ export function GitHubCalendarSection() {
                   transformData={selectData}
                   hideTotalCount
                   hideColorLegend={false}
-                  blockRadius={3.5}
-                  blockMargin={4}
-                  blockSize={12}
+                  blockRadius={2.5}
+                  blockMargin={3}
+                  blockSize={10.5}
                   fontSize={11}
-                  renderBlock={(block, activity) =>
-                    React.cloneElement(block as any, {
+                  renderBlock={(block, activity) => {
+                    const isToday = activity.date === todayStr;
+                    return React.cloneElement(block as any, {
                       "data-tooltip-id": "github-tooltip",
                       "data-tooltip-content": JSON.stringify({
                         date: activity.date,
                         count: activity.count,
                         level: activity.level,
+                        isToday,
                       }),
-                    })
-                  }
+                      style: {
+                        ...(block as any).props?.style,
+                        ...(isToday
+                          ? {
+                              stroke: "#34d399",
+                              strokeWidth: 2,
+                              filter: "drop-shadow(0 0 4px rgba(52, 211, 153, 0.8))",
+                            }
+                          : {}),
+                      },
+                    });
+                  }}
                   theme={calendarTheme}
                 />
               </div>
@@ -434,6 +501,7 @@ export function GitHubCalendarSection() {
               if (typeof content !== "string") return <span>{content}</span>;
               try {
                 const data = JSON.parse(content);
+                const isToday = data.isToday || data.date === todayStr;
                 const dateObj = new Date(data.date + "T00:00:00");
                 const formattedDate = dateObj.toLocaleDateString("en-US", {
                   weekday: "short",
@@ -453,10 +521,15 @@ export function GitHubCalendarSection() {
                 const levelColor = levelColors[data.level] || levelColors[0];
 
                 return (
-                  <div className="flex flex-col gap-1.5 min-w-[155px] text-foreground">
+                  <div className="flex flex-col gap-1.5 min-w-[165px] text-foreground">
                     <div className="flex items-center justify-between gap-3 border-b border-border/50 pb-1.5">
-                      <span className="text-[11px] font-medium text-muted-foreground">
+                      <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
                         {formattedDate}
+                        {isToday && (
+                          <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            Today
+                          </span>
+                        )}
                       </span>
                       <span className={cn("h-2 w-2 rounded-full", levelColor)} />
                     </div>
