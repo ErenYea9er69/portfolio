@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Play, Pause, RotateCcw, Bot, Gamepad2, Zap, X, Trophy } from "lucide-react";
-import { cn } from "@/lib/utils";
+import React, { useEffect, useRef, useCallback } from "react";
 
 interface ActivityItem {
   date: string;
@@ -13,8 +11,8 @@ interface ActivityItem {
 interface GitHubSnakeProps {
   contributions: ActivityItem[];
   theme: "dark" | "light";
-  onClose: () => void;
-  username: string;
+  onClose?: () => void;
+  username?: string;
 }
 
 interface Cell {
@@ -37,6 +35,8 @@ interface Particle {
   color: string;
 }
 
+type SnakeState = "hunting" | "dying" | "dead" | "rebirth";
+
 const COLS = 53;
 const ROWS = 7;
 const CELL_SIZE = 10.5;
@@ -47,6 +47,10 @@ const LEFT_MARGIN = 28;
 
 const CANVAS_WIDTH = Math.ceil(LEFT_MARGIN + COLS * (CELL_SIZE + CELL_GAP));
 const CANVAS_HEIGHT = Math.ceil(TOP_MARGIN + ROWS * (CELL_SIZE + CELL_GAP));
+
+const MAX_SNAKE_LENGTH = 8;
+const HUNT_SPEED_MS = 52;
+const DISSOLVE_SPEED_MS = 65;
 
 const COLOR_LEVELS = {
   dark: [
@@ -68,50 +72,23 @@ const COLOR_LEVELS = {
 export function GitHubSnake({
   contributions,
   theme,
-  onClose,
-  username,
 }: GitHubSnakeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Game configuration states
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isAuto, setIsAuto] = useState(true);
-  const [speed, setSpeed] = useState<1 | 2 | 3>(2);
-  const [devouredCount, setDevouredCount] = useState(0);
-  const [totalFood, setTotalFood] = useState(0);
-  const [allEatenCelebration, setAllEatenCelebration] = useState(false);
-
-  // References for game loop state
+  // References for game state
   const gridRef = useRef<Cell[][]>([]);
   const snakeRef = useRef<Array<{ col: number; row: number }>>([]);
   const dirRef = useRef<{ dc: number; dr: number }>({ dc: 1, dr: 0 });
-  const nextDirRef = useRef<{ dc: number; dr: number }>({ dc: 1, dr: 0 });
+  const gameStateRef = useRef<SnakeState>("hunting");
   const particlesRef = useRef<Particle[]>([]);
   const lastTickRef = useRef(0);
   const tongueTimerRef = useRef(0);
-  const isPlayingRef = useRef(isPlaying);
-  const isAutoRef = useRef(isAuto);
-  const speedRef = useRef(speed);
   const headPulseRef = useRef(0);
-
-  // Synchronize ref states
-  useEffect(() => {
-    isPlayingRef.current = isPlaying;
-  }, [isPlaying]);
-
-  useEffect(() => {
-    isAutoRef.current = isAuto;
-  }, [isAuto]);
-
-  useEffect(() => {
-    speedRef.current = speed;
-  }, [speed]);
 
   // Initialize the grid from real contributions
   const initGrid = useCallback(() => {
     const grid: Cell[][] = [];
-    let foodCount = 0;
 
     // Determine start day from first contribution
     let startDay = 0;
@@ -131,7 +108,6 @@ export function GitHubSnake({
         if (slot >= 0 && slot < contributions.length) {
           const item = contributions[slot];
           const level = Math.min(Math.max(item.level ?? 0, 0), 4);
-          if (level > 0) foodCount++;
           grid[c][r] = {
             col: c,
             row: r,
@@ -156,9 +132,7 @@ export function GitHubSnake({
     }
 
     gridRef.current = grid;
-    setTotalFood(foodCount);
-    setDevouredCount(0);
-    setAllEatenCelebration(false);
+    gameStateRef.current = "hunting";
 
     // Initial snake placement: start at top-left with 5 segments
     snakeRef.current = [
@@ -169,65 +143,20 @@ export function GitHubSnake({
       { col: 0, row: 0 },
     ];
     dirRef.current = { dc: 1, dr: 0 };
-    nextDirRef.current = { dc: 1, dr: 0 };
   }, [contributions]);
 
   useEffect(() => {
     initGrid();
   }, [initGrid]);
 
-  // Keyboard navigation for Manual play mode
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " ", "w", "a", "s", "d", "W", "A", "S", "D"].includes(
-          e.key
-        )
-      ) {
-        // Prevent window scrolling while playing
-        if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
-          e.preventDefault();
-        }
-
-        if (e.key === " ") {
-          setIsPlaying((prev) => !prev);
-          return;
-        }
-
-        if (isAutoRef.current) {
-          setIsAuto(false);
-        }
-
-        const curr = dirRef.current;
-        let nd: { dc: number; dr: number } | null = null;
-
-        if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
-          if (curr.dr !== 1) nd = { dc: 0, dr: -1 };
-        } else if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
-          if (curr.dr !== -1) nd = { dc: 0, dr: 1 };
-        } else if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
-          if (curr.dc !== 1) nd = { dc: -1, dr: 0 };
-        } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
-          if (curr.dc !== -1) nd = { dc: 1, dr: 0 };
-        }
-
-        if (nd) {
-          nextDirRef.current = nd;
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  // BFS Pathfinding for Autonomous Hunter AI
-  const findNextAiMove = (): { dc: number; dr: number } | null => {
+  // BFS Pathfinding for Autonomous Hunter AI with Torus Grid wrapping
+  const findNextAiMove = (): { dc: number; dr: number } => {
     const snake = snakeRef.current;
-    if (snake.length === 0) return null;
+    const currDir = dirRef.current;
+    if (snake.length === 0) return currDir;
     const head = snake[0];
     const grid = gridRef.current;
-    if (!grid || grid.length === 0) return null;
+    if (!grid || grid.length === 0) return currDir;
 
     // Obstacle set contains body segments except tail (which vacates on next step)
     const obstacleSet = new Set<string>();
@@ -235,79 +164,79 @@ export function GitHubSnake({
       obstacleSet.add(`${snake[i].col},${snake[i].row}`);
     }
 
-    const directions = [
+    const allDirs = [
       { dc: 1, dr: 0 },
-      { dc: 0, dr: 1 },
       { dc: -1, dr: 0 },
+      { dc: 0, dr: 1 },
       { dc: 0, dr: -1 },
     ];
 
-    // Priority 1: BFS search for nearest un-eaten green dot
+    // Avoid 180° immediate reversal
+    const validDirs = allDirs.filter(
+      (d) => !(d.dc === -currDir.dc && d.dr === -currDir.dr)
+    );
+
+    // Queue for BFS
     const queue: Array<{ col: number; row: number; firstMove: { dc: number; dr: number } }> = [];
     const visited = new Set<string>();
     visited.add(`${head.col},${head.row}`);
 
-    for (const dir of directions) {
-      const nc = head.col + dir.dc;
-      const nr = head.row + dir.dr;
-      if (nc >= 0 && nc < COLS && nr >= 0 && nr < ROWS) {
-        const key = `${nc},${nr}`;
-        if (!obstacleSet.has(key)) {
-          const cell = grid[nc][nr];
-          if (cell && cell.level > 0 && !cell.eaten) {
-            return dir; // Immediate food adjacent!
-          }
-          visited.add(key);
-          queue.push({ col: nc, row: nr, firstMove: dir });
+    for (const d of validDirs) {
+      const nc = (head.col + d.dc + COLS) % COLS;
+      const nr = (head.row + d.dr + ROWS) % ROWS;
+      const key = `${nc},${nr}`;
+
+      if (!obstacleSet.has(key)) {
+        const cell = grid[nc]?.[nr];
+        if (cell && cell.level > 0 && !cell.eaten) {
+          return d; // Immediate food adjacent!
         }
+        visited.add(key);
+        queue.push({ col: nc, row: nr, firstMove: d });
       }
     }
 
     while (queue.length > 0) {
       const curr = queue.shift()!;
-      for (const dir of directions) {
-        const nc = curr.col + dir.dc;
-        const nr = curr.row + dir.dr;
-        if (nc >= 0 && nc < COLS && nr >= 0 && nr < ROWS) {
-          const key = `${nc},${nr}`;
-          if (!visited.has(key) && !obstacleSet.has(key)) {
-            const cell = grid[nc][nr];
-            if (cell && cell.level > 0 && !cell.eaten) {
-              return curr.firstMove;
-            }
-            visited.add(key);
-            queue.push({ col: nc, row: nr, firstMove: curr.firstMove });
+      for (const d of allDirs) {
+        const nc = (curr.col + d.dc + COLS) % COLS;
+        const nr = (curr.row + d.dr + ROWS) % ROWS;
+        const key = `${nc},${nr}`;
+
+        if (!visited.has(key) && !obstacleSet.has(key)) {
+          const cell = grid[nc]?.[nr];
+          if (cell && cell.level > 0 && !cell.eaten) {
+            return curr.firstMove; // Found shortest path to food!
           }
+          visited.add(key);
+          queue.push({ col: nc, row: nr, firstMove: curr.firstMove });
         }
       }
     }
 
-    // Priority 2: Fallback to any safe open neighbor to avoid self-trapping
-    for (const dir of directions) {
-      const nc = head.col + dir.dc;
-      const nr = head.row + dir.dr;
-      if (nc >= 0 && nc < COLS && nr >= 0 && nr < ROWS) {
-        if (!obstacleSet.has(`${nc},${nr}`)) {
-          return dir;
-        }
+    // Fallback: Pick any safe neighbor that doesn't immediately collide with body
+    for (const d of validDirs) {
+      const nc = (head.col + d.dc + COLS) % COLS;
+      const nr = (head.row + d.dr + ROWS) % ROWS;
+      if (!obstacleSet.has(`${nc},${nr}`)) {
+        return d;
       }
     }
 
-    return dirRef.current;
+    return validDirs[0] || currDir;
   };
 
-  // Spawn eat burst particles
-  const spawnParticles = (cx: number, cy: number, color: string) => {
+  // Spawn eat burst or dissolve particles
+  const spawnParticles = (cx: number, cy: number, color: string, count = 7) => {
     const newParticles: Particle[] = [];
-    const count = 7;
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5);
-      const speed = 1.2 + Math.random() * 2.2;
+      const spd = 1.2 + Math.random() * 2.2;
       newParticles.push({
         x: cx,
         y: cy,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
+        vx: Math.cos(angle) * spd,
+        vy: Math.sin(angle) * spd,
         alpha: 1,
         size: 1.5 + Math.random() * 2.5,
         color,
@@ -316,93 +245,137 @@ export function GitHubSnake({
     particlesRef.current.push(...newParticles);
   };
 
-  // Main game tick: moves snake, detects food, updates scores
+  // Check remaining green dots
+  const getRemainingGreenCount = (): number => {
+    const grid = gridRef.current;
+    if (!grid || grid.length === 0) return 0;
+    let count = 0;
+    for (let c = 0; c < COLS; c++) {
+      for (let r = 0; r < ROWS; r++) {
+        if (grid[c][r].originalLevel > 0 && !grid[c][r].eaten) {
+          count++;
+        }
+      }
+    }
+    return count;
+  };
+
+  // Resurrect / respawn all green contribution cells
+  const respawnAllGreenCells = () => {
+    const grid = gridRef.current;
+    if (!grid || grid.length === 0) return;
+    for (let c = 0; c < COLS; c++) {
+      for (let r = 0; r < ROWS; r++) {
+        if (grid[c][r].originalLevel > 0) {
+          grid[c][r].eaten = false;
+          grid[c][r].level = grid[c][r].originalLevel;
+        }
+      }
+    }
+  };
+
+  // Main game tick
   const gameTick = () => {
+    const state = gameStateRef.current;
     const grid = gridRef.current;
     const snake = snakeRef.current;
-    if (!grid || grid.length === 0 || snake.length === 0) return;
 
-    let nextDir = nextDirRef.current;
-    if (isAutoRef.current) {
-      const aiMove = findNextAiMove();
-      if (aiMove) {
-        nextDir = aiMove;
-        nextDirRef.current = aiMove;
-      }
-    }
-    dirRef.current = nextDir;
+    // ─── STATE: HUNTING ───
+    if (state === "hunting") {
+      if (!grid || grid.length === 0 || snake.length === 0) return;
 
-    const head = snake[0];
-    let newCol = head.col + nextDir.dc;
-    let newRow = head.row + nextDir.dr;
+      const nextDir = findNextAiMove();
+      dirRef.current = nextDir;
 
-    // Torus wrapping for smooth slithering
-    if (newCol >= COLS) newCol = 0;
-    if (newCol < 0) newCol = COLS - 1;
-    if (newRow >= ROWS) newRow = 0;
-    if (newRow < 0) newRow = ROWS - 1;
+      const head = snake[0];
+      let newCol = head.col + nextDir.dc;
+      let newRow = head.row + nextDir.dr;
 
-    // In manual mode, check self-collision
-    if (!isAutoRef.current) {
-      const selfCollision = snake.some((seg) => seg.col === newCol && seg.row === newRow);
-      if (selfCollision) {
-        // Respawn snake at starting position
-        snakeRef.current = [
-          { col: 4, row: 0 },
-          { col: 3, row: 0 },
-          { col: 2, row: 0 },
-          { col: 1, row: 0 },
-          { col: 0, row: 0 },
-        ];
-        dirRef.current = { dc: 1, dr: 0 };
-        nextDirRef.current = { dc: 1, dr: 0 };
-        return;
-      }
-    }
+      // Torus wrapping
+      if (newCol >= COLS) newCol = 0;
+      if (newCol < 0) newCol = COLS - 1;
+      if (newRow >= ROWS) newRow = 0;
+      if (newRow < 0) newRow = ROWS - 1;
 
-    const targetCell = grid[newCol]?.[newRow];
-    let didEat = false;
+      const targetCell = grid[newCol]?.[newRow];
+      let didEat = false;
 
-    if (targetCell && targetCell.level > 0 && !targetCell.eaten) {
-      // Devour the commit square!
-      targetCell.eaten = true;
-      targetCell.level = 0;
-      didEat = true;
-      headPulseRef.current = 1.35;
+      if (targetCell && targetCell.level > 0 && !targetCell.eaten) {
+        // Devour the commit cell!
+        targetCell.eaten = true;
+        targetCell.level = 0;
+        didEat = true;
+        headPulseRef.current = 1.35;
 
-      const px = LEFT_MARGIN + newCol * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2;
-      const py = TOP_MARGIN + newRow * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2;
-      const particleColor = theme === "dark" ? "#39d353" : "#10b981";
-      spawnParticles(px, py, particleColor);
+        const px = LEFT_MARGIN + newCol * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2;
+        const py = TOP_MARGIN + newRow * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2;
+        const particleColor = theme === "dark" ? "#39d353" : "#10b981";
+        spawnParticles(px, py, particleColor, 6);
 
-      setDevouredCount((prev) => {
-        const next = prev + 1;
-        if (totalFood > 0 && next >= totalFood) {
-          setAllEatenCelebration(true);
-          setTimeout(() => {
-            // Respawn all food for infinite entertainment
-            for (let c = 0; c < COLS; c++) {
-              for (let r = 0; r < ROWS; r++) {
-                if (gridRef.current[c][r].originalLevel > 0) {
-                  gridRef.current[c][r].eaten = false;
-                  gridRef.current[c][r].level = gridRef.current[c][r].originalLevel;
-                }
-              }
-            }
-            setDevouredCount(0);
-            setAllEatenCelebration(false);
-          }, 2400);
+        // Check if all green cells are gone!
+        const remaining = getRemainingGreenCount();
+        if (remaining === 0) {
+          // No more green dots left! Transition to dying
+          gameStateRef.current = "dying";
         }
-        return next;
-      });
+      }
+
+      // Add new head
+      const newSnake = [{ col: newCol, row: newRow }, ...snake];
+
+      // Keep snake agile: if not eating OR reached maximum length, remove tail
+      if (!didEat || newSnake.length > MAX_SNAKE_LENGTH) {
+        newSnake.pop();
+      }
+      snakeRef.current = newSnake;
+      return;
     }
 
-    // Add new head
-    const newSnake = [{ col: newCol, row: newRow }, ...snake];
-    if (!didEat) {
-      newSnake.pop(); // Remove tail if not eating
+    // ─── STATE: DYING (Dissolve segment-by-segment) ───
+    if (state === "dying") {
+      if (snake.length > 0) {
+        // Pop the tail segment into dissolution dust
+        const tail = snake[snake.length - 1];
+        const tx = LEFT_MARGIN + tail.col * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2;
+        const ty = TOP_MARGIN + tail.row * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2;
+        spawnParticles(tx, ty, theme === "dark" ? "#f87171" : "#ef4444", 5);
+
+        snake.pop();
+
+        if (snake.length === 0) {
+          // All segments dissolved! Snake is dead
+          gameStateRef.current = "dead";
+          setTimeout(() => {
+            gameStateRef.current = "rebirth";
+          }, 450);
+        }
+      }
+      return;
     }
-    snakeRef.current = newSnake;
+
+    // ─── STATE: REBIRTH (Green comes back, new snake is born) ───
+    if (state === "rebirth") {
+      // 1. All original green contribution dots bloom back!
+      respawnAllGreenCells();
+
+      // 2. A brand-new snake is born!
+      snakeRef.current = [
+        { col: 4, row: 0 },
+        { col: 3, row: 0 },
+        { col: 2, row: 0 },
+        { col: 1, row: 0 },
+        { col: 0, row: 0 },
+      ];
+      dirRef.current = { dc: 1, dr: 0 };
+
+      // Birth sparkle explosion
+      const bx = LEFT_MARGIN + 4 * (CELL_SIZE + CELL_GAP) + CELL_SIZE / 2;
+      const by = TOP_MARGIN + CELL_SIZE / 2;
+      spawnParticles(bx, by, theme === "dark" ? "#38bdf8" : "#0284c7", 10);
+
+      // Back to hunting the fresh green dots!
+      gameStateRef.current = "hunting";
+    }
   };
 
   const gameTickRef = useRef<() => void>(gameTick);
@@ -417,11 +390,10 @@ export function GitHubSnake({
     const render = (time: number) => {
       animId = requestAnimationFrame(render);
 
-      // Determine step interval based on speed
-      const speedIntervals = { 1: 140, 2: 75, 3: 40 };
-      const interval = speedIntervals[speedRef.current];
+      const state = gameStateRef.current;
+      const interval = state === "dying" ? DISSOLVE_SPEED_MS : HUNT_SPEED_MS;
 
-      if (isPlayingRef.current && time - lastTickRef.current > interval) {
+      if (time - lastTickRef.current > interval) {
         lastTickRef.current = time;
         tongueTimerRef.current = (tongueTimerRef.current + 1) % 5;
         gameTickRef.current();
@@ -455,7 +427,7 @@ export function GitHubSnake({
 
       // Draw Weekday labels (Mon, Wed, Fri)
       ctx.font = "9px ui-monospace, SFMono-Regular, Menlo, monospace";
-      ctx.fillStyle = isDark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.45)";
+      ctx.fillStyle = isDark ? "rgba(255, 255, 255, 0.35)" : "rgba(0, 0, 0, 0.4)";
       ctx.textAlign = "right";
       ctx.textBaseline = "middle";
       const weekdayNames: Record<number, string> = { 1: "Mon", 3: "Wed", 5: "Fri" };
@@ -512,7 +484,7 @@ export function GitHubSnake({
               ctx.lineWidth = 0.8;
               ctx.stroke();
             } else if (cell.level === 4 && isDark) {
-              // Subtle neon radiance for top-tier contribution dots
+              // Neon radiance for highest activity dots
               ctx.shadowColor = "rgba(57, 211, 83, 0.4)";
               ctx.shadowBlur = 4;
               ctx.fill();
@@ -528,7 +500,7 @@ export function GitHubSnake({
         const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.alpha -= 0.035;
+        p.alpha -= 0.038;
         p.size = Math.max(0, p.size - 0.04);
 
         if (p.alpha <= 0 || p.size <= 0) {
@@ -549,6 +521,8 @@ export function GitHubSnake({
 
       // Draw Snake
       const snake = snakeRef.current;
+      const isDying = state === "dying";
+
       if (snake.length > 0) {
         // Draw body segments (tail to neck)
         for (let i = snake.length - 1; i >= 1; i--) {
@@ -556,15 +530,20 @@ export function GitHubSnake({
           const x = LEFT_MARGIN + seg.col * (CELL_SIZE + CELL_GAP);
           const y = TOP_MARGIN + seg.row * (CELL_SIZE + CELL_GAP);
 
-          // Vibrant body gradient (cyan to cyber-purple)
-          const ratio = i / snake.length;
-          const bodyColor = isDark
-            ? ratio < 0.5
-              ? "#38bdf8"
-              : "#818cf8"
-            : ratio < 0.5
-            ? "#0284c7"
-            : "#6366f1";
+          // Body gradient (or flashing red/gray when dying)
+          let bodyColor = "";
+          if (isDying) {
+            bodyColor = isDark ? "#ef4444" : "#dc2626";
+          } else {
+            const ratio = i / snake.length;
+            bodyColor = isDark
+              ? ratio < 0.5
+                ? "#38bdf8"
+                : "#818cf8"
+              : ratio < 0.5
+              ? "#0284c7"
+              : "#6366f1";
+          }
 
           ctx.fillStyle = bodyColor;
           ctx.beginPath();
@@ -572,7 +551,7 @@ export function GitHubSnake({
           ctx.fill();
         }
 
-        // Draw Head with cute eyes and animated tongue
+        // Draw Head
         const head = snake[0];
         const hx = LEFT_MARGIN + head.col * (CELL_SIZE + CELL_GAP);
         const hy = TOP_MARGIN + head.row * (CELL_SIZE + CELL_GAP);
@@ -580,15 +559,23 @@ export function GitHubSnake({
         const offset = ((scale - 1) * CELL_SIZE) / 2;
 
         ctx.save();
-        ctx.fillStyle = isDark ? "#38bdf8" : "#0284c7";
-        ctx.shadowColor = isDark ? "rgba(56, 189, 248, 0.7)" : "rgba(2, 132, 199, 0.4)";
+        const headColor = isDying
+          ? isDark
+            ? "#f87171"
+            : "#ef4444"
+          : isDark
+          ? "#38bdf8"
+          : "#0284c7";
+
+        ctx.fillStyle = headColor;
+        ctx.shadowColor = isDying ? "rgba(239, 68, 68, 0.8)" : isDark ? "rgba(56, 189, 248, 0.7)" : "rgba(2, 132, 199, 0.4)";
         ctx.shadowBlur = 8;
         ctx.beginPath();
         ctx.roundRect(hx - offset, hy - offset, CELL_SIZE * scale, CELL_SIZE * scale, CELL_RADIUS + 1);
         ctx.fill();
         ctx.shadowBlur = 0;
 
-        // Draw animated eyes based on current direction
+        // Draw eyes
         const dir = dirRef.current;
         const eyeRadius = 1.3;
         const pupilRadius = 0.7;
@@ -598,53 +585,68 @@ export function GitHubSnake({
         let pupilOffset = { x: 0, y: 0 };
 
         if (dir.dc === 1) {
-          // Looking Right
           leftEye = { x: hx + 7, y: hy + 2.8 };
           rightEye = { x: hx + 7, y: hy + 7.5 };
           pupilOffset = { x: 0.6, y: 0 };
         } else if (dir.dc === -1) {
-          // Looking Left
           leftEye = { x: hx + 3, y: hy + 2.8 };
           rightEye = { x: hx + 3, y: hy + 7.5 };
           pupilOffset = { x: -0.6, y: 0 };
         } else if (dir.dr === 1) {
-          // Looking Down
           leftEye = { x: hx + 2.8, y: hy + 7.5 };
           rightEye = { x: hx + 7.5, y: hy + 7.5 };
           pupilOffset = { x: 0, y: 0.6 };
         } else if (dir.dr === -1) {
-          // Looking Up
           leftEye = { x: hx + 2.8, y: hy + 2.8 };
           rightEye = { x: hx + 7.5, y: hy + 2.8 };
           pupilOffset = { x: 0, y: -0.6 };
         }
 
-        // Eye whites
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.arc(leftEye.x, leftEye.y, eyeRadius, 0, Math.PI * 2);
-        ctx.arc(rightEye.x, rightEye.y, eyeRadius, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Eye pupils
-        ctx.fillStyle = "#0f172a";
-        ctx.beginPath();
-        ctx.arc(leftEye.x + pupilOffset.x, leftEye.y + pupilOffset.y, pupilRadius, 0, Math.PI * 2);
-        ctx.arc(rightEye.x + pupilOffset.x, rightEye.y + pupilOffset.y, pupilRadius, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Tiny cute red tongue flick
-        if (tongueTimerRef.current === 0) {
-          ctx.strokeStyle = "#ef4444";
+        if (isDying) {
+          // Retro X_X dead eyes when dying!
+          ctx.strokeStyle = "#ffffff";
           ctx.lineWidth = 1;
+
           ctx.beginPath();
-          const cx = hx + CELL_SIZE / 2;
-          const cy = hy + CELL_SIZE / 2;
-          const tx = cx + dir.dc * (CELL_SIZE * 0.7);
-          const ty = cy + dir.dr * (CELL_SIZE * 0.7);
-          ctx.moveTo(cx + dir.dc * (CELL_SIZE / 2), cy + dir.dr * (CELL_SIZE / 2));
-          ctx.lineTo(tx, ty);
+          ctx.moveTo(leftEye.x - 1, leftEye.y - 1);
+          ctx.lineTo(leftEye.x + 1, leftEye.y + 1);
+          ctx.moveTo(leftEye.x + 1, leftEye.y - 1);
+          ctx.lineTo(leftEye.x - 1, leftEye.y + 1);
           ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(rightEye.x - 1, rightEye.y - 1);
+          ctx.lineTo(rightEye.x + 1, rightEye.y + 1);
+          ctx.moveTo(rightEye.x + 1, rightEye.y - 1);
+          ctx.lineTo(rightEye.x - 1, rightEye.y + 1);
+          ctx.stroke();
+        } else {
+          // Normal alive eyes
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(leftEye.x, leftEye.y, eyeRadius, 0, Math.PI * 2);
+          ctx.arc(rightEye.x, rightEye.y, eyeRadius, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = "#0f172a";
+          ctx.beginPath();
+          ctx.arc(leftEye.x + pupilOffset.x, leftEye.y + pupilOffset.y, pupilRadius, 0, Math.PI * 2);
+          ctx.arc(rightEye.x + pupilOffset.x, rightEye.y + pupilOffset.y, pupilRadius, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Tongue flick
+          if (tongueTimerRef.current === 0) {
+            ctx.strokeStyle = "#ef4444";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            const cx = hx + CELL_SIZE / 2;
+            const cy = hy + CELL_SIZE / 2;
+            const tx = cx + dir.dc * (CELL_SIZE * 0.7);
+            const ty = cy + dir.dr * (CELL_SIZE * 0.7);
+            ctx.moveTo(cx + dir.dc * (CELL_SIZE / 2), cy + dir.dr * (CELL_SIZE / 2));
+            ctx.lineTo(tx, ty);
+            ctx.stroke();
+          }
         }
 
         ctx.restore();
@@ -655,177 +657,19 @@ export function GitHubSnake({
 
     animId = requestAnimationFrame(render);
     return () => cancelAnimationFrame(animId);
-  }, [theme, totalFood]);
-
-  const progress = totalFood > 0 ? Math.min(100, Math.round((devouredCount / totalFood) * 100)) : 0;
+  }, [theme]);
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* ─── Snake Control HUD Bar ─── */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-border/50">
-        {/* Left: Mode Badge & Devour Counter */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 text-xs font-semibold text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.15)]">
-            <span className="animate-bounce">🐍</span>
-            <span>Snake Arena</span>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-muted-foreground">Devoured:</span>
-            <span className="font-mono font-bold text-foreground">
-              {devouredCount} / {totalFood}
-            </span>
-            <div className="hidden sm:flex h-1.5 w-16 overflow-hidden rounded-full bg-muted/60">
-              <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <span className="text-[11px] font-mono text-muted-foreground/80 hidden sm:inline">
-              ({progress}%)
-            </span>
-          </div>
-        </div>
-
-        {/* Right: Controls (Auto/Manual, Speed, Play/Pause, Reset, Close) */}
-        <div className="flex items-center gap-1.5">
-          {/* AI vs Manual Mode Toggle */}
-          <button
-            type="button"
-            onClick={() => setIsAuto(!isAuto)}
-            className={cn(
-              "flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium transition-all border cursor-pointer",
-              isAuto
-                ? "bg-sky-500/15 border-sky-500/30 text-sky-500 hover:bg-sky-500/25"
-                : "bg-muted/60 border-border/60 text-foreground hover:bg-muted"
-            )}
-            title={isAuto ? "Auto-Hunt (Snake autonomously eats commits)" : "Manual Play (Control with Arrow keys / WASD)"}
-          >
-            {isAuto ? <Bot className="size-3.5" /> : <Gamepad2 className="size-3.5" />}
-            <span className="hidden sm:inline">{isAuto ? "Auto-Hunt" : "Manual Play"}</span>
-          </button>
-
-          {/* Speed Toggle */}
-          <button
-            type="button"
-            onClick={() => setSpeed((prev) => (prev === 1 ? 2 : prev === 2 ? 3 : 1))}
-            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-mono font-medium bg-muted/40 border border-border/50 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-            title="Toggle snake speed (1x, 2x, 3x)"
-          >
-            <Zap className="size-3 text-amber-400" />
-            <span>{speed}x</span>
-          </button>
-
-          {/* Play/Pause */}
-          <button
-            type="button"
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted/40 border border-border/50 text-foreground hover:bg-muted/80 transition-colors cursor-pointer"
-            title={isPlaying ? "Pause Snake" : "Resume Snake"}
-          >
-            {isPlaying ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
-          </button>
-
-          {/* Reset Grid */}
-          <button
-            type="button"
-            onClick={initGrid}
-            className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted/40 border border-border/50 text-foreground hover:bg-muted/80 transition-colors cursor-pointer"
-            title="Reset eaten commits & respawn snake"
-          >
-            <RotateCcw className="size-3.5" />
-          </button>
-
-          {/* Close Snake Mode */}
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-colors cursor-pointer ml-1"
-            title="Exit Snake Mode"
-          >
-            <X className="size-3.5" />
-          </button>
-        </div>
-      </div>
-
-      {/* ─── Celebration Banner when All Commits are Devoured ─── */}
-      {allEatenCelebration && (
-        <div className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500/20 via-cyan-500/20 to-violet-500/20 border border-emerald-500/40 p-2.5 text-center text-xs font-bold text-emerald-400 animate-pulse">
-          <Trophy className="size-4 text-amber-400" />
-          <span>ALL COMMITS DEVOURED! Regenerating fresh matrix...</span>
-        </div>
-      )}
-
-      {/* ─── Canvas Game Arena ─── */}
-      <div
-        ref={containerRef}
-        className="relative overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 pb-2 min-w-full"
-      >
-        <div className="min-w-fit w-full flex justify-center sm:justify-start lg:justify-center p-1">
-          <canvas
-            ref={canvasRef}
-            className="block rounded-lg select-none cursor-crosshair"
-            style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
-          />
-        </div>
-      </div>
-
-      {/* ─── Touch D-Pad for Mobile Players ─── */}
-      {!isAuto && (
-        <div className="flex flex-col items-center gap-1 sm:hidden pt-2 border-t border-border/30">
-          <button
-            type="button"
-            onClick={() => {
-              if (dirRef.current.dr !== 1) nextDirRef.current = { dc: 0, dr: -1 };
-            }}
-            className="h-8 w-12 rounded-md bg-muted/70 border border-border/60 text-xs font-bold active:bg-muted"
-          >
-            ▲
-          </button>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                if (dirRef.current.dc !== 1) nextDirRef.current = { dc: -1, dr: 0 };
-              }}
-              className="h-8 w-12 rounded-md bg-muted/70 border border-border/60 text-xs font-bold active:bg-muted"
-            >
-              ◀
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (dirRef.current.dr !== -1) nextDirRef.current = { dc: 0, dr: 1 };
-              }}
-              className="h-8 w-12 rounded-md bg-muted/70 border border-border/60 text-xs font-bold active:bg-muted"
-            >
-              ▼
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (dirRef.current.dc !== -1) nextDirRef.current = { dc: 1, dr: 0 };
-              }}
-              className="h-8 w-12 rounded-md bg-muted/70 border border-border/60 text-xs font-bold active:bg-muted"
-            >
-              ▶
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ─── Mini Footer Info ─── */}
-      <div className="flex flex-wrap items-center justify-between text-[11px] text-muted-foreground pt-1">
-        <div className="flex items-center gap-2">
-          <span>
-            {isAuto
-              ? "Autonomous AI pathfinding in progress — watching the snake devour commits!"
-              : "Use WASD or Arrow Keys to guide the snake across the GitHub grid."}
-          </span>
-        </div>
-        <span className="font-mono text-[10px] text-muted-foreground/60 hidden sm:inline">
-          PLATANE-STYLE GITHUB CONTRIBUTION SNAKE
-        </span>
+    <div
+      ref={containerRef}
+      className="relative overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 pb-1 min-w-full"
+    >
+      <div className="min-w-fit w-full flex justify-center sm:justify-start lg:justify-center p-1">
+        <canvas
+          ref={canvasRef}
+          className="block rounded-lg select-none"
+          style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
+        />
       </div>
     </div>
   );

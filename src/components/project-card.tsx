@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight, Globe, Sparkles, Tv, Monitor, BookOpen, Layers, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, Globe, Sparkles, Tv, Monitor, BookOpen, Layers, ShieldCheck, FileText, Terminal, Search, Code, Radio, Volume2 } from "lucide-react";
 
 export interface ProjectItem {
   title: string;
@@ -149,17 +149,41 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
           {project.description}
         </p>
 
-        {/* Technology Badges (Neutral, Cohesive) */}
+        {/* Technology Badges (Colorful Brand Palette, No Animation) */}
         <div className="flex flex-wrap gap-1.5 mb-5">
-          {project.technologies.map((tech) => (
-            <span
-              key={tech}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium bg-muted/50 dark:bg-white/[0.04] border border-border/50 dark:border-white/[0.06] text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <TechIcon tech={tech} />
-              {tech}
-            </span>
-          ))}
+          {project.technologies.map((tech) => {
+            const meta = getTechMeta(tech);
+            const isNext = tech.toLowerCase().includes("next");
+            return (
+              <span
+                key={tech}
+                className={cn(
+                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium border select-none transition-colors",
+                  isNext
+                    ? "bg-zinc-500/10 dark:bg-zinc-400/10 border-zinc-500/20 dark:border-zinc-400/20 text-foreground"
+                    : "text-foreground"
+                )}
+                style={
+                  !isNext
+                    ? {
+                        backgroundColor: `${meta.color}15`,
+                        borderColor: `${meta.color}35`,
+                      }
+                    : undefined
+                }
+              >
+                <span
+                  className="flex shrink-0 items-center justify-center"
+                  style={{
+                    color: !isNext ? meta.color : undefined,
+                  }}
+                >
+                  {meta.icon}
+                </span>
+                <span>{tech}</span>
+              </span>
+            );
+          })}
         </div>
 
         {/* Action Buttons */}
@@ -412,21 +436,207 @@ function DefaultArt() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Tech Icon Resolver (Clean, Neutral, High-Contrast)
+// Tech Metadata & Color Resolver (Brand-Accurate Palette, Static)
 // ─────────────────────────────────────────────────────────────────────────────
 
-function TechIcon({ tech }: { tech: string }) {
-  const t = tech.toLowerCase();
-  if (t.includes("next")) return <Icons.nextjs className="size-3" />;
-  if (t.includes("react")) return <Icons.react className="size-3" />;
-  if (t.includes("type")) return <Icons.typescript className="size-3" />;
-  if (t.includes("tailwind")) return <Icons.tailwindcss className="size-3" />;
-  if (t.includes("framer")) return <Icons.framermotion className="size-3" />;
-  if (t.includes("openai")) return <Icons.openai className="size-3" />;
-  if (t.includes("supabase")) return <Icons.supabase className="size-3" />;
-  if (t.includes("prisma")) return <Icons.prisma className="size-3" />;
-  if (t.includes("c#")) return <Icons.csharp className="size-3" />;
-  if (t.includes(".net")) return <Icons.dotnet className="size-3" />;
-  if (t.includes("git")) return <Icons.git className="size-3" />;
-  return <Sparkles className="size-2.5 opacity-60" />;
+function getTechMeta(tech: string): { color: string; icon: React.ReactNode } {
+  const t = tech.toLowerCase().trim();
+
+  // Next.js
+  if (t === "next.js" || t === "nextjs" || t.includes("next")) {
+    return {
+      color: "#000000",
+      icon: <Icons.nextjs className="size-3" />,
+    };
+  }
+
+  // TypeScript
+  if (t.includes("typescript") || t === "ts") {
+    return {
+      color: "#3178c6",
+      icon: <Icons.typescript className="size-3" />,
+    };
+  }
+
+  // React
+  if (t === "react" || t.includes("react")) {
+    return {
+      color: "#61dafb",
+      icon: <Icons.react className="size-3" />,
+    };
+  }
+
+  // OpenAI
+  if (t.includes("openai") || t.includes("chatgpt")) {
+    return {
+      color: "#10a37f",
+      icon: <Icons.openai className="size-3" />,
+    };
+  }
+
+  // Supabase
+  if (t.includes("supabase")) {
+    return {
+      color: "#3ecf8e",
+      icon: <Icons.supabase className="size-3" />,
+    };
+  }
+
+  // Tavily
+  if (t.includes("tavily")) {
+    return {
+      color: "#0ea5e9",
+      icon: <Sparkles className="size-3" />,
+    };
+  }
+
+  // PDF Generation
+  if (t.includes("pdf")) {
+    return {
+      color: "#f43f5e",
+      icon: <FileText className="size-3" />,
+    };
+  }
+
+  // TailwindCSS
+  if (t.includes("tailwind")) {
+    return {
+      color: "#06b6d4",
+      icon: <Icons.tailwindcss className="size-3" />,
+    };
+  }
+
+  // Framer Motion
+  if (t.includes("framer")) {
+    return {
+      color: "#e945ff",
+      icon: <Icons.framermotion className="size-3" />,
+    };
+  }
+
+  // Prisma
+  if (t.includes("prisma")) {
+    return {
+      color: "#6366f1",
+      icon: <Icons.prisma className="size-3" />,
+    };
+  }
+
+  // C#
+  if (t.includes("c#") || t === "csharp") {
+    return {
+      color: "#9b4f96",
+      icon: <Icons.csharp className="size-3" />,
+    };
+  }
+
+  // .NET
+  if (t.includes(".net") || t.includes("dotnet")) {
+    return {
+      color: "#512bd4",
+      icon: <Icons.dotnet className="size-3" />,
+    };
+  }
+
+  // Vidstack
+  if (t.includes("vidstack")) {
+    return {
+      color: "#f43f5e",
+      icon: <Tv className="size-3" />,
+    };
+  }
+
+  // Consumet API
+  if (t.includes("consumet") || t.includes("api")) {
+    return {
+      color: "#10b981",
+      icon: <Code className="size-3" />,
+    };
+  }
+
+  // HLS Stream
+  if (t.includes("hls") || t.includes("stream")) {
+    return {
+      color: "#f97316",
+      icon: <Radio className="size-3" />,
+    };
+  }
+
+  // ARP Spoofing
+  if (t.includes("arp") || t.includes("spoof")) {
+    return {
+      color: "#10b981",
+      icon: <ShieldCheck className="size-3" />,
+    };
+  }
+
+  // Layer-2
+  if (t.includes("layer")) {
+    return {
+      color: "#06b6d4",
+      icon: <Layers className="size-3" />,
+    };
+  }
+
+  // WinPcap
+  if (t.includes("winpcap") || t.includes("pcap")) {
+    return {
+      color: "#3b82f6",
+      icon: <Terminal className="size-3" />,
+    };
+  }
+
+  // Retro UI
+  if (t.includes("retro") || t.includes("xp")) {
+    return {
+      color: "#0284c7",
+      icon: <Monitor className="size-3" />,
+    };
+  }
+
+  // Win32 Audio
+  if (t.includes("audio") || t.includes("sound") || t.includes("win32")) {
+    return {
+      color: "#f59e0b",
+      icon: <Volume2 className="size-3" />,
+    };
+  }
+
+  // Editorial UI
+  if (t.includes("editorial")) {
+    return {
+      color: "#f59e0b",
+      icon: <BookOpen className="size-3" />,
+    };
+  }
+
+  // Search Index
+  if (t.includes("search")) {
+    return {
+      color: "#eab308",
+      icon: <Search className="size-3" />,
+    };
+  }
+
+  // Node.js
+  if (t.includes("node")) {
+    return {
+      color: "#22c55e",
+      icon: <Icons.nodejs className="size-3" />,
+    };
+  }
+
+  // Git / GitHub
+  if (t.includes("git")) {
+    return {
+      color: "#f05032",
+      icon: <Icons.git className="size-3" />,
+    };
+  }
+
+  // Fallback
+  return {
+    color: "#8b5cf6",
+    icon: <Sparkles className="size-2.5 opacity-80" />,
+  };
 }
