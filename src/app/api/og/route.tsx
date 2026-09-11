@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <img
-                src="https://avatars.githubusercontent.com/u/92244026?v=4"
+                src="https://avatars.githubusercontent.com/u/144842989?v=4"
                 width="40"
                 height="40"
                 style={{ borderRadius: '50%' }}
@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
           }}
         >
           <img
-            src="https://avatars.githubusercontent.com/u/92244026?v=4"
+            src="https://avatars.githubusercontent.com/u/144842989?v=4"
             width="180"
             height="180"
             style={{ borderRadius: '50%' }}

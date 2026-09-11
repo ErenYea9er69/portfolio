@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${DATA.url}/og.png`,
+        url: `${DATA.url}/api/og`,
         width: 1200,
         height: 630,
         alt: `${DATA.name} - Full Stack Developer`
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `${DATA.name} | Full Stack Developer`,
     description: `Full Stack Developer specializing in React, Next.js, TypeScript and Node.js. Check out my portfolio and projects.`,
-    images: [`${DATA.url}/og.png`],
+    images: [`${DATA.url}/api/og`],
     creator: '@ErenYea9er',
   },
   robots: {

@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     siteName: DATA.name,
     images: [
       {
-        url: `${DATA.url}/portfolio.png`,
+        url: `${DATA.url}/api/og`,
         width: 1200,
         height: 630,
         alt: `${DATA.name}'s Portfolio`,
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     title: DATA.name,
     description: HOME_DESCRIPTION,
     creator: '@ErenYea9er',
-    images: [`${DATA.url}/portfolio.png`],
+    images: [`${DATA.url}/api/og`],
   },
 };
 
