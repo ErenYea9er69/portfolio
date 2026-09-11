@@ -14,7 +14,7 @@ export const DATA = {
   summary:
     "Status: Available for work",
 
-  avatarUrl: "/prasen.webp",
+  avatarUrl: "/avatar.jpg",
   skills: [
     { name: "React", icon: faReact, category: "Frontend", role: "UI Library", level: "Core", color: "#61dafb" },
     { name: "Next.js", customIcon: Icons.nextjs, category: "Frontend", role: "Full Stack App", level: "Core", color: "#000000", lightColor: "#111827" },

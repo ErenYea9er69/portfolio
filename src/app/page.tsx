@@ -118,7 +118,7 @@ export default function Page() {
                 <div className="profile-wrapper">
                   <FlipAvatar
                     src={DATA.avatarUrl}
-                    hoverSrc="/hi2.webp"
+                    hoverSrc="/github-avatar.png"
                     alt={DATA.name}
                     fallback={DATA.initials}
                   />

@@ -18,6 +18,16 @@ export function FlipAvatar({ src, hoverSrc, alt, fallback }: FlipAvatarProps) {
       className="size-28 [perspective:600px] cursor-pointer"
       onMouseEnter={() => setFlipped(true)}
       onMouseLeave={() => setFlipped(false)}
+      onClick={() => setFlipped((prev) => !prev)}
+      role="button"
+      tabIndex={0}
+      aria-label="Toggle profile picture"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setFlipped((prev) => !prev);
+        }
+      }}
     >
       <div
         className="relative size-full transition-transform duration-500 [transform-style:preserve-3d]"
