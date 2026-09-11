@@ -3,8 +3,8 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-const BIRTHDAY_MONTH = 5; // June (0-indexed)
-const BIRTHDAY_DATE = 27;
+const BIRTHDAY_MONTH = 8; // September (0-indexed)
+const BIRTHDAY_DATE = 16;
 
 function PartyHat() {
   return (

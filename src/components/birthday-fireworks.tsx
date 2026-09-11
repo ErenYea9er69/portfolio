@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from "react";
 // client-side navigation back to the home page within the same session.
 let hasCelebrated = false;
 
-const BIRTHDAY_MONTH = 5; // June (0-indexed)
-const BIRTHDAY_DATE = 27;
+const BIRTHDAY_MONTH = 8; // September (0-indexed)
+const BIRTHDAY_DATE = 16;
 
 const LAUNCH_MS = 12000; // keep launching new rockets for this long
 const MAX_MS = 17000; // hard stop, letting late bursts finish
