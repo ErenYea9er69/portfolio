@@ -76,12 +76,9 @@ export default function ProjectsPage() {
               {DATA.projects.length} Repositories
             </span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-5xl mt-1">
-            Engineered Works & Explorations
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mt-1">
+            Projects
           </h1>
-          <p className="max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
-            A comprehensive catalog of my open-source projects, autonomous AI tools, low-level networking utilities, and interactive web products.
-          </p>
         </BlurFade>
 
         {/* Telemetry quick stats */}

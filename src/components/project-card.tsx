@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
@@ -77,9 +78,23 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
       {/* Top subtle gloss rim */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
 
-      {/* ─── Bespoke Visual Mockup Banner ─── */}
-      <div className="relative h-44 sm:h-48 w-full overflow-hidden border-b border-border/50 dark:border-white/[0.06] bg-muted/30 dark:bg-zinc-900/40">
-        <ProjectVisualArt slug={project.slug || project.title.toLowerCase()} isHovered={isHovered} />
+      {/* ─── Project Visual Preview Banner ─── */}
+      <div className="relative h-48 sm:h-52 w-full overflow-hidden border-b border-border/50 dark:border-white/[0.06] bg-muted/30 dark:bg-zinc-900/40">
+        {project.image ? (
+          <div className="relative w-full h-full overflow-hidden">
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover object-top transition-transform duration-500 ease-out group-hover/card:scale-105"
+            />
+            {/* Subtle gradient vignette to blend cleanly with card chrome */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-black/20 dark:from-zinc-950/80" />
+          </div>
+        ) : (
+          <ProjectVisualArt slug={project.slug || project.title.toLowerCase()} isHovered={isHovered} />
+        )}
 
         {/* Category & Status Overlay Floating Pills (Quiet, Calm) */}
         <div className="absolute top-3 inset-x-3.5 flex items-center justify-between pointer-events-none z-10">

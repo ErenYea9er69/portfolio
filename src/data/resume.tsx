@@ -211,7 +211,7 @@ export const DATA = {
           icon: <Icons.github className="size-3.5" />,
         },
       ],
-      image: "",
+      image: "/projects/anime-site.png",
       video: "",
     },
     {
@@ -240,7 +240,7 @@ export const DATA = {
           icon: <Icons.github className="size-3.5" />,
         },
       ],
-      image: "",
+      image: "/projects/3d-portfolio-winxp.png",
       video: "",
     },
     {
@@ -269,7 +269,7 @@ export const DATA = {
           icon: <Icons.github className="size-3.5" />,
         },
       ],
-      image: "",
+      image: "/projects/anybook.png",
       video: "",
     },
   ],

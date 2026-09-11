@@ -27,9 +27,6 @@ export function ProjectsSection() {
           <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Featured Projects
           </h2>
-          <p className="mt-1 text-xs text-muted-foreground max-w-lg leading-relaxed">
-            Systems networking, autonomous AI copilots, streaming web apps, and creative retro experiences built with modern architecture.
-          </p>
         </BlurFade>
 
         <BlurFade delay={BLUR_FADE_DELAY * 11.2}>
