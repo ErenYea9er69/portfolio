@@ -13,7 +13,7 @@ FEATURE HIGHLIGHTS
 1. Live Visitor Counter: Neon PostgreSQL records unique visits through an HTTP cookie.
 2. Command Palette: Press Ctrl+K or Cmd+K to jump between sections and links.
 3. Interactive CLI: The /cli route gives visitors a working terminal interface.
-4. Social Hover Cards: Hovering on social links shows profile previews and account details.
+4. Profile Hover Cards: Hovering on the X profile link displays my live account preview.
 5. GitHub Activity: The page renders my live GitHub contribution graph.
 
 FEATURED PROJECTS
@@ -31,12 +31,11 @@ Frontend: Next.js 15, React 19, TypeScript 5, Tailwind CSS, Framer Motion
 Backend and Database: Node.js, Neon PostgreSQL, Prisma, SQL
 Infrastructure: Vercel, Docker
 
-ENVIRONMENT VARIABLES
+ENVIRONMENT CONFIGURATION
 
-Create a file named .env.local in the project root. Add these variables:
+Create a file named .env.local in the project root. Add this single variable:
 
 DATABASE_URL=your_neon_postgresql_url
-GITHUB_TOKEN=your_github_personal_access_token
 
 NEON DATABASE SETUP
 
@@ -44,13 +43,6 @@ NEON DATABASE SETUP
 2. Copy your connection string from the Neon console.
 3. Save the connection string into DATABASE_URL in .env.local.
 4. The application creates the site_stats table on first launch.
-
-GITHUB TOKEN SETUP
-
-1. Open GitHub Developer Settings and create a personal access token.
-2. Select the read:user scope.
-3. Generate the token.
-4. Copy the token into GITHUB_TOKEN in .env.local.
 
 LOCAL SETUP
 

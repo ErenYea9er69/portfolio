@@ -24,16 +24,9 @@ import { ProjectsSection } from "@/components/projects-section";
 
 const BLUR_FADE_DELAY = 0.04;
 
-// Brand colors for social icon hover glow
 const SOCIAL_BRAND_COLORS: Record<string, string> = {
   GitHub: "#333333",
-  LinkedIn: "#0a66c2",
   X: "#1da1f2",
-  Youtube: "#ff0000",
-  Instagram: "#e4405f",
-  CodePen: "#47cf73",
-  Discord: "#5865f2",
-  buyMeACoffee: "#ffdd00",
 };
 // Plain-text description — DATA.summary is markdown and leaks syntax into meta tags
 const HOME_DESCRIPTION =
