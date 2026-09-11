@@ -6,11 +6,12 @@ import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import BlurFade from "@/components/magicui/blur-fade";
 import { BorderBeam } from "@/components/magicui/border-beam";
-import { Flame, Zap, BookOpen, GitCommitHorizontal, ArrowUpRight, Activity, Sparkles } from "lucide-react";
+import { Flame, Zap, BookOpen, GitCommitHorizontal, ArrowUpRight, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { DATA } from "@/data/resume";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useTheme } from "next-themes";
+import { GitHubSnake } from "@/components/github-snake";
 
 const YEARS = ["last", "2026", "2025"];
 
@@ -18,7 +19,8 @@ export function GitHubCalendarSection() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [selectedYear, setSelectedYear] = useState<string>("last");
-  const [artMode, setArtMode] = useState(false);
+  const [snakeMode, setSnakeMode] = useState(false);
+  const [rawContributions, setRawContributions] = useState<any[]>([]);
 
   // Interactive mouse spotlight position
   const containerRef = useRef<HTMLDivElement>(null);
@@ -39,6 +41,24 @@ export function GitHubCalendarSection() {
 
   // Calendar scroll ref to ensure today's date is always visible
   const calendarScrollRef = useRef<HTMLDivElement>(null);
+
+  const username = DATA.contact.social.GitHub.url.split("/").pop() || "ErenYea9er69";
+
+  // Pre-fetch raw contributions for Snake Mode so it's always ready
+  useEffect(() => {
+    async function loadContr() {
+      try {
+        const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=${selectedYear}`);
+        const data = await res.json();
+        if (data && data.contributions && Array.isArray(data.contributions)) {
+          setRawContributions(data.contributions);
+        }
+      } catch (err) {
+        console.error("Failed to load contributions for snake:", err);
+      }
+    }
+    loadContr();
+  }, [username, selectedYear]);
 
   // Today's date string in YYYY-MM-DD
   const todayStr = useMemo(() => {
@@ -165,12 +185,11 @@ export function GitHubCalendarSection() {
       setPeakDate(pDate);
       setActiveDays(activeDaysCount);
       setTodayContributions(todayCount);
+      setRawContributions(contributions);
     }, 0);
 
     return contributions;
   };
-
-  const username = DATA.contact.social.GitHub.url.split("/").pop() || "ErenYea9er69";
 
   const formattedPeakDate = useMemo(() => {
     if (!peakDate) return "";
@@ -185,27 +204,8 @@ export function GitHubCalendarSection() {
     }
   }, [peakDate]);
 
-  // Color schemes for calendar
+  // Clean GitHub emerald color scheme for calendar
   const calendarTheme = useMemo(() => {
-    const isDark = !mounted || resolvedTheme === "dark";
-    if (artMode) {
-      return {
-        dark: [
-          "rgba(255, 255, 255, 0.05)",
-          "#1e1b4b", // deep cosmic indigo
-          "#4f46e5", // vibrant indigo
-          "#9333ea", // royal cyber purple
-          "#ec4899", // glowing neon fuchsia
-        ],
-        light: [
-          "rgba(0, 0, 0, 0.06)",
-          "#fed7aa", // peach amber
-          "#fb923c", // vivid coral
-          "#db2777", // deep rose
-          "#7c3aed", // royal violet
-        ],
-      };
-    }
     return {
       dark: [
         "rgba(255, 255, 255, 0.05)", // level 0: deep frosted glass
@@ -222,7 +222,7 @@ export function GitHubCalendarSection() {
         "#064e3b",                   // level 4: deep forest
       ],
     };
-  }, [mounted, resolvedTheme, artMode]);
+  }, []);
 
   return (
     <div className="flex flex-col gap-y-3">
@@ -288,7 +288,7 @@ export function GitHubCalendarSection() {
               </div>
             </div>
 
-            {/* Controls: Year Switcher & Art Mode */}
+            {/* Controls: Year Switcher & Snake Mode */}
             <div className="flex flex-wrap items-center gap-2">
               <div className="inline-flex items-center rounded-full border border-border/60 bg-background/50 p-1 backdrop-blur-md shadow-sm">
                 {YEARS.map((year) => (
@@ -307,30 +307,31 @@ export function GitHubCalendarSection() {
                 ))}
               </div>
 
+              {/* 🐍 Snake Mode Toggle (replaces old Art Mode) */}
               <button
                 type="button"
-                onClick={() => setArtMode(!artMode)}
+                onClick={() => setSnakeMode(!snakeMode)}
                 className={cn(
-                  "relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 border cursor-pointer select-none",
-                  artMode
-                    ? "bg-gradient-to-r from-violet-500/20 via-fuchsia-500/20 to-pink-500/20 text-foreground border-violet-500/40 shadow-xs"
-                    : "bg-background/50 hover:bg-background/80 text-muted-foreground hover:text-foreground border-border/60"
+                  "relative inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200 border cursor-pointer select-none",
+                  snakeMode
+                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/40 shadow-[0_0_14px_rgba(16,185,129,0.3)] font-semibold"
+                    : "bg-background/50 hover:bg-background/80 text-muted-foreground hover:text-foreground border-border/60 shadow-xs"
                 )}
-                title="Toggle dynamic Aurora art mode"
+                title="Toggle GitHub Contribution Snake mode (watch or play as snake eats commits)"
               >
-                <Sparkles className={cn("size-3.5 transition-colors", artMode ? "text-violet-400 animate-spin" : "text-muted-foreground")} style={{ animationDuration: "8s" }} />
-                <span>{artMode ? "Aurora Art" : "Art Mode"}</span>
+                <span className={cn("text-xs transition-transform duration-300", snakeMode ? "scale-125" : "")}>🐍</span>
+                <span>{snakeMode ? "Exit Snake" : "Snake Mode"}</span>
               </button>
             </div>
           </div>
 
-          {/* ─── Stats Grid (4 Focused Cards) ─── */}
+          {/* ─── Stats Grid (4 Focused Cards with Theme-Colored Icons) ─── */}
           <div className="relative z-10 grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-4 mb-7">
-            {/* 1. Contributions */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:bg-background/80 hover:shadow-xs">
+            {/* 1. Contributions (GitHub Emerald Theme) */}
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(16,185,129,0.12)]">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-muted-foreground">Contributions</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/70 text-foreground/70 transition-colors group-hover/stat:text-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.12)] transition-all group-hover/stat:bg-emerald-500/20 group-hover/stat:border-emerald-500/40 group-hover/stat:text-emerald-500">
                   <GitCommitHorizontal className="h-4 w-4" />
                 </div>
               </div>
@@ -340,16 +341,16 @@ export function GitHubCalendarSection() {
                 </span>
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
                 <span>{selectedYear === "last" ? "Past 365 days" : `Year ${selectedYear}`}</span>
               </div>
             </div>
 
-            {/* 2. Current Streak */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:bg-background/80 hover:shadow-xs">
+            {/* 2. Current Streak (Flame Orange Theme) */}
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-orange-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(249,115,22,0.12)]">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-muted-foreground">Current streak</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/70 text-foreground/70 transition-colors group-hover/stat:text-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/25 text-orange-600 dark:text-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.12)] transition-all group-hover/stat:bg-orange-500/20 group-hover/stat:border-orange-500/40 group-hover/stat:text-orange-500">
                   <Flame className="h-4 w-4" />
                 </div>
               </div>
@@ -360,16 +361,16 @@ export function GitHubCalendarSection() {
                 <span className="text-xs font-medium text-muted-foreground">days</span>
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
+                <span className={cn("inline-block h-1.5 w-1.5 rounded-full", currentStreak > 0 ? "bg-orange-500 animate-pulse" : "bg-muted-foreground/50")} />
                 <span>{currentStreak > 0 ? "Active streak" : "Ready to commit"}</span>
               </div>
             </div>
 
-            {/* 3. Longest Streak */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:bg-background/80 hover:shadow-xs">
+            {/* 3. Longest Streak (Lightning Amber Theme) */}
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(245,158,11,0.12)]">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-muted-foreground">Longest streak</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/70 text-foreground/70 transition-colors group-hover/stat:text-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-amber-600 dark:text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.12)] transition-all group-hover/stat:bg-amber-500/20 group-hover/stat:border-amber-500/40 group-hover/stat:text-amber-500">
                   <Zap className="h-4 w-4" />
                 </div>
               </div>
@@ -380,21 +381,21 @@ export function GitHubCalendarSection() {
                 <span className="text-xs font-medium text-muted-foreground">days</span>
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500" />
                 <span>Personal record</span>
               </div>
             </div>
 
-            {/* 4. Repositories */}
+            {/* 4. Repositories (Codebase Sky Cyan Theme) */}
             <a
               href={`${DATA.contact.social.GitHub.url}?tab=repositories`}
               target="_blank"
               rel="noopener noreferrer"
-              className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:bg-background/80 hover:shadow-xs cursor-pointer block"
+              className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(14,165,233,0.12)] cursor-pointer block"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-muted-foreground">Repositories</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/70 text-foreground/70 transition-colors group-hover/stat:text-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-500/10 dark:bg-sky-500/15 border border-sky-500/25 text-sky-600 dark:text-sky-400 shadow-[0_0_10px_rgba(14,165,233,0.12)] transition-all group-hover/stat:bg-sky-500/20 group-hover/stat:border-sky-500/40 group-hover/stat:text-sky-500">
                   <BookOpen className="h-4 w-4" />
                 </div>
               </div>
@@ -402,10 +403,10 @@ export function GitHubCalendarSection() {
                 <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
                   {reposCount ?? "—"}
                 </span>
-                <ArrowUpRight className="h-3.5 w-3.5 opacity-40 group-hover/stat:opacity-100 transition-opacity text-foreground ml-1" />
+                <ArrowUpRight className="h-3.5 w-3.5 opacity-60 text-sky-500 group-hover/stat:opacity-100 group-hover/stat:translate-x-0.5 group-hover/stat:-translate-y-0.5 transition-all ml-1" />
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-sky-500" />
                 <span>Public codebases</span>
               </div>
             </a>
@@ -413,108 +414,118 @@ export function GitHubCalendarSection() {
 
           {/* ─── The Contribution Matrix Card ─── */}
           <div className="relative z-10 rounded-xl border border-border/50 bg-background/35 dark:bg-zinc-950/40 p-4 sm:p-5 backdrop-blur-md overflow-hidden shadow-inner">
-
-            {/* Micro grid watermark pattern */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
-              style={{
-                backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)",
-                backgroundSize: "18px 18px",
-              }}
-            />
-
-            {/* Matrix Telemetry Top Bar */}
-            <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 mb-4 text-xs">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Activity className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
-                <span className="font-semibold text-foreground">{totalContributions.toLocaleString()}</span>
-                <span>contributions in {selectedYear === "last" ? "the past year" : selectedYear}</span>
-                {peakDate && (
-                  <span className="hidden sm:inline-flex items-center gap-1.5 rounded-md bg-muted/60 dark:bg-zinc-900/80 px-2 py-0.5 text-[11px] text-muted-foreground border border-border/40">
-                    <span className="text-emerald-500">★</span> Peak: {maxContributions} on {formattedPeakDate}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-2 text-[11px] font-mono">
-                <button
-                  type="button"
-                  onClick={scrollToLatest}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 transition-all border border-emerald-500/20 cursor-pointer text-[10px] font-semibold tracking-tight"
-                  title="Jump to Today's contributions"
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Today ({todayContributions !== null ? `${todayContributions} commits` : "10/09"})</span>
-                </button>
-                <span className="text-muted-foreground/60 hidden sm:inline">INTERACTIVE MATRIX</span>
-              </div>
-            </div>
-
-            {/* Calendar Canvas */}
-            <div
-              ref={calendarScrollRef}
-              className="github-calendar-wrapper overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 pb-2.5 min-w-full"
-            >
-              <div className="min-w-fit w-full flex justify-center sm:justify-start lg:justify-center p-1">
-                <GitHubCalendar
-                  username={username}
-                  year={selectedYear === "last" ? "last" : parseInt(selectedYear)}
-                  colorScheme={mounted && resolvedTheme === "light" ? "light" : "dark"}
-                  transformData={selectData}
-                  hideTotalCount
-                  hideColorLegend={false}
-                  blockRadius={2.5}
-                  blockMargin={3}
-                  blockSize={10.5}
-                  fontSize={11}
-                  renderBlock={(block, activity) => {
-                    const isToday = activity.date === todayStr;
-                    return React.cloneElement(block as any, {
-                      "data-tooltip-id": "github-tooltip",
-                      "data-tooltip-content": JSON.stringify({
-                        date: activity.date,
-                        count: activity.count,
-                        level: activity.level,
-                        isToday,
-                      }),
-                      style: {
-                        ...(block as any).props?.style,
-                        ...(isToday
-                          ? {
-                              stroke: "#34d399",
-                              strokeWidth: 2,
-                              filter: "drop-shadow(0 0 4px rgba(52, 211, 153, 0.8))",
-                            }
-                          : {}),
-                      },
-                    });
+            {snakeMode ? (
+              <GitHubSnake
+                contributions={rawContributions}
+                theme={mounted && resolvedTheme === "light" ? "light" : "dark"}
+                onClose={() => setSnakeMode(false)}
+                username={username}
+              />
+            ) : (
+              <>
+                {/* Micro grid watermark pattern */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
+                  style={{
+                    backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)",
+                    backgroundSize: "18px 18px",
                   }}
-                  theme={calendarTheme}
                 />
-              </div>
-            </div>
 
-            {/* Matrix Telemetry Footer Bar */}
-            <div className="mt-3 pt-3 border-t border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-muted-foreground">
-              <div className="flex items-center gap-3">
-                <span>
-                  Active Days: <strong className="text-foreground">{activeDays}</strong>
-                </span>
-                <span>•</span>
-                <span>
-                  Consistency: <strong className="text-foreground">{((activeDays / 365) * 100).toFixed(0)}%</strong>
-                </span>
-              </div>
-              <a
-                href={DATA.contact.social.GitHub.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-emerald-500 transition-colors flex items-center gap-1 w-fit group/btn font-medium"
-              >
-                <span>Inspect full graph on GitHub</span>
-                <ArrowUpRight className="h-3 w-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-              </a>
-            </div>
+                {/* Matrix Telemetry Top Bar */}
+                <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 mb-4 text-xs">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Activity className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
+                    <span className="font-semibold text-foreground">{totalContributions.toLocaleString()}</span>
+                    <span>contributions in {selectedYear === "last" ? "the past year" : selectedYear}</span>
+                    {peakDate && (
+                      <span className="hidden sm:inline-flex items-center gap-1.5 rounded-md bg-muted/60 dark:bg-zinc-900/80 px-2 py-0.5 text-[11px] text-muted-foreground border border-border/40">
+                        <span className="text-emerald-500">★</span> Peak: {maxContributions} on {formattedPeakDate}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px] font-mono">
+                    <button
+                      type="button"
+                      onClick={scrollToLatest}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 transition-all border border-emerald-500/20 cursor-pointer text-[10px] font-semibold tracking-tight"
+                      title="Jump to Today's contributions"
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>Today ({todayContributions !== null ? `${todayContributions} commits` : "10/09"})</span>
+                    </button>
+                    <span className="text-muted-foreground/60 hidden sm:inline">INTERACTIVE MATRIX</span>
+                  </div>
+                </div>
+
+                {/* Calendar Canvas */}
+                <div
+                  ref={calendarScrollRef}
+                  className="github-calendar-wrapper overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 pb-2.5 min-w-full"
+                >
+                  <div className="min-w-fit w-full flex justify-center sm:justify-start lg:justify-center p-1">
+                    <GitHubCalendar
+                      username={username}
+                      year={selectedYear === "last" ? "last" : parseInt(selectedYear)}
+                      colorScheme={mounted && resolvedTheme === "light" ? "light" : "dark"}
+                      transformData={selectData}
+                      hideTotalCount
+                      hideColorLegend={false}
+                      blockRadius={2.5}
+                      blockMargin={3}
+                      blockSize={10.5}
+                      fontSize={11}
+                      renderBlock={(block, activity) => {
+                        const isToday = activity.date === todayStr;
+                        return React.cloneElement(block as any, {
+                          "data-tooltip-id": "github-tooltip",
+                          "data-tooltip-content": JSON.stringify({
+                            date: activity.date,
+                            count: activity.count,
+                            level: activity.level,
+                            isToday,
+                          }),
+                          style: {
+                            ...(block as any).props?.style,
+                            ...(isToday
+                              ? {
+                                  stroke: "#34d399",
+                                  strokeWidth: 2,
+                                  filter: "drop-shadow(0 0 4px rgba(52, 211, 153, 0.8))",
+                                }
+                              : {}),
+                          },
+                        });
+                      }}
+                      theme={calendarTheme}
+                    />
+                  </div>
+                </div>
+
+                {/* Matrix Telemetry Footer Bar */}
+                <div className="mt-3 pt-3 border-t border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-muted-foreground">
+                  <div className="flex items-center gap-3">
+                    <span>
+                      Active Days: <strong className="text-foreground">{activeDays}</strong>
+                    </span>
+                    <span>•</span>
+                    <span>
+                      Consistency: <strong className="text-foreground">{((activeDays / 365) * 100).toFixed(0)}%</strong>
+                    </span>
+                  </div>
+                  <a
+                    href={DATA.contact.social.GitHub.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-emerald-500 transition-colors flex items-center gap-1 w-fit group/btn font-medium"
+                  >
+                    <span>Inspect full graph on GitHub</span>
+                    <ArrowUpRight className="h-3 w-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                  </a>
+                </div>
+              </>
+            )}
           </div>
 
           {/* ─── Ultra-Modern Frosted Glass Tooltip ─── */}
