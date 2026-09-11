@@ -100,7 +100,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Prasenjit Nayak",
+    title: DATA.name,
   },
   other: {
     "mobile-web-app-capable": "yes",

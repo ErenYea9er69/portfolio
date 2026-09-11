@@ -6,7 +6,8 @@ import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import BlurFade from "@/components/magicui/blur-fade";
 import { BorderBeam } from "@/components/magicui/border-beam";
-import { Flame, Zap, BookOpen, GitCommitHorizontal, ArrowUpRight, Activity } from "lucide-react";
+import { Flame, Zap, BookOpen, GitCommitHorizontal, ArrowUpRight, Activity, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 import { DATA } from "@/data/resume";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useTheme } from "next-themes";
@@ -17,6 +18,7 @@ export function GitHubCalendarSection() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [selectedYear, setSelectedYear] = useState<string>("last");
+  const [artMode, setArtMode] = useState(false);
 
   // Interactive mouse spotlight position
   const containerRef = useRef<HTMLDivElement>(null);
@@ -186,6 +188,24 @@ export function GitHubCalendarSection() {
   // Color schemes for calendar
   const calendarTheme = useMemo(() => {
     const isDark = !mounted || resolvedTheme === "dark";
+    if (artMode) {
+      return {
+        dark: [
+          "rgba(255, 255, 255, 0.05)",
+          "#1e1b4b", // deep cosmic indigo
+          "#4f46e5", // vibrant indigo
+          "#9333ea", // royal cyber purple
+          "#ec4899", // glowing neon fuchsia
+        ],
+        light: [
+          "rgba(0, 0, 0, 0.06)",
+          "#fed7aa", // peach amber
+          "#fb923c", // vivid coral
+          "#db2777", // deep rose
+          "#7c3aed", // royal violet
+        ],
+      };
+    }
     return {
       dark: [
         "rgba(255, 255, 255, 0.05)", // level 0: deep frosted glass
@@ -202,7 +222,7 @@ export function GitHubCalendarSection() {
         "#064e3b",                   // level 4: deep forest
       ],
     };
-  }, [mounted, resolvedTheme]);
+  }, [mounted, resolvedTheme, artMode]);
 
   return (
     <div className="flex flex-col gap-y-3">
@@ -272,22 +292,39 @@ export function GitHubCalendarSection() {
               </div>
             </div>
 
-            {/* Segmented Year Switcher */}
-            <div className="inline-flex items-center rounded-full border border-border/60 bg-background/50 p-1 backdrop-blur-md shadow-sm">
-              {YEARS.map((year) => (
-                <button
-                  key={year}
-                  onClick={() => setSelectedYear(year)}
-                  className={cn(
-                    "relative rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200",
-                    selectedYear === year
-                      ? "bg-background text-foreground shadow-sm shadow-black/10 font-semibold border border-border/60"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {year === "last" ? "Past Year" : year}
-                </button>
-              ))}
+            {/* Controls: Year Switcher & Art Mode */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center rounded-full border border-border/60 bg-background/50 p-1 backdrop-blur-md shadow-sm">
+                {YEARS.map((year) => (
+                  <button
+                    key={year}
+                    onClick={() => setSelectedYear(year)}
+                    className={cn(
+                      "relative rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200",
+                      selectedYear === year
+                        ? "bg-background text-foreground shadow-sm shadow-black/10 font-semibold border border-border/60"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {year === "last" ? "Past Year" : year}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setArtMode(!artMode)}
+                className={cn(
+                  "relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 border cursor-pointer select-none",
+                  artMode
+                    ? "bg-gradient-to-r from-violet-500/20 via-fuchsia-500/20 to-pink-500/20 text-foreground border-violet-500/40 shadow-xs"
+                    : "bg-background/50 hover:bg-background/80 text-muted-foreground hover:text-foreground border-border/60"
+                )}
+                title="Toggle dynamic Aurora art mode"
+              >
+                <Sparkles className={cn("size-3.5 transition-colors", artMode ? "text-violet-400 animate-spin" : "text-muted-foreground")} style={{ animationDuration: "8s" }} />
+                <span>{artMode ? "Aurora Art" : "Art Mode"}</span>
+              </button>
             </div>
           </div>
 
@@ -384,7 +421,22 @@ export function GitHubCalendarSection() {
           </div>
 
           {/* ─── The Contribution Matrix Card ─── */}
-          <div className="relative z-10 rounded-xl border border-border/50 bg-background/35 dark:bg-zinc-950/40 p-4 sm:p-5 backdrop-blur-md overflow-hidden shadow-inner">
+          <div className={cn(
+            "relative z-10 rounded-xl border p-4 sm:p-5 backdrop-blur-md overflow-hidden shadow-inner transition-colors duration-500",
+            artMode
+              ? "border-violet-500/30 bg-gradient-to-b from-background/50 via-violet-950/10 to-background/50 dark:from-zinc-950/60 dark:via-violet-950/20 dark:to-zinc-950/60"
+              : "border-border/50 bg-background/35 dark:bg-zinc-950/40"
+          )}>
+            {/* Dynamic Art Mode Aurora Wave Beam */}
+            {artMode && (
+              <motion.div
+                initial={{ x: "-100%" }}
+                animate={{ x: "400%" }}
+                transition={{ repeat: Infinity, duration: 4.8, ease: "easeInOut" }}
+                className="pointer-events-none absolute inset-y-0 w-48 bg-gradient-to-r from-transparent via-violet-500/15 dark:via-fuchsia-400/20 to-transparent skew-x-12 blur-md z-10"
+              />
+            )}
+
             {/* Micro grid watermark pattern */}
             <div
               aria-hidden

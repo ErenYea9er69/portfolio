@@ -30,6 +30,7 @@ import { VisitorCounter } from "@/components/lazy-client";
 import { SocialGlowLink } from "@/components/social-glow-link";
 import { GitHubCalendarSection } from "@/components/github-calendar-section";
 import { TechStackSection } from "@/components/tech-stack-section";
+import { ProjectsSection } from "@/components/projects-section";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -242,8 +243,10 @@ export default function Page() {
           <TechStackSection />
         </section>
 
-
-        
+        {/* ─── FEATURED PROJECTS ─── */}
+        <section id="projects">
+          <ProjectsSection />
+        </section>
 
 {/* ─── WORK ─── */}
         <section id="work">
