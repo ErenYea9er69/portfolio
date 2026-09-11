@@ -6,7 +6,7 @@ import { faLeaf, faPlug, faBolt, faTerminal, faRocket, faServer, faDatabase, faC
 export const DATA = {
   name: "Rayen Ben Aissa",
   initials: "RB",
-  url: "https://github.com/ErenYea9er69/3D-portfolio-winxp",
+  url: "https://erenyea9er-portfolio.vercel.app",
   location: "Tunisia",
   locationLink: "https://www.google.com/maps/place/Tunisia",
   description:
