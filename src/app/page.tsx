@@ -86,6 +86,25 @@ function SectionLabel({ label }: { label: string }) {
   );
 }
 
+function BioTechBadge({
+  name,
+  icon: IconComponent,
+  color,
+}: {
+  name: string;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  color?: string;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 mx-0.5 my-0.5 rounded-md border border-border/60 bg-muted/40 hover:bg-muted/70 transition-colors text-foreground font-medium text-xs align-middle select-none shadow-xs">
+      <span className="size-3.5 flex items-center justify-center shrink-0" style={{ color: color || "currentColor" }}>
+        <IconComponent className="size-3.5" />
+      </span>
+      <span>{name}</span>
+    </span>
+  );
+}
+
 export default function Page() {
   return (
     <>
@@ -127,11 +146,31 @@ export default function Page() {
               </BlurFade>
             </div>
 
-            {/* About */}
+            {/* Bio / About */}
             <BlurFade delay={BLUR_FADE_DELAY * 3}>
-              <Markdown className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
-                {DATA.summary}
-              </Markdown>
+              <div className="space-y-3 text-sm sm:text-[15px] leading-relaxed text-muted-foreground">
+                <p>
+                  I’m <strong className="font-bold text-foreground">Rayen</strong>, a{" "}
+                  <strong className="font-semibold text-foreground">Full Stack Engineer</strong> with{" "}
+                  <strong className="font-semibold text-foreground">2+ years of experience</strong>.
+                </p>
+                <p>
+                  I build products end to end with{" "}
+                  <BioTechBadge name="React" icon={Icons.react} color="#61dafb" />,{" "}
+                  <BioTechBadge name="Next.js" icon={Icons.nextjs} />,{" "}
+                  <BioTechBadge name="TypeScript" icon={Icons.typescript} color="#3178c6" /> and{" "}
+                  <BioTechBadge name="Node.js" icon={Icons.nodejs} color="#22c55e" /> — from
+                  schema and API design through to the interface.
+                </p>
+                <p>
+                  On the backend I work with{" "}
+                  <BioTechBadge name="Express" icon={Icons.express} color="#a1a1aa" />,{" "}
+                  <BioTechBadge name="MongoDB" icon={Icons.mongodb} color="#10b981" />,{" "}
+                  <BioTechBadge name="PostgreSQL" icon={Icons.postgresql} color="#38bdf8" /> and{" "}
+                  <BioTechBadge name="Supabase" icon={Icons.supabase} color="#3ecf8e" />, with a
+                  bias toward strong validation, correctness and predictable failure handling.
+                </p>
+              </div>
             </BlurFade>
 
             {/* Social links + Now Playing */}

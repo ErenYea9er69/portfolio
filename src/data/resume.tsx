@@ -12,7 +12,7 @@ export const DATA = {
   description:
     "Full Stack Developer",
   summary:
-    "Status: Available for work",
+    "I’m **Rayen**, a **Full Stack Engineer** with 2+ years of experience. I build products end to end with React, Next.js, TypeScript and Node.js — from schema and API design through to the interface.\n\nOn the backend I work with Express, MongoDB, PostgreSQL and Supabase, with a bias toward strong validation, correctness and predictable failure handling.",
 
   avatarUrl: "/avatar.jpg",
   skills: [
