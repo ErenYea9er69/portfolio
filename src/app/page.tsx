@@ -315,10 +315,15 @@ export default function Page() {
                 className="group/cta inline-flex items-center gap-2.5 rounded-full border border-border/70 bg-background/70 px-5 py-2.5 text-sm font-medium shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:bg-background hover:shadow-lg hover:border-foreground/20"
               >
                 <span className="relative">
-                  <Avatar className="size-6 transition-transform duration-300 group-hover/cta:scale-110">
-                    <AvatarImage src={DATA.avatarUrl} alt={DATA.name} />
-                    <AvatarFallback>{DATA.initials}</AvatarFallback>
-                  </Avatar>
+                  <div className="relative size-6 overflow-hidden rounded-full transition-transform duration-300 group-hover/cta:scale-110">
+                    <Image
+                      src={DATA.avatarUrl}
+                      alt={DATA.name}
+                      width={48}
+                      height={48}
+                      className="size-full object-cover"
+                    />
+                  </div>
                   <span className="absolute inset-0 rounded-full animate-ping bg-foreground/10 group-hover/cta:bg-foreground/20" style={{ animationDuration: '2s' }} />
                 </span>
                 Let's talk

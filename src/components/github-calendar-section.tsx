@@ -46,6 +46,7 @@ export function GitHubCalendarSection() {
 
   // Pre-fetch raw contributions for Snake Mode so it's always ready
   useEffect(() => {
+    if (!snakeMode) return;
     async function loadContr() {
       try {
         const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=${selectedYear}`);
@@ -58,7 +59,7 @@ export function GitHubCalendarSection() {
       }
     }
     loadContr();
-  }, [username, selectedYear]);
+  }, [username, selectedYear, snakeMode]);
 
   // Today's date string in YYYY-MM-DD
   const todayStr = useMemo(() => {

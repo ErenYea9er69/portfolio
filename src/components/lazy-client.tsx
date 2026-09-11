@@ -13,7 +13,7 @@ export const BirthdayFireworks = dynamic(
   { ssr: false }
 );
 
-export const GitHubCalendarSection = dynamic(
+const DynamicGitHubCalendarSection = dynamic(
   () => import("@/components/github-calendar-section").then((mod) => mod.GitHubCalendarSection),
   {
     ssr: false,
@@ -24,6 +24,46 @@ export const GitHubCalendarSection = dynamic(
     ),
   }
 );
+
+export function GitHubCalendarSection() {
+  const [shouldLoad, setShouldLoad] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    if (!("IntersectionObserver" in window)) {
+      setShouldLoad(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref}>
+      {shouldLoad ? (
+        <DynamicGitHubCalendarSection />
+      ) : (
+        <div className="w-full h-44 rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+          Loading GitHub activity...
+        </div>
+      )}
+    </div>
+  );
+}
 
 export const CommandPalette = dynamic(
   () => import("@/components/command-palette").then((mod) => mod.CommandPalette),
