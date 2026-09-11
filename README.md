@@ -13,7 +13,7 @@ FEATURE HIGHLIGHTS
 1. Live Visitor Counter: Neon PostgreSQL records unique visits through an HTTP cookie.
 2. Command Palette: Press Ctrl+K or Cmd+K to jump between sections and links.
 3. Interactive CLI: The /cli route gives visitors a working terminal interface.
-4. Social Hover Cards: Hovering on social links shows live statistics from Steam and GitHub.
+4. Social Hover Cards: Hovering on social links shows profile previews and account details.
 5. GitHub Activity: The page renders my live GitHub contribution graph.
 
 FEATURED PROJECTS
@@ -37,7 +37,6 @@ Create a file named .env.local in the project root. Add these variables:
 
 DATABASE_URL=your_neon_postgresql_url
 GITHUB_TOKEN=your_github_personal_access_token
-STEAM_API_KEY=your_steam_web_api_key
 
 NEON DATABASE SETUP
 
@@ -52,11 +51,6 @@ GITHUB TOKEN SETUP
 2. Select the read:user scope.
 3. Generate the token.
 4. Copy the token into GITHUB_TOKEN in .env.local.
-
-STEAM API SETUP
-
-1. Register an API key at steamcommunity.com/dev/apikey.
-2. Add the key to STEAM_API_KEY in .env.local.
 
 LOCAL SETUP
 

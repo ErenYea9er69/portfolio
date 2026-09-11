@@ -79,12 +79,6 @@ export const DATA = {
         icon: Icons.instagram,
         navbar: false,
       },
-      Steam: {
-        name: "Steam",
-        url: "none",
-        icon: Icons.steam,
-        navbar: false,
-      },
       CodePen: {
         name: "CodePen",
         url: "none",

@@ -15,7 +15,6 @@ import ShinyButton from "@/components/ui/shiny-button";
 import { AgeCounter } from "@/components/age-counter";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FlipAvatar } from "@/components/flip-avatar";
-import { SteamHoverCard } from "@/components/steam-hover-card";
 import { YouTubeHoverCard } from "@/components/youtube-hover-card";
 import { XHoverCard } from "@/components/x-hover-card";
 import { LinkedInHoverCard } from "@/components/linkedin-hover-card";
@@ -23,7 +22,6 @@ import { InstagramHoverCard } from "@/components/instagram-hover-card";
 import { CodePenHoverCard } from "@/components/codepen-hover-card";
 import { BuyMeACoffeeHoverCard } from "@/components/bmc-hover-card";
 import { DiscordHoverCard } from "@/components/discord-hover-card";
-import { SteamNowPlaying } from "@/components/steam-now-playing";
 import { BirthdayFireworks } from "@/components/birthday-fireworks";
 import { BirthdayHat } from "@/components/birthday-hat";
 import { VisitorCounter } from "@/components/lazy-client";
@@ -41,7 +39,6 @@ const SOCIAL_BRAND_COLORS: Record<string, string> = {
   X: "#1da1f2",
   Youtube: "#ff0000",
   Instagram: "#e4405f",
-  Steam: "#00adee",
   CodePen: "#47cf73",
   Discord: "#5865f2",
   buyMeACoffee: "#ffdd00",
@@ -191,13 +188,6 @@ export default function Page() {
                         </SocialGlowLink>
                       );
 
-                      if (name === "Steam") {
-                        return (
-                          <SteamHoverCard key={name}>
-                            {socialLink}
-                          </SteamHoverCard>
-                        );
-                      }
 
                       if (name === "Youtube") {
                         return (
@@ -346,12 +336,6 @@ export default function Page() {
         </section>
 
 
-        {/* ─── NOW PLAYING ─── */}
-        {Boolean(DATA.contact.social.Steam.navbar) && (
-          <BlurFade delay={BLUR_FADE_DELAY * 13.5}>
-            <SteamNowPlaying />
-          </BlurFade>
-        )}
 
         
 
