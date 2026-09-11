@@ -600,7 +600,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
               <div className="flex items-center gap-3 border-b border-white/10 pb-3">
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-cyan-400/50 relative shadow-lg shadow-cyan-500/20">
                   <Image 
-                    src={DATA.avatarUrl || '/prasen.webp'} 
+                    src={DATA.avatarUrl || '/avatar.jpg'} 
                     alt={DATA.name} 
                     width={48} 
                     height={48} 
