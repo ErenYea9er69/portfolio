@@ -1,40 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Redis } from '@upstash/redis';
+import { neon } from '@neondatabase/serverless';
 
-// Force dynamic rendering since we use cookies
 export const dynamic = 'force-dynamic';
 
-const VISITOR_KEY = 'portfolio_visitors';
 const COOKIE_NAME = 'visitor_counted';
 const COOKIE_MAX_AGE = 60 * 60 * 24; // 24 hours
 
-// Initialize Redis client
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+function getDb() {
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) return null;
+  return neon(databaseUrl);
+}
 
 export async function GET(request: NextRequest) {
   try {
-    // Check if Redis is configured
-    if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-      console.warn('Upstash Redis not configured');
-      return NextResponse.json({ count: 0, error: 'Redis not configured' });
+    const sql = getDb();
+    if (!sql) {
+      return NextResponse.json({ count: 0, error: 'DATABASE_URL not configured' });
     }
 
-    // Check if this visitor was already counted
+    await sql`
+      CREATE TABLE IF NOT EXISTS site_stats (
+        key VARCHAR(50) PRIMARY KEY,
+        count BIGINT NOT NULL DEFAULT 0
+      );
+    `;
+
     const alreadyCounted = request.cookies.get(COOKIE_NAME)?.value === 'true';
-    
+
     if (alreadyCounted) {
-      // Return current count without incrementing
-      const count = await redis.get<number>(VISITOR_KEY) || 0;
-      return NextResponse.json({ count, incremented: false });
+      const rows = await sql`
+        SELECT count FROM site_stats WHERE key = 'visitors' LIMIT 1;
+      `;
+      const currentCount = rows[0]?.count ? Number(rows[0].count) : 0;
+      return NextResponse.json({ count: currentCount, incremented: false });
     }
-    
-    // New visitor - increment count
-    const newCount = await redis.incr(VISITOR_KEY);
-    
-    // Set cookie so we don't count them again for 24 hours
+
+    const rows = await sql`
+      INSERT INTO site_stats (key, count)
+      VALUES ('visitors', 1)
+      ON CONFLICT (key)
+      DO UPDATE SET count = site_stats.count + 1
+      RETURNING count;
+    `;
+
+    const newCount = rows[0]?.count ? Number(rows[0].count) : 1;
+
     const response = NextResponse.json({ count: newCount, incremented: true });
     response.cookies.set(COOKIE_NAME, 'true', {
       httpOnly: true,
@@ -43,7 +54,7 @@ export async function GET(request: NextRequest) {
       maxAge: COOKIE_MAX_AGE,
       path: '/',
     });
-    
+
     return response;
   } catch (error) {
     console.error('Visitor count error:', error);
