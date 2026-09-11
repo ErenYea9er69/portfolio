@@ -58,14 +58,9 @@ export function TechStackSection() {
 
   return (
     <div className="relative flex min-h-0 flex-col gap-y-4">
-      {/* Dynamic ambient backlight reacting to hovered skill */}
+      {/* Subtle neutral ambient backlight */}
       <div
-        className="pointer-events-none absolute -inset-x-8 -top-12 h-64 blur-3xl opacity-35 dark:opacity-25 transition-all duration-500 -z-10 rounded-full"
-        style={{
-          background: hoveredSkill?.color
-            ? `radial-gradient(circle at 50% 50%, ${hoveredSkill.color}, transparent 70%)`
-            : "radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.12), transparent 70%)",
-        }}
+        className="pointer-events-none absolute -inset-x-8 -top-12 h-40 blur-3xl opacity-15 dark:opacity-10 transition-opacity duration-500 -z-10 rounded-full bg-muted-foreground/10"
       />
 
       {/* Header section */}
@@ -189,40 +184,26 @@ function SkillPill({
     <motion.div
       ref={pillRef}
       layout
-      initial={{ opacity: 0, scale: 0.9, y: 6 }}
+      initial={{ opacity: 0, scale: 0.95, y: 4 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.85, y: -4 }}
-      whileHover={{ scale: 1.14, y: -3 }}
+      exit={{ opacity: 0, scale: 0.9, y: -2 }}
+      whileHover={{ y: -2 }}
       transition={{
         type: "spring",
-        stiffness: 420,
-        damping: 24,
+        stiffness: 400,
+        damping: 26,
       }}
       onMouseMove={handleMouseMove}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       className={cn(
-        "group relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl transition-colors duration-200 select-none cursor-default",
-        "bg-card/75 dark:bg-card/50 backdrop-blur-md",
+        "group relative inline-flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-200 select-none cursor-default",
+        "bg-card/70 dark:bg-zinc-900/60 backdrop-blur-md",
         "border border-border/60 dark:border-white/10",
-        isHovered ? "z-30 border-transparent shadow-xl" : "z-10"
+        "hover:border-border hover:bg-card dark:hover:bg-zinc-800/70 hover:shadow-xs",
+        isHovered ? "z-20 border-foreground/20" : "z-10"
       )}
-      style={{
-        boxShadow: isHovered
-          ? `0 10px 24px -4px ${glowRgba}, 0 0 16px -2px ${glowRgba}, 0 0 0 1.5px ${borderGlowRgba}`
-          : undefined,
-      }}
     >
-      {/* Internal mouse spotlight highlight */}
-      <div
-        className="pointer-events-none absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 -z-10 overflow-hidden"
-        style={{
-          background: `radial-gradient(80px circle at ${mousePos.x}% ${mousePos.y}%, ${glowRgba}, transparent 80%)`,
-        }}
-      />
-
-      {/* Top subtle gloss line */}
-      <div className="pointer-events-none absolute inset-x-2 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent dark:via-white/15" />
 
       {/* Floating Tooltip displaying Role & Level */}
       <div

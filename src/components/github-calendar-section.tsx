@@ -266,12 +266,8 @@ export function GitHubCalendarSection() {
           {/* ─── Header: Profile & Controls ─── */}
           <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-7">
             <div className="flex items-center gap-3.5">
-              <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-background/90 to-background/50 border border-border/80 shadow-inner group/icon">
-                <Icons.github className="h-5 w-5 transition-transform duration-300 group-hover/icon:scale-110" />
-                <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-background" />
-                </span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted/40 border border-border/70 text-foreground shadow-xs">
+                <Icons.github className="h-5 w-5" />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
@@ -331,10 +327,10 @@ export function GitHubCalendarSection() {
           {/* ─── Stats Grid (4 Focused Cards) ─── */}
           <div className="relative z-10 grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-4 mb-7">
             {/* 1. Contributions */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/60 to-background/20 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-500/5">
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:bg-background/80 hover:shadow-xs">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-muted-foreground">Contributions</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500 transition-transform duration-300 group-hover/stat:scale-110">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/70 text-foreground/70 transition-colors group-hover/stat:text-foreground">
                   <GitCommitHorizontal className="h-4 w-4" />
                 </div>
               </div>
@@ -344,16 +340,16 @@ export function GitHubCalendarSection() {
                 </span>
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
                 <span>{selectedYear === "last" ? "Past 365 days" : `Year ${selectedYear}`}</span>
               </div>
             </div>
 
             {/* 2. Current Streak */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/60 to-background/20 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-500/5">
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:bg-background/80 hover:shadow-xs">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-muted-foreground">Current streak</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500 transition-transform duration-300 group-hover/stat:scale-110">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/70 text-foreground/70 transition-colors group-hover/stat:text-foreground">
                   <Flame className="h-4 w-4" />
                 </div>
               </div>
@@ -364,21 +360,16 @@ export function GitHubCalendarSection() {
                 <span className="text-xs font-medium text-muted-foreground">days</span>
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
-                <span
-                  className={cn(
-                    "inline-block h-1.5 w-1.5 rounded-full",
-                    currentStreak > 0 ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/40"
-                  )}
-                />
-                <span>{currentStreak > 0 ? "Streak active 🔥" : "Ready to commit"}</span>
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
+                <span>{currentStreak > 0 ? "Active streak" : "Ready to commit"}</span>
               </div>
             </div>
 
             {/* 3. Longest Streak */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/60 to-background/20 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/40 hover:shadow-lg hover:shadow-cyan-500/5">
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:bg-background/80 hover:shadow-xs">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-muted-foreground">Longest streak</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-500 transition-transform duration-300 group-hover/stat:scale-110">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/70 text-foreground/70 transition-colors group-hover/stat:text-foreground">
                   <Zap className="h-4 w-4" />
                 </div>
               </div>
@@ -389,7 +380,7 @@ export function GitHubCalendarSection() {
                 <span className="text-xs font-medium text-muted-foreground">days</span>
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-cyan-500" />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
                 <span>Personal record</span>
               </div>
             </div>
@@ -399,11 +390,11 @@ export function GitHubCalendarSection() {
               href={`${DATA.contact.social.GitHub.url}?tab=repositories`}
               target="_blank"
               rel="noopener noreferrer"
-              className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/60 to-background/20 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/40 hover:shadow-lg hover:shadow-violet-500/5 cursor-pointer block"
+              className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:bg-background/80 hover:shadow-xs cursor-pointer block"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-muted-foreground">Repositories</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 text-violet-500 transition-transform duration-300 group-hover/stat:scale-110">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/70 text-foreground/70 transition-colors group-hover/stat:text-foreground">
                   <BookOpen className="h-4 w-4" />
                 </div>
               </div>
@@ -411,31 +402,17 @@ export function GitHubCalendarSection() {
                 <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
                   {reposCount ?? "—"}
                 </span>
-                <ArrowUpRight className="h-3.5 w-3.5 opacity-40 group-hover/stat:opacity-100 transition-opacity text-violet-400 ml-1" />
+                <ArrowUpRight className="h-3.5 w-3.5 opacity-40 group-hover/stat:opacity-100 transition-opacity text-foreground ml-1" />
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-violet-500" />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
                 <span>Public codebases</span>
               </div>
             </a>
           </div>
 
           {/* ─── The Contribution Matrix Card ─── */}
-          <div className={cn(
-            "relative z-10 rounded-xl border p-4 sm:p-5 backdrop-blur-md overflow-hidden shadow-inner transition-colors duration-500",
-            artMode
-              ? "border-violet-500/30 bg-gradient-to-b from-background/50 via-violet-950/10 to-background/50 dark:from-zinc-950/60 dark:via-violet-950/20 dark:to-zinc-950/60"
-              : "border-border/50 bg-background/35 dark:bg-zinc-950/40"
-          )}>
-            {/* Dynamic Art Mode Aurora Wave Beam */}
-            {artMode && (
-              <motion.div
-                initial={{ x: "-100%" }}
-                animate={{ x: "400%" }}
-                transition={{ repeat: Infinity, duration: 4.8, ease: "easeInOut" }}
-                className="pointer-events-none absolute inset-y-0 w-48 bg-gradient-to-r from-transparent via-violet-500/15 dark:via-fuchsia-400/20 to-transparent skew-x-12 blur-md z-10"
-              />
-            )}
+          <div className="relative z-10 rounded-xl border border-border/50 bg-background/35 dark:bg-zinc-950/40 p-4 sm:p-5 backdrop-blur-md overflow-hidden shadow-inner">
 
             {/* Micro grid watermark pattern */}
             <div
