@@ -10,6 +10,9 @@ import { ArrowRight, Sparkles, FolderGit2 } from "lucide-react";
 const BLUR_FADE_DELAY = 0.04;
 
 export function ProjectsSection() {
+  // Only display the 4 projects with visual screenshot previews on the landing page
+  const landingProjects = DATA.projects.filter((p) => Boolean(p.image)).slice(0, 4);
+
   return (
     <div className="flex min-h-0 flex-col gap-y-6">
       {/* Header section */}
@@ -34,15 +37,15 @@ export function ProjectsSection() {
             href="/projects"
             className="group/link inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors w-fit pb-1"
           >
-            <span>Explore full index</span>
+            <span>More projects ({DATA.projects.length})</span>
             <ArrowRight className="size-3.5 transition-transform duration-200 group-hover/link:translate-x-1" />
           </Link>
         </BlurFade>
       </div>
 
-      {/* Grid of Projects */}
+      {/* Grid of 4 Projects with pictures */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 pt-1">
-        {DATA.projects.map((project, idx) => (
+        {landingProjects.map((project, idx) => (
           <ProjectCard key={project.title} project={project as any} index={idx} />
         ))}
       </div>
@@ -55,7 +58,7 @@ export function ProjectsSection() {
             className="group/btn relative inline-flex items-center gap-2.5 rounded-2xl border border-border/70 dark:border-white/10 bg-card/60 dark:bg-zinc-950/60 px-6 py-3 text-xs font-medium text-foreground backdrop-blur-xl shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-card hover:border-foreground/20 hover:shadow-lg"
           >
             <FolderGit2 className="size-4 text-muted-foreground group-hover/btn:text-foreground transition-colors" />
-            <span>Browse Full Projects Directory & Case Studies</span>
+            <span>More Projects ({DATA.projects.length})</span>
             <ArrowRight className="size-3.5 opacity-60 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all" />
           </Link>
         </div>

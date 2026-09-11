@@ -138,6 +138,35 @@ export const DATA = {
   ],
   projects: [
     {
+      title: "Game of chance",
+      slug: "game-of-chance",
+      href: "https://game-of-chance-beryl.vercel.app/",
+      dates: "2025",
+      active: true,
+      featured: true,
+      category: "Interactive & Games",
+      tagline: "Casino & arcade games hub featuring probability challenges & live leaderboard",
+      description:
+        "Next.js casino web app featuring four probability mini-games: Pick a Number, No Match Dealer, Find the Ace, and Lucky Wheel. Built with real-time credits, Vercel Postgres leaderboard, and dark minimalist aesthetics.",
+      technologies: ["Next.js", "PostgreSQL", "TailwindCSS", "TypeScript", "React"],
+      accentColor: "#a855f7",
+      badge: "Live Web App",
+      links: [
+        {
+          type: "Website",
+          href: "https://game-of-chance-beryl.vercel.app/",
+          icon: <Icons.globe className="size-3.5" />,
+        },
+        {
+          type: "Source",
+          href: "https://github.com/ErenYea9er69/Game-of-chance",
+          icon: <Icons.github className="size-3.5" />,
+        },
+      ],
+      image: "/projects/game-of-chance.png",
+      video: "",
+    },
+    {
       title: "MyNet",
       slug: "mynet",
       href: "https://github.com/ErenYea9er69/MyNet",
