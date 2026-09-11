@@ -6,16 +6,15 @@ import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
-import { ScrollProgress } from "@/components/scroll-progress";
 import { JsonLd } from "@/components/json-ld";
 import { PageBackground } from "@/components/page-background";
-import { CommandPalette } from "@/components/command-palette";
-import { BackToTop } from "@/components/back-to-top";
 import { DomainGuardedAnalytics } from "@/components/domain-guarded-analytics";
+import { CommandPalette, BackToTop, ScrollProgress } from "@/components/lazy-client";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -92,11 +91,11 @@ export const metadata: Metadata = {
       },
       {
         rel: "manifest",
-        url: "/favicons/manifest.json",
+        url: "/manifest.json",
       },
     ],
   },
-  manifest: "/favicons/manifest.json",
+  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

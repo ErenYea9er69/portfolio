@@ -40,20 +40,23 @@ export default function Navbar() {
 
   useEffect(() => {
     if (isScrolled) return;
-    const navItems = DATA.navbar.slice(1);
-    const activeIndex = navItems.findIndex((item) => item.href === pathname);
-    if (activeIndex !== -1 && itemRefs.current[activeIndex] && navRef.current) {
-      const itemEl = itemRefs.current[activeIndex]!;
-      const navEl = navRef.current;
-      const itemRect = itemEl.getBoundingClientRect();
-      const navRect = navEl.getBoundingClientRect();
-      setActiveRect({
-        left: itemRect.left - navRect.left,
-        width: itemRect.width,
-      });
-    } else {
-      setActiveRect(null);
-    }
+    const raf = requestAnimationFrame(() => {
+      const navItems = DATA.navbar.slice(1);
+      const activeIndex = navItems.findIndex((item) => item.href === pathname);
+      if (activeIndex !== -1 && itemRefs.current[activeIndex] && navRef.current) {
+        const itemEl = itemRefs.current[activeIndex]!;
+        const navEl = navRef.current;
+        const itemRect = itemEl.getBoundingClientRect();
+        const navRect = navEl.getBoundingClientRect();
+        setActiveRect({
+          left: itemRect.left - navRect.left,
+          width: itemRect.width,
+        });
+      } else {
+        setActiveRect(null);
+      }
+    });
+    return () => cancelAnimationFrame(raf);
   }, [pathname, isMounted, isScrolled]);
 
   if (pathname === "/cli") {

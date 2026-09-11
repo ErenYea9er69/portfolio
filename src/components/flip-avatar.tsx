@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
 
 interface FlipAvatarProps {
   src: string;
@@ -34,29 +34,31 @@ export function FlipAvatar({ src, hoverSrc, alt, fallback }: FlipAvatarProps) {
         style={{ transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
       >
         {/* Front */}
-        <Avatar className="absolute inset-0 size-28 [backface-visibility:hidden]">
-          <AvatarImage
+        <div className="absolute inset-0 size-28 rounded-full overflow-hidden [backface-visibility:hidden] bg-muted">
+          <Image
             alt={alt}
             src={src}
-            width={224}
-            height={224}
-            loading="eager"
-            className="object-cover"
+            width={112}
+            height={112}
+            priority
+            sizes="112px"
+            quality={85}
+            className="aspect-square size-full object-cover"
           />
-          <AvatarFallback>{fallback}</AvatarFallback>
-        </Avatar>
+        </div>
 
         {/* Back */}
-        <Avatar className="absolute inset-0 size-28 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-          <AvatarImage
+        <div className="absolute inset-0 size-28 rounded-full overflow-hidden [backface-visibility:hidden] [transform:rotateY(180deg)] bg-muted">
+          <Image
             alt={`${alt} alternate`}
             src={hoverSrc}
-            width={224}
-            height={224}
-            className="object-cover"
+            width={112}
+            height={112}
+            sizes="112px"
+            quality={85}
+            className="aspect-square size-full object-cover"
           />
-          <AvatarFallback>{fallback}</AvatarFallback>
-        </Avatar>
+        </div>
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ interface BlurFadeTextProps {
   yOffset?: number;
   animateByCharacter?: boolean;
   as?: "h1" | "h2" | "h3" | "p" | "span" | "div";
+  priority?: boolean;
 }
 const BlurFadeText = ({
   text,
@@ -27,6 +28,7 @@ const BlurFadeText = ({
   yOffset = 8,
   animateByCharacter = false,
   as,
+  priority = false,
 }: BlurFadeTextProps) => {
   const defaultVariants: Variants = {
     hidden: { y: yOffset, opacity: 0, filter: "blur(8px)" },
@@ -43,7 +45,7 @@ const BlurFadeText = ({
             <motion.span
               aria-hidden="true"
               key={i}
-              initial="hidden"
+              initial={priority ? false : "hidden"}
               animate="visible"
               exit="hidden"
               variants={combinedVariants}
@@ -68,14 +70,18 @@ const BlurFadeText = ({
     <Wrapper className="flex">
       <AnimatePresence>
         <motion.span
-          initial="hidden"
+          initial={priority ? false : "hidden"}
           animate="visible"
           exit="hidden"
           variants={combinedVariants}
-          transition={{
-            delay,
-            ease: "easeOut",
-          }}
+          transition={
+            priority
+              ? { duration: 0, delay: 0 }
+              : {
+                  delay,
+                  ease: "easeOut",
+                }
+          }
           className={cn("inline-block", className)}
         >
           {text}

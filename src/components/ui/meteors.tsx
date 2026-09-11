@@ -176,12 +176,28 @@ export const Meteors = ({ number = 15 }: MeteorsProps) => {
     };
 
     document.addEventListener("visibilitychange", handleVisibility);
-    animFrameRef.current = requestAnimationFrame(draw);
+    
+    // Defer animation startup so initial paint and hydration are completely unblocked
+    let idleId: any;
+    if ("requestIdleCallback" in window) {
+      idleId = (window as any).requestIdleCallback(() => {
+        animFrameRef.current = requestAnimationFrame(draw);
+      }, { timeout: 1500 });
+    } else {
+      idleId = setTimeout(() => {
+        animFrameRef.current = requestAnimationFrame(draw);
+      }, 500);
+    }
 
     return () => {
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", handleVisibility);
       cancelAnimationFrame(animFrameRef.current);
+      if ("cancelIdleCallback" in window && typeof idleId === "number") {
+        (window as any).cancelIdleCallback(idleId);
+      } else {
+        clearTimeout(idleId);
+      }
     };
   }, [number, createMeteor]);
 

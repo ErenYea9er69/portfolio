@@ -16,6 +16,7 @@ interface BlurFadeProps {
   inView?: boolean;
   inViewMargin?: string;
   blur?: string;
+  priority?: boolean;
 }
 const BlurFade = ({
   children,
@@ -27,6 +28,7 @@ const BlurFade = ({
   inView = false,
   inViewMargin = "-50px",
   blur = "6px",
+  priority = false,
 }: BlurFadeProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const inViewResult = useInView(ref, { once: true, margin: inViewMargin as any });
@@ -40,15 +42,19 @@ const BlurFade = ({
     <AnimatePresence>
       <motion.div
         ref={ref}
-        initial="hidden"
+        initial={priority ? false : "hidden"}
         animate={isInView ? "visible" : "hidden"}
         exit="hidden"
         variants={combinedVariants}
-        transition={{
-          delay: 0.04 + delay,
-          duration,
-          ease: "easeOut",
-        }}
+        transition={
+          priority
+            ? { duration: 0, delay: 0 }
+            : {
+                delay: 0.04 + delay,
+                duration,
+                ease: "easeOut",
+              }
+        }
         className={className}
       >
         {children}

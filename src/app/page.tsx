@@ -4,6 +4,7 @@ import Markdown from "react-markdown";
 import BlurFade from "@/components/magicui/blur-fade";
 import BlurFadeText from "@/components/magicui/blur-fade-text";
 
+import Image from "next/image";
 import { ResumeCard } from "@/components/resume-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -15,18 +16,9 @@ import ShinyButton from "@/components/ui/shiny-button";
 import { AgeCounter } from "@/components/age-counter";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FlipAvatar } from "@/components/flip-avatar";
-import { YouTubeHoverCard } from "@/components/youtube-hover-card";
-import { XHoverCard } from "@/components/x-hover-card";
-import { LinkedInHoverCard } from "@/components/linkedin-hover-card";
-import { InstagramHoverCard } from "@/components/instagram-hover-card";
-import { CodePenHoverCard } from "@/components/codepen-hover-card";
-import { BuyMeACoffeeHoverCard } from "@/components/bmc-hover-card";
-import { DiscordHoverCard } from "@/components/discord-hover-card";
-import { BirthdayFireworks } from "@/components/birthday-fireworks";
 import { BirthdayHat } from "@/components/birthday-hat";
-import { VisitorCounter } from "@/components/lazy-client";
+import { VisitorCounter, BirthdayFireworks, GitHubCalendarSection, XHoverCard } from "@/components/lazy-client";
 import { SocialGlowLink } from "@/components/social-glow-link";
-import { GitHubCalendarSection } from "@/components/github-calendar-section";
 import { TechStackSection } from "@/components/tech-stack-section";
 import { ProjectsSection } from "@/components/projects-section";
 
@@ -77,7 +69,7 @@ export const metadata: Metadata = {
 
 function SectionLabel({ label }: { label: string }) {
   return (
-    <span className="inline-block text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60">
+    <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/75 dark:text-muted-foreground">
       {label}
     </span>
   );
@@ -115,22 +107,24 @@ export default function Page() {
             <div className="flex flex-col-reverse items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex-col flex flex-1 space-y-1.5">
                 <BlurFadeText
+                  priority
                   delay={BLUR_FADE_DELAY}
                   className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
                   yOffset={8}
                   text="Hey, Welcome here"
                   as="h1"
                 />
-                <BlurFade delay={BLUR_FADE_DELAY * 1.5}>
+                <BlurFade priority delay={BLUR_FADE_DELAY * 1.5}>
                   <AgeCounter />
                 </BlurFade>
                 <BlurFadeText
+                  priority
                   className="max-w-[600px] text-muted-foreground md:text-xl"
                   delay={BLUR_FADE_DELAY}
                   text={DATA.description}
                 />
               </div>
-              <BlurFade delay={BLUR_FADE_DELAY}>
+              <BlurFade priority delay={BLUR_FADE_DELAY}>
                 <div className="profile-wrapper">
                   <FlipAvatar
                     src={DATA.avatarUrl}
@@ -144,7 +138,7 @@ export default function Page() {
             </div>
 
             {/* Bio / About */}
-            <BlurFade delay={BLUR_FADE_DELAY * 3}>
+            <BlurFade priority delay={BLUR_FADE_DELAY * 3}>
               <div className="space-y-3 text-sm sm:text-[15px] leading-relaxed text-muted-foreground">
                 <p>
                   I’m <strong className="font-bold text-foreground">Rayen</strong>, a{" "}
@@ -189,59 +183,11 @@ export default function Page() {
                       );
 
 
-                      if (name === "Youtube") {
-                        return (
-                          <YouTubeHoverCard key={name}>
-                            {socialLink}
-                          </YouTubeHoverCard>
-                        );
-                      }
-
                       if (name === "X") {
                         return (
                           <XHoverCard key={name}>
                             {socialLink}
                           </XHoverCard>
-                        );
-                      }
-
-                      if (name === "LinkedIn") {
-                        return (
-                          <LinkedInHoverCard key={name}>
-                            {socialLink}
-                          </LinkedInHoverCard>
-                        );
-                      }
-
-                      if (name === "Instagram") {
-                        return (
-                          <InstagramHoverCard key={name}>
-                            {socialLink}
-                          </InstagramHoverCard>
-                        );
-                      }
-
-                      if (name === "CodePen") {
-                        return (
-                          <CodePenHoverCard key={name}>
-                            {socialLink}
-                          </CodePenHoverCard>
-                        );
-                      }
-
-                      if (name === "buyMeACoffee") {
-                        return (
-                          <BuyMeACoffeeHoverCard key={name}>
-                            {socialLink}
-                          </BuyMeACoffeeHoverCard>
-                        );
-                      }
-
-                      if (name === "Discord") {
-                        return (
-                          <DiscordHoverCard key={name}>
-                            {socialLink}
-                          </DiscordHoverCard>
                         );
                       }
 
@@ -403,13 +349,13 @@ export default function Page() {
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground/60">Links</p>
-                <div className="flex flex-col gap-1.5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-foreground/75 dark:text-muted-foreground">Links</p>
+                <div className="flex flex-col gap-1">
                   {DATA.navbar.slice(1).map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1"
+                      className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center"
                     >
                       {item.label}
                     </Link>
@@ -418,19 +364,19 @@ export default function Page() {
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground/60">Meta</p>
-                <div className="flex flex-col gap-1.5">
-                  <Link href="/sitemap.xml" className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1">
+                <p className="text-xs font-semibold uppercase tracking-wider text-foreground/75 dark:text-muted-foreground">Meta</p>
+                <div className="flex flex-col gap-1">
+                  <Link href="/sitemap.xml" className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center">
                     Sitemap
                   </Link>
-                  <Link href="/rss.xml" className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1">
+                  <Link href="/rss.xml" className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center">
                     RSS Feed
                   </Link>
                   <a
                     href={DATA.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1"
+                    className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center"
                   >
                     Source Code
                   </a>
@@ -439,13 +385,13 @@ export default function Page() {
             </div>
 
             <div className="mt-8 flex flex-col gap-3 border-t border-border/30 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-muted-foreground/60">
+              <p className="text-xs text-muted-foreground">
                 © {new Date().getFullYear()} {DATA.name}. Open source under{' '}
                 <a
                   href="https://opensource.org/licenses/MIT"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline hover:text-foreground transition-colors"
+                  className="underline hover:text-foreground transition-colors font-medium"
                 >
                   MIT
                 </a>

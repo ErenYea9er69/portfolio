@@ -69,7 +69,7 @@ export default function ProjectsPage() {
       <section className="space-y-4">
         <BlurFade delay={BLUR_FADE_DELAY * 1.5}>
           <div className="flex items-center gap-2">
-            <span className="inline-block text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60">
+            <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/75 dark:text-muted-foreground">
               PROJECTS DIRECTORY
             </span>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
