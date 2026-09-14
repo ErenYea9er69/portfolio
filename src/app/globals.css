@@ -177,6 +177,7 @@
   .github-calendar-wrapper {
     position: relative;
     width: 100%;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
   }
@@ -188,15 +189,29 @@
   }
 
   .github-calendar-wrapper .react-activity-calendar {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: auto !important;
+    min-width: 680px !important;
+  }
+
+  @media (min-width: 768px) {
+    .github-calendar-wrapper .react-activity-calendar {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
   }
 
   .github-calendar-wrapper .react-activity-calendar__scroll-container {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: auto !important;
+    min-width: 680px !important;
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
+  }
+
+  @media (min-width: 768px) {
+    .github-calendar-wrapper .react-activity-calendar__scroll-container {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
   }
 
   .github-calendar-wrapper .react-activity-calendar__scroll-container::-webkit-scrollbar {
@@ -206,10 +221,17 @@
   }
 
   .github-calendar-wrapper .react-activity-calendar__calendar {
-    width: 100% !important;
+    width: auto !important;
+    min-width: 680px !important;
     height: auto !important;
-    max-width: 100% !important;
     overflow: visible !important;
+  }
+
+  @media (min-width: 768px) {
+    .github-calendar-wrapper .react-activity-calendar__calendar {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
   }
 
   /* Interactive Matrix Cells with 3D Pop & Neon Bloom */
@@ -223,12 +245,14 @@
     cursor: pointer;
   }
 
-  .github-calendar-wrapper .react-activity-calendar__calendar rect:hover {
-    transform: scale(1.48) !important;
-    filter: brightness(1.35) drop-shadow(0 0 10px rgba(52, 211, 153, 0.95)) !important;
-    stroke: rgba(255, 255, 255, 0.95) !important;
-    stroke-width: 1px !important;
-    z-index: 50;
+  @media (hover: hover) and (pointer: fine) {
+    .github-calendar-wrapper .react-activity-calendar__calendar rect:hover {
+      transform: scale(1.48) !important;
+      filter: brightness(1.35) drop-shadow(0 0 10px rgba(52, 211, 153, 0.95)) !important;
+      stroke: rgba(255, 255, 255, 0.95) !important;
+      stroke-width: 1px !important;
+      z-index: 50;
+    }
   }
 
   .github-calendar-wrapper .react-activity-calendar text {
@@ -545,6 +569,38 @@ html {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ─── Ghibli twinkle star pure GPU animation ─── */
+@keyframes ghibli-twinkle {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.15);
+  }
+}
+
+.ghibli-twinkle-star {
+  animation-name: ghibli-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  will-change: opacity, transform;
+}
+
+/* ─── Touch & no-scrollbar utilities ─── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

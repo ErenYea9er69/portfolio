@@ -137,7 +137,7 @@ export default function ProjectsPage() {
         <BlurFade delay={BLUR_FADE_DELAY * 3}>
           <div
             role="tablist"
-            className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl bg-muted/40 dark:bg-muted/20 border border-border/40 backdrop-blur-md w-fit"
+            className="flex items-center gap-1.5 p-1 rounded-2xl bg-muted/40 dark:bg-muted/20 border border-border/40 backdrop-blur-md overflow-x-auto no-scrollbar max-w-full w-full sm:w-fit"
           >
             {CATEGORIES.map((category) => {
               const isActive = selectedCategory === category;
@@ -155,7 +155,7 @@ export default function ProjectsPage() {
                   aria-selected={isActive}
                   onClick={() => setSelectedCategory(category)}
                   className={cn(
-                    "relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl transition-all duration-200 outline-none cursor-pointer",
+                    "relative shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl transition-all duration-200 outline-none cursor-pointer",
                     isActive
                       ? "text-foreground font-semibold"
                       : "text-muted-foreground hover:text-foreground/90 hover:bg-muted/30"

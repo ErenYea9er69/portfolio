@@ -206,15 +206,13 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
 
     useEffect(() => {
       const checkMobile = () => {
-        setIsMobile("ontouchstart" in window || navigator.maxTouchPoints > 0);
+        const mobile = ("ontouchstart" in window || navigator.maxTouchPoints > 0) || window.innerWidth < 768;
+        setIsMobile(mobile);
+        setLiquidOk(!mobile && supportsLiquidGlass());
       };
       checkMobile();
       window.addEventListener("resize", checkMobile);
       return () => window.removeEventListener("resize", checkMobile);
-    }, []);
-
-    useEffect(() => {
-      setLiquidOk(supportsLiquidGlass());
     }, []);
 
     // Regenerate the lens map whenever the dock's layout size changes

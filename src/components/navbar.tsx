@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Terminal, Home } from "lucide-react";
+import { Menu, X, Terminal, Home, Code2, Briefcase, GraduationCap, Mail, FolderKanban } from "lucide-react";
 import { Dock, DockIcon } from "@/components/magicui/dock";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { buttonVariants } from "@/components/ui/button";
@@ -17,6 +17,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [activeRect, setActiveRect] = useState<{ left: number; width: number } | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
@@ -24,6 +25,12 @@ export default function Navbar() {
 
   useEffect(() => {
     setIsMounted(true);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile, { passive: true });
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
@@ -67,9 +74,9 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ─── Expanded navbar (top of page) ─── */}
+      {/* ─── Expanded navbar (top of page / always on mobile) ─── */}
       <AnimatePresence>
-        {!isScrolled && (
+        {(!isScrolled || isMobile) && (
           <motion.nav
             initial={isMounted ? { y: 0, opacity: 1 } : { y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -77,12 +84,18 @@ export default function Navbar() {
             transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="fixed top-0 left-0 right-0 z-50"
           >
-            <div className="mx-auto max-w-4xl px-6">
-              <div className="mt-3 flex items-center justify-between rounded-2xl py-2 px-3 backdrop-blur-xl bg-background/50 border border-border/20 shadow-sm">
+            <div className="mx-auto max-w-4xl px-4 sm:px-6">
+              <div className={cn(
+                "mt-3 flex items-center justify-between rounded-2xl py-2 px-3 backdrop-blur-xl border border-border/20 transition-all duration-300",
+                isScrolled
+                  ? "bg-background/85 dark:bg-zinc-950/85 shadow-md border-border/40"
+                  : "bg-background/50 shadow-sm"
+              )}>
                 <Link
                   href="/"
                   className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/60"
                   aria-label="Home"
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Home className="size-5" />
                 </Link>
@@ -188,7 +201,7 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Mobile menu */}
+            {/* Mobile menu dropdown */}
             <AnimatePresence>
               {isMobileMenuOpen && (
                 <>
@@ -207,45 +220,84 @@ export default function Navbar() {
                     transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                     className="relative z-50 mx-4 mt-2 overflow-hidden rounded-2xl border border-border/40 bg-background/95 shadow-lg backdrop-blur-xl md:hidden"
                   >
-                    <div className="p-2">
-                      {DATA.navbar.map((item, index) => {
-                        const isActive = pathname === item.href;
-                        return (
-                          <motion.div
-                            key={item.href}
-                            initial={{ opacity: 0, x: -12 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.04, duration: 0.2 }}
-                          >
-                            <Link
-                              href={item.href}
-                              className={cn(
-                                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                                isActive
-                                  ? "bg-muted/60 text-foreground"
-                                  : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                              )}
-                            >
-                              <item.icon className="size-4" />
-                              {item.label}
-                            </Link>
-                          </motion.div>
-                        );
-                      })}
-                      <div className="my-1 h-px bg-border/40" />
-                      <motion.div
-                        initial={{ opacity: 0, x: -12 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: DATA.navbar.length * 0.04, duration: 0.2 }}
+                    <div className="p-2 space-y-0.5">
+                      <Link
+                        href="/"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                          pathname === "/"
+                            ? "bg-muted/60 text-foreground"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                        )}
                       >
-                        <Link
-                          href="/cli"
-                          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
-                        >
-                          <Terminal className="size-4" />
-                          CLI Mode
-                        </Link>
-                      </motion.div>
+                        <Home className="size-4" />
+                        Home
+                      </Link>
+
+                      <Link
+                        href="/projects"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                          pathname === "/projects"
+                            ? "bg-muted/60 text-foreground"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                        )}
+                      >
+                        <FolderKanban className="size-4" />
+                        Projects
+                      </Link>
+
+                      <div className="my-1 h-px bg-border/40" />
+
+                      {/* Quick Section Jump Links */}
+                      <Link
+                        href="/#skills"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
+                      >
+                        <Code2 className="size-3.5 text-emerald-500" />
+                        Skills & Stack
+                      </Link>
+
+                      <Link
+                        href="/#work"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
+                      >
+                        <Briefcase className="size-3.5 text-blue-500" />
+                        Work Experience
+                      </Link>
+
+                      <Link
+                        href="/#education"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
+                      >
+                        <GraduationCap className="size-3.5 text-amber-500" />
+                        Education
+                      </Link>
+
+                      <Link
+                        href="/#contact"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
+                      >
+                        <Mail className="size-3.5 text-purple-500" />
+                        Contact
+                      </Link>
+
+                      <div className="my-1 h-px bg-border/40" />
+
+                      <Link
+                        href="/cli"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
+                      >
+                        <Terminal className="size-4" />
+                        CLI Mode
+                      </Link>
                     </div>
                   </motion.div>
                 </>
@@ -255,15 +307,15 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
-      {/* ─── Dock navbar (on scroll) ─── */}
+      {/* ─── Dock navbar (on scroll, desktop only) ─── */}
       <AnimatePresence>
-        {isScrolled && (
+        {isScrolled && !isMobile && (
           <motion.div
             initial={{ y: 60, opacity: 0, scale: 0.9 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 60, opacity: 0, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 260, damping: 24 }}
-            className="fixed bottom-5 left-0 right-0 z-50 flex justify-center px-4"
+            className="hidden md:flex fixed bottom-5 left-0 right-0 z-50 justify-center px-4"
           >
             <Dock
               magnification={50}

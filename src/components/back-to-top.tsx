@@ -36,14 +36,13 @@ export function BackToTop() {
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
           transition={{ duration: 0.2 }}
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-40 p-2 rounded-full 
+          className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-40 p-2 rounded-full 
             bg-foreground/90 text-background 
             shadow-lg hover:shadow-xl
             hover:scale-110 active:scale-95
             transition-all duration-200
             backdrop-blur-sm
-            group
-            max-md:bottom-24 max-md:right-4"
+            group"
           aria-label="Back to top"
         >
           {/* Scroll progress ring */}

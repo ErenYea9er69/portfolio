@@ -53,8 +53,12 @@ export const Meteors = ({ number = 15 }: MeteorsProps) => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const isMobile = window.innerWidth < 768;
+    const effectiveNumber = isMobile ? Math.min(number, 5) : number;
+
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const isMobileNow = window.innerWidth < 768;
+      const dpr = isMobileNow ? 1 : Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       canvas.style.width = `${window.innerWidth}px`;
@@ -66,7 +70,7 @@ export const Meteors = ({ number = 15 }: MeteorsProps) => {
     window.addEventListener("resize", resize);
 
     // Initialize meteors
-    meteorsRef.current = Array.from({ length: number }, () =>
+    meteorsRef.current = Array.from({ length: effectiveNumber }, () =>
       createMeteor(window.innerWidth, window.innerHeight)
     );
 

@@ -101,6 +101,7 @@ export function GitHubCalendarSection() {
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
+    if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) return;
     const rect = containerRef.current.getBoundingClientRect();
     setMousePos({
       x: e.clientX - rect.left,
@@ -297,7 +298,7 @@ export function GitHubCalendarSection() {
                     key={year}
                     onClick={() => setSelectedYear(year)}
                     className={cn(
-                      "relative rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200",
+                      "relative rounded-full px-2.5 sm:px-3.5 py-1 text-xs font-medium transition-all duration-200",
                       selectedYear === year
                         ? "bg-background text-foreground shadow-sm shadow-black/10 font-semibold border border-border/60"
                         : "text-muted-foreground hover:text-foreground"
@@ -313,7 +314,7 @@ export function GitHubCalendarSection() {
                 type="button"
                 onClick={() => setSnakeMode(!snakeMode)}
                 className={cn(
-                  "relative inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200 border cursor-pointer select-none",
+                  "relative inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 border cursor-pointer select-none shrink-0",
                   snakeMode
                     ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/40 shadow-[0_0_14px_rgba(16,185,129,0.3)] font-semibold"
                     : "bg-background/50 hover:bg-background/80 text-muted-foreground hover:text-foreground border-border/60 shadow-xs"

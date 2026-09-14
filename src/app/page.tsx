@@ -335,7 +335,7 @@ export default function Page() {
         </section>
 
         {/* ─── FOOTER ─── */}
-        <footer className="border-t border-border/40 pt-8 pb-4">
+        <footer className="border-t border-border/40 pt-8 pb-12 sm:pb-8">
           <BlurFade delay={BLUR_FADE_DELAY * 17}>
             <div className="grid gap-6 sm:grid-cols-3">
               <div className="space-y-2">

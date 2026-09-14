@@ -22,19 +22,6 @@ const CATEGORIES: { label: string; value: CategoryType }[] = [
   { label: "Exploring", value: "Exploring" },
 ];
 
-function hexToRgba(hex?: string, alpha: number = 0.15): string {
-  if (!hex || hex === "transparent") return `rgba(120, 120, 120, ${alpha})`;
-  let cleanHex = hex.replace("#", "");
-  if (cleanHex.length === 3) {
-    cleanHex = cleanHex.split("").map((c) => c + c).join("");
-  }
-  const num = parseInt(cleanHex, 16);
-  if (isNaN(num)) return `rgba(120, 120, 120, ${alpha})`;
-  const r = (num >> 16) & 255;
-  const g = (num >> 8) & 255;
-  const b = num & 255;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
 
 export function TechStackSection() {
   const [activeCategory, setActiveCategory] = useState<CategoryType>("All");
@@ -86,7 +73,7 @@ export function TechStackSection() {
         <div
           role="tablist"
           aria-label="Filter tech stack by category"
-          className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl bg-muted/40 dark:bg-muted/20 border border-border/40 backdrop-blur-md w-fit"
+          className="flex items-center gap-1.5 p-1 rounded-2xl bg-muted/40 dark:bg-muted/20 border border-border/40 backdrop-blur-md overflow-x-auto no-scrollbar max-w-full w-full sm:w-fit"
         >
           {CATEGORIES.map((cat) => {
             const isActive = activeCategory === cat.value;
@@ -98,7 +85,7 @@ export function TechStackSection() {
                 aria-selected={isActive}
                 onClick={() => setActiveCategory(cat.value)}
                 className={cn(
-                  "relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/40 cursor-pointer",
+                  "relative shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/40 cursor-pointer",
                   isActive
                     ? "text-foreground font-semibold shadow-xs"
                     : "text-muted-foreground hover:text-foreground/90 hover:bg-muted/30"
@@ -166,19 +153,7 @@ function SkillPill({
   onMouseLeave: () => void;
 }) {
   const pillRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!pillRef.current) return;
-    const rect = pillRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setMousePos({ x, y });
-  };
-
   const brandColor = (skill.color as string) || "#6366f1";
-  const glowRgba = useMemo(() => hexToRgba(brandColor, 0.28), [brandColor]);
-  const borderGlowRgba = useMemo(() => hexToRgba(brandColor, 0.7), [brandColor]);
 
   return (
     <motion.div
@@ -192,7 +167,6 @@ function SkillPill({
         stiffness: 400,
         damping: 26,
       }}
-      onMouseMove={handleMouseMove}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       className={cn(

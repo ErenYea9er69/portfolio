@@ -24,7 +24,7 @@ export function FloatingCloud({
 }) {
   return (
     <motion.div
-      className={cn("absolute pointer-events-none", className)}
+      className={cn("absolute pointer-events-none hidden sm:block", className)}
       style={{
         width: size,
         height: size * 0.55,
@@ -237,6 +237,19 @@ function StarField() {
  *  A few stars that subtly pulse in brightness
  * ───────────────────────────────────────────── */
 function TwinklingStars({ count = 14 }: { count?: number }) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile, { passive: true });
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const effectiveCount = isMobile ? 6 : count;
+
   const stars = useMemo(() => {
     const items: Array<{
       x: number;
@@ -245,25 +258,25 @@ function TwinklingStars({ count = 14 }: { count?: number }) {
       delay: number;
       duration: number;
     }> = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < effectiveCount; i++) {
       items.push({
         x: Math.random() * 100,
         y: Math.random() * 80,
         size: Math.random() * 2 + 1,
-        delay: Math.random() * 5,
-        duration: Math.random() * 3 + 2,
+        delay: Math.random() * 4,
+        duration: Math.random() * 2.5 + 2,
       });
     }
     return items;
-  }, [count]);
+  }, [effectiveCount]);
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
       {stars.map((star, i) => (
         <React.Fragment key={i}>
-          {/* Dark mode twinkling star */}
-          <motion.div
-            className="hidden dark:block absolute rounded-full"
+          {/* Dark mode twinkling star with pure GPU CSS animation */}
+          <div
+            className="hidden dark:block absolute rounded-full ghibli-twinkle-star"
             style={{
               width: star.size,
               height: star.size,
@@ -271,18 +284,13 @@ function TwinklingStars({ count = 14 }: { count?: number }) {
               top: `${star.y}%`,
               background: "white",
               boxShadow: `0 0 ${star.size * 3}px ${star.size}px rgba(200,220,255,0.4)`,
-            }}
-            animate={{ opacity: [0.3, 0.9, 0.3] }}
-            transition={{
-              duration: star.duration,
-              repeat: Infinity,
-              delay: star.delay,
-              ease: "easeInOut",
+              animationDuration: `${star.duration}s`,
+              animationDelay: `${star.delay}s`,
             }}
           />
-          {/* Light mode twinkling slate star */}
-          <motion.div
-            className="block dark:hidden absolute rounded-full"
+          {/* Light mode twinkling slate star with pure GPU CSS animation */}
+          <div
+            className="block dark:hidden absolute rounded-full ghibli-twinkle-star"
             style={{
               width: star.size,
               height: star.size,
@@ -290,13 +298,8 @@ function TwinklingStars({ count = 14 }: { count?: number }) {
               top: `${star.y}%`,
               background: "rgb(71, 85, 105)",
               boxShadow: `0 0 ${star.size * 3}px ${star.size}px rgba(100,116,139,0.4)`,
-            }}
-            animate={{ opacity: [0.35, 0.95, 0.35] }}
-            transition={{
-              duration: star.duration,
-              repeat: Infinity,
-              delay: star.delay,
-              ease: "easeInOut",
+              animationDuration: `${star.duration}s`,
+              animationDelay: `${star.delay}s`,
             }}
           />
         </React.Fragment>
@@ -314,11 +317,11 @@ function AtmosphericHaze() {
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
       {/* Top-right wash: subtle sapphire/slate in light, cool navy in dark */}
       <div
-        className="absolute -top-[10%] -right-[5%] w-[50%] h-[50%] rounded-full blur-[70px] transition-colors duration-500 bg-sky-200/35 dark:bg-[hsla(220,40%,30%,0.08)]"
+        className="absolute -top-[10%] -right-[5%] w-[50%] h-[50%] rounded-full blur-[35px] sm:blur-[70px] transition-colors duration-500 bg-sky-200/35 dark:bg-[hsla(220,40%,30%,0.08)]"
       />
       {/* Bottom-left wash: soft warm slate in light, subtle purple-gray in dark */}
       <div
-        className="absolute -bottom-[15%] -left-[10%] w-[45%] h-[45%] rounded-full blur-[80px] transition-colors duration-500 bg-slate-200/30 dark:bg-[hsla(260,30%,25%,0.06)]"
+        className="absolute -bottom-[15%] -left-[10%] w-[45%] h-[45%] rounded-full blur-[40px] sm:blur-[80px] transition-colors duration-500 bg-slate-200/30 dark:bg-[hsla(260,30%,25%,0.06)]"
       />
     </div>
   );
