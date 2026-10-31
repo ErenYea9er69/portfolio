@@ -480,6 +480,12 @@
   }
 }
 
+.github-calendar-wrapper {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  overscroll-behavior-x: contain;
+}
+
 .github-calendar-wrapper .react-activity-calendar__scroll-container {
   width: auto !important;
   min-width: 680px !important;
@@ -494,14 +500,13 @@
   }
 }
 
-.github-calendar-wrapper .react-activity-calendar__calendar rect {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.22s ease, opacity 0.2s ease;
-  transform-origin: center;
-  transform-box: fill-box;
-  cursor: pointer;
-}
-
 @media (hover: hover) and (pointer: fine) {
+  .github-calendar-wrapper .react-activity-calendar__calendar rect {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.22s ease, opacity 0.2s ease;
+    transform-origin: center;
+    transform-box: fill-box;
+    cursor: pointer;
+  }
   .github-calendar-wrapper .react-activity-calendar__calendar rect:hover {
     transform: scale(1.48) !important;
     filter: brightness(1.35) drop-shadow(0 0 10px rgba(52, 211, 153, 0.95)) !important;

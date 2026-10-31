@@ -40,7 +40,7 @@ export const ResumeCard = ({
   const cardContent = (
     <Card
       className={cn(
-        "group relative flex flex-col justify-between h-full p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card/60 dark:bg-zinc-950/50 backdrop-blur-md transition-all duration-200",
+        "group relative flex flex-col justify-between h-full p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card/90 dark:bg-zinc-950/85 md:bg-card/60 md:dark:bg-zinc-950/50 md:backdrop-blur-md transition-all duration-200",
         isRealLink
           ? "hover:border-foreground/30 hover:bg-card/90 dark:hover:bg-zinc-900/70 hover:shadow-sm cursor-pointer"
           : "hover:border-border",

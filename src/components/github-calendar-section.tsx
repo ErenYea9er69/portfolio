@@ -21,6 +21,8 @@ export function GitHubCalendarSection() {
   const [selectedYear, setSelectedYear] = useState<string>("last");
   const [snakeMode, setSnakeMode] = useState(false);
   const [rawContributions, setRawContributions] = useState<any[]>([]);
+  const [isPointerFine, setIsPointerFine] = useState(false);
+  const lastDataKeyRef = useRef<string>("");
 
   // Interactive mouse spotlight position
   const containerRef = useRef<HTMLDivElement>(null);
@@ -79,7 +81,7 @@ export function GitHubCalendarSection() {
     }
   };
 
-  // Automatically scroll to today's date on mount or when data/year updates
+  // Automatically scroll to today's date on mount or when year updates
   useEffect(() => {
     const scrollToEnd = () => {
       if (calendarScrollRef.current) {
@@ -87,16 +89,17 @@ export function GitHubCalendarSection() {
       }
     };
     scrollToEnd();
-    const t1 = setTimeout(scrollToEnd, 100);
-    const t2 = setTimeout(scrollToEnd, 300);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, [mounted, selectedYear, totalContributions]);
+    const t = setTimeout(scrollToEnd, 150);
+    return () => clearTimeout(t);
+  }, [mounted, selectedYear]);
 
   useEffect(() => {
     setMounted(true);
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    setIsPointerFine(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsPointerFine(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -129,6 +132,12 @@ export function GitHubCalendarSection() {
 
   const selectData = (contributions: any[]) => {
     if (!contributions || contributions.length === 0) return contributions;
+
+    const dataKey = `${selectedYear}-${contributions.length}-${contributions[0]?.date}-${contributions[contributions.length - 1]?.date}`;
+    if (lastDataKeyRef.current === dataKey) {
+      return contributions;
+    }
+    lastDataKeyRef.current = dataKey;
 
     let total = 0;
     let current = 0;
@@ -178,7 +187,7 @@ export function GitHubCalendarSection() {
     const todayItem = contributions.find((d: any) => d.date === todayStr);
     const todayCount = todayItem ? todayItem.count : (contributions[contributions.length - 1]?.count ?? 0);
 
-    // Wrap in setTimeout to avoid updating state during render
+    // Update state only once when dataset changes
     setTimeout(() => {
       setTotalContributions(total);
       setCurrentStreak(currentTemp);
@@ -240,25 +249,27 @@ export function GitHubCalendarSection() {
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className="group/section relative overflow-hidden rounded-2xl border border-white/10 dark:border-white/[0.08] bg-gradient-to-b from-card/85 via-card/55 to-card/30 dark:from-zinc-950/80 dark:via-zinc-900/60 dark:to-zinc-950/85 p-6 sm:p-7 backdrop-blur-2xl shadow-[0_12px_40px_-10px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300"
+          className="group/section relative overflow-hidden rounded-2xl border border-white/10 dark:border-white/[0.08] bg-gradient-to-b from-card/95 via-card/80 to-card/60 dark:from-zinc-950/90 dark:via-zinc-900/80 dark:to-zinc-950/90 p-5 sm:p-7 md:backdrop-blur-xl shadow-md transition-all duration-300"
         >
-          {/* Subtle Silver/Chrome Edge Beam */}
-          <BorderBeam size={160} duration={12} colorFrom="hsl(var(--muted-foreground) / 0.35)" colorTo="transparent" />
+          {/* Subtle Silver/Chrome Edge Beam (Desktop Only) */}
+          <div className="hidden md:block">
+            <BorderBeam size={160} duration={12} colorFrom="hsl(var(--muted-foreground) / 0.35)" colorTo="transparent" />
+          </div>
 
-          {/* Ambient Gray Theme Corner Lighting */}
+          {/* Ambient Gray Theme Corner Lighting (Desktop Only) */}
           <div
             aria-hidden
-            className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-zinc-500/[0.06] dark:bg-zinc-400/[0.06] blur-3xl transition-opacity duration-700"
+            className="hidden md:block pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-zinc-500/[0.06] dark:bg-zinc-400/[0.06] blur-3xl transition-opacity duration-700"
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-zinc-600/[0.04] dark:bg-zinc-500/[0.05] blur-3xl transition-opacity duration-700"
+            className="hidden md:block pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-zinc-600/[0.04] dark:bg-zinc-500/[0.05] blur-3xl transition-opacity duration-700"
           />
 
-          {/* Dynamic Interactive Cursor Spotlight (Monochrome Frosted Glass) */}
+          {/* Dynamic Interactive Cursor Spotlight (Monochrome Frosted Glass, Desktop Only) */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover/section:opacity-100"
+            className="hidden md:block pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover/section:opacity-100"
             style={{
               background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, hsl(var(--foreground) / 0.04), transparent 45%)`,
             }}
@@ -329,7 +340,7 @@ export function GitHubCalendarSection() {
           {/* ─── Stats Grid (4 Focused Cards with Theme-Colored Icons) ─── */}
           <div className="relative z-10 grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4 mb-5 sm:mb-7">
             {/* 1. Contributions (GitHub Emerald Theme) */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-3 sm:p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(16,185,129,0.12)]">
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-card/90 dark:bg-zinc-900/85 md:bg-background/50 p-3 sm:p-4 md:backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(16,185,129,0.12)]">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Contributions</span>
                 <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.12)] transition-all group-hover/stat:bg-emerald-500/20 group-hover/stat:border-emerald-500/40 group-hover/stat:text-emerald-500">
@@ -348,7 +359,7 @@ export function GitHubCalendarSection() {
             </div>
 
             {/* 2. Current Streak (Flame Orange Theme) */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-3 sm:p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-orange-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(249,115,22,0.12)]">
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-card/90 dark:bg-zinc-900/85 md:bg-background/50 p-3 sm:p-4 md:backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-orange-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(249,115,22,0.12)]">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Current streak</span>
                 <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/25 text-orange-600 dark:text-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.12)] transition-all group-hover/stat:bg-orange-500/20 group-hover/stat:border-orange-500/40 group-hover/stat:text-orange-500">
@@ -368,7 +379,7 @@ export function GitHubCalendarSection() {
             </div>
 
             {/* 3. Longest Streak (Lightning Amber Theme) */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-3 sm:p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(245,158,11,0.12)]">
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-card/90 dark:bg-zinc-900/85 md:bg-background/50 p-3 sm:p-4 md:backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(245,158,11,0.12)]">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Longest streak</span>
                 <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-amber-600 dark:text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.12)] transition-all group-hover/stat:bg-amber-500/20 group-hover/stat:border-amber-500/40 group-hover/stat:text-amber-500">
@@ -392,7 +403,7 @@ export function GitHubCalendarSection() {
               href={`${DATA.contact.social.GitHub.url}?tab=repositories`}
               target="_blank"
               rel="noopener noreferrer"
-              className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-3 sm:p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(14,165,233,0.12)] cursor-pointer block"
+              className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-card/90 dark:bg-zinc-900/85 md:bg-background/50 p-3 sm:p-4 md:backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(14,165,233,0.12)] cursor-pointer block"
             >
               <div className="flex items-center justify-between">
                 <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Repositories</span>
@@ -414,7 +425,7 @@ export function GitHubCalendarSection() {
           </div>
 
           {/* ─── The Contribution Matrix Card ─── */}
-          <div className="relative z-10 rounded-xl border border-border/50 bg-background/35 dark:bg-zinc-950/40 p-4 sm:p-5 backdrop-blur-md overflow-hidden shadow-inner">
+          <div className="relative z-10 rounded-xl border border-border/50 bg-background/50 dark:bg-zinc-950/60 p-3.5 sm:p-5 md:backdrop-blur-md overflow-hidden shadow-inner">
             {snakeMode ? (
               <GitHubSnake
                 contributions={rawContributions}
@@ -480,6 +491,29 @@ export function GitHubCalendarSection() {
                       fontSize={11}
                       renderBlock={(block, activity) => {
                         const isToday = activity.date === todayStr;
+
+                        if (!isPointerFine) {
+                          if (!isToday) return block;
+                          return React.cloneElement(block as any, {
+                            style: {
+                              ...(block as any).props?.style,
+                              stroke: "#34d399",
+                              strokeWidth: 2,
+                            },
+                          });
+                        }
+
+                        const blockStyle = {
+                          ...(block as any).props?.style,
+                          ...(isToday
+                            ? {
+                                stroke: "#34d399",
+                                strokeWidth: 2,
+                                filter: "drop-shadow(0 0 4px rgba(52, 211, 153, 0.8))",
+                              }
+                            : {}),
+                        };
+
                         return React.cloneElement(block as any, {
                           "data-tooltip-id": "github-tooltip",
                           "data-tooltip-content": JSON.stringify({
@@ -488,16 +522,7 @@ export function GitHubCalendarSection() {
                             level: activity.level,
                             isToday,
                           }),
-                          style: {
-                            ...(block as any).props?.style,
-                            ...(isToday
-                              ? {
-                                  stroke: "#34d399",
-                                  strokeWidth: 2,
-                                  filter: "drop-shadow(0 0 4px rgba(52, 211, 153, 0.8))",
-                                }
-                              : {}),
-                          },
+                          style: blockStyle,
                         });
                       }}
                       theme={calendarTheme}
@@ -530,75 +555,77 @@ export function GitHubCalendarSection() {
             )}
           </div>
 
-          {/* ─── Ultra-Modern Frosted Glass Tooltip ─── */}
-          <ReactTooltip
-            id="github-tooltip"
-            place="top"
-            offset={8}
-            delayShow={30}
-            delayHide={50}
-            className="!bg-popover/95 !backdrop-blur-2xl !border !border-border/80 !rounded-xl !p-3 !shadow-2xl !z-50 !opacity-100"
-            render={({ content }) => {
-              if (!content) return null;
-              if (typeof content !== "string") return <span>{content}</span>;
-              try {
-                const data = JSON.parse(content);
-                const isToday = data.isToday || data.date === todayStr;
-                const dateObj = new Date(data.date + "T00:00:00");
-                const formattedDate = dateObj.toLocaleDateString("en-US", {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                });
+          {/* ─── Ultra-Modern Frosted Glass Tooltip (Desktop with fine pointer only) ─── */}
+          {isPointerFine && (
+            <ReactTooltip
+              id="github-tooltip"
+              place="top"
+              offset={8}
+              delayShow={30}
+              delayHide={50}
+              className="!bg-popover/95 !backdrop-blur-2xl !border !border-border/80 !rounded-xl !p-3 !shadow-2xl !z-50 !opacity-100"
+              render={({ content }) => {
+                if (!content) return null;
+                if (typeof content !== "string") return <span>{content}</span>;
+                try {
+                  const data = JSON.parse(content);
+                  const isToday = data.isToday || data.date === todayStr;
+                  const dateObj = new Date(data.date + "T00:00:00");
+                  const formattedDate = dateObj.toLocaleDateString("en-US", {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  });
 
-                const levelColors = [
-                  "bg-muted-foreground/30",
-                  "bg-emerald-700",
-                  "bg-emerald-600",
-                  "bg-emerald-500",
-                  "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]",
-                ];
+                  const levelColors = [
+                    "bg-muted-foreground/30",
+                    "bg-emerald-700",
+                    "bg-emerald-600",
+                    "bg-emerald-500",
+                    "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]",
+                  ];
 
-                const levelColor = levelColors[data.level] || levelColors[0];
+                  const levelColor = levelColors[data.level] || levelColors[0];
 
-                return (
-                  <div className="flex flex-col gap-1.5 min-w-[165px] text-foreground">
-                    <div className="flex items-center justify-between gap-3 border-b border-border/50 pb-1.5">
-                      <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
-                        {formattedDate}
-                        {isToday && (
-                          <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                            Today
-                          </span>
-                        )}
-                      </span>
-                      <span className={cn("h-2 w-2 rounded-full", levelColor)} />
+                  return (
+                    <div className="flex flex-col gap-1.5 min-w-[165px] text-foreground">
+                      <div className="flex items-center justify-between gap-3 border-b border-border/50 pb-1.5">
+                        <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+                          {formattedDate}
+                          {isToday && (
+                            <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                              Today
+                            </span>
+                          )}
+                        </span>
+                        <span className={cn("h-2 w-2 rounded-full", levelColor)} />
+                      </div>
+                      <div className="flex items-baseline gap-1.5 pt-0.5">
+                        <span className="text-xl font-extrabold text-foreground leading-none">
+                          {data.count}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {data.count === 1 ? "contribution" : "contributions"}
+                        </span>
+                      </div>
+                      <div className="text-[10px] font-medium tracking-wide text-emerald-500">
+                        {data.count === 0
+                          ? "No commits recorded"
+                          : data.count >= 15
+                          ? "🔥 Exceptional output"
+                          : data.count >= 8
+                          ? "⚡ High activity"
+                          : "✨ Steady progress"}
+                      </div>
                     </div>
-                    <div className="flex items-baseline gap-1.5 pt-0.5">
-                      <span className="text-xl font-extrabold text-foreground leading-none">
-                        {data.count}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {data.count === 1 ? "contribution" : "contributions"}
-                      </span>
-                    </div>
-                    <div className="text-[10px] font-medium tracking-wide text-emerald-500">
-                      {data.count === 0
-                        ? "No commits recorded"
-                        : data.count >= 15
-                        ? "🔥 Exceptional output"
-                        : data.count >= 8
-                        ? "⚡ High activity"
-                        : "✨ Steady progress"}
-                    </div>
-                  </div>
-                );
-              } catch {
-                return <span>{content}</span>;
-              }
-            }}
-          />
+                  );
+                } catch {
+                  return <span>{content}</span>;
+                }
+              }}
+            />
+          )}
         </div>
       </BlurFade>
     </div>

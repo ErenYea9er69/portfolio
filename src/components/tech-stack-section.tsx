@@ -44,9 +44,10 @@ export function TechStackSection() {
 
   return (
     <div className="relative flex min-h-0 flex-col gap-y-4">
-      {/* Subtle neutral ambient backlight clipped inside */}
+      {/* Subtle neutral ambient backlight clipped inside (Desktop Only) */}
       <div
-        className="pointer-events-none absolute inset-x-0 -top-12 h-40 blur-3xl opacity-15 dark:opacity-10 transition-opacity duration-500 -z-10 rounded-full bg-muted-foreground/10"
+        aria-hidden
+        className="hidden md:block pointer-events-none absolute inset-x-0 -top-12 h-40 blur-3xl opacity-15 dark:opacity-10 transition-opacity duration-500 -z-10 rounded-full bg-muted-foreground/10"
       />
 
       {/* Header section */}
@@ -69,7 +70,7 @@ export function TechStackSection() {
         <div
           role="tablist"
           aria-label="Filter tech stack by category"
-          className="flex items-center gap-1.5 p-1 rounded-2xl bg-muted/40 dark:bg-muted/20 border border-border/40 backdrop-blur-md overflow-x-auto no-scrollbar max-w-full w-full sm:w-fit"
+          className="flex items-center gap-1.5 p-1 rounded-2xl bg-muted/60 dark:bg-muted/30 md:bg-muted/40 md:dark:bg-muted/20 border border-border/40 md:backdrop-blur-md overflow-x-auto no-scrollbar max-w-full w-full sm:w-fit"
         >
           {CATEGORIES.map((cat) => {
             const isActive = activeCategory === cat.value;
@@ -91,7 +92,7 @@ export function TechStackSection() {
                   <motion.div
                     layoutId="active-tech-pill"
                     transition={{ type: "spring", stiffness: 450, damping: 35 }}
-                    className="absolute inset-0 rounded-xl bg-background/90 dark:bg-card/95 border border-border/70 shadow-sm backdrop-blur-lg"
+                    className="absolute inset-0 rounded-xl bg-background/95 dark:bg-card/95 border border-border/70 shadow-sm md:backdrop-blur-lg"
                   />
                 )}
                 <span className="relative z-10">{cat.label}</span>
@@ -160,7 +161,7 @@ function SkillPill({
       onMouseLeave={onMouseLeave}
       className={cn(
         "group relative inline-flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-200 select-none cursor-default",
-        "bg-card/75 dark:bg-zinc-900/65 backdrop-blur-md",
+        "bg-card/90 dark:bg-zinc-900/85 md:bg-card/75 md:dark:bg-zinc-900/65 md:backdrop-blur-md",
         "border border-border/70 dark:border-white/10",
         "hover:border-foreground/25 hover:bg-card dark:hover:bg-zinc-800/80 hover:-translate-y-0.5 hover:shadow-xs",
         isHovered ? "z-20 border-foreground/30 shadow-xs" : "z-10"

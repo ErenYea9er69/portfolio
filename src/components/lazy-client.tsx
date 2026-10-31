@@ -45,7 +45,7 @@ export function GitHubCalendarSection() {
           observer.disconnect();
         }
       },
-      { rootMargin: "300px" }
+      { rootMargin: "600px" }
     );
 
     observer.observe(el);

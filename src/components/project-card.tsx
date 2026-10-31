@@ -61,7 +61,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
       className={cn(
         "group/card relative flex flex-col justify-between overflow-hidden rounded-2xl transition-all duration-300",
         // Calm, premium liquid glass surface
-        "bg-card/75 dark:bg-zinc-950/70 backdrop-blur-xl",
+        "bg-card/95 dark:bg-zinc-950/90 md:bg-card/75 md:dark:bg-zinc-950/70 md:backdrop-blur-xl",
         "border border-border/70 dark:border-white/[0.08]",
         "shadow-xs hover:shadow-md",
         "hover:-translate-y-1 hover:border-foreground/20"
@@ -99,18 +99,18 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
 
         {/* Category & Status Overlay Floating Pills (Quiet, Calm) */}
         <div className="absolute top-2.5 sm:top-3 inset-x-2.5 sm:inset-x-3.5 flex items-center justify-between pointer-events-none z-10">
-          <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium tracking-wider uppercase bg-background/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
+          <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium tracking-wider uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
             <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
             {project.category || "Project"}
           </span>
 
           {websiteLink ? (
-            <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border/60 text-foreground shadow-xs">
+            <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-foreground shadow-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
               Live Demo
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
+            <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
               Source Only
             </span>
