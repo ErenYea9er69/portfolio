@@ -8,6 +8,7 @@ import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { JsonLd } from "@/components/json-ld";
 import { PageBackground } from "@/components/page-background";
+import { CursorFx } from "@/components/cursor-fx";
 import { DomainGuardedAnalytics } from "@/components/domain-guarded-analytics";
 import { CommandPalette, BackToTop, ScrollProgress } from "@/components/lazy-client";
 
@@ -130,11 +131,12 @@ export default function RootLayout({
           <JsonLd />
           <ScrollProgress />
           <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
+            attribute="data-theme"
+            defaultTheme="dark"
+            enableSystem={false}
           >
               <TooltipProvider delayDuration={0}>
+                <CursorFx />
                 {children}
                 <Navbar />
                 <CommandPalette />

@@ -2,6 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Self-Hosted Variable & OFL Fonts ─── */
+@font-face {
+  font-family: 'Pixelify Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/pixelify-sans-latin-3cf4d7ea.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Oxanium';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/oxanium-latin-f874cdc5.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/eb-garamond-latin-ef73a8c5.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url('/fonts/cormorant-garamond-latin-c24a45a1.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-latin-0a7197f9.woff2') format('woff2');
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
@@ -9,395 +50,504 @@
 }
 
 @layer base {
-    :root {
-      --background: 0 0% 98.43%;
-      --foreground: 210 11.1% 3.53%;
+  /* ─── Light Mode ─── */
+  :root,
+  [data-theme="light"] {
+    --background: 0 0% 98.43%;
+    --foreground: 210 11.1% 3.53%;
 
-      --card: 0 0% 100%;
-      --card-foreground: 210 11.1% 3.53%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 11.1% 3.53%;
 
-      --popover: 0 0% 100%;
-      --popover-foreground: 210 11.1% 3.53%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 11.1% 3.53%;
 
-      --primary: 0 0% 9%;
-      --primary-foreground: 0 0% 98%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
 
-      --secondary: 0 0% 95%;
-      --secondary-foreground: 0 0% 9%;
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 0 0% 9%;
 
-      --muted: 0 0% 95%;
-      --muted-foreground: 0 0% 45.1%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 45.1%;
 
-      --accent: 0 0% 95%;
+    --accent: 0 0% 95%;
     --accent-foreground: 0 0% 9%;
 
-      --destructive: 0 84.2% 60.2%;
-      --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-      --border: 0 0% 89.8%;
-      --input: 0 0% 89.8%;
-      --ring: 0 0% 3.9%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --radius: 0.5rem;
 
-      --radius: 0.5rem;
+    --color-1: 0 100% 63%;
+    --color-2: 270 100% 63%;
+    --color-3: 210 100% 63%;
+    --color-4: 195 100% 63%;
+    --color-5: 90 100% 63%;
 
-      --color-1: 0 100% 63%;
-
-      --color-2: 270 100% 63%;
-
-      --color-3: 210 100% 63%;
-
-      --color-4: 195 100% 63%;
-
-      --color-5: 90 100% 63%;
-
-      --ghibli-element-fill: 210 11.1% 85%;
-      --ghibli-element-opacity: 0.6;
-
-      /* Atmospheric background tokens (Light Mode) */
-      --ghibli-cloud-core: 215 35% 78%;
-      --cloud-opacity-core: 0.55;
-      --cloud-opacity-mid: 0.22;
-      --spirit-glow-core: 210 30% 75% / 0.5;
-      --spirit-glow-mid: 220 20% 60% / 0.2;
-      --spirit-body-bright: 210 15% 85%;
-      --spirit-body-dim: 220 10% 60%;
-      --spirit-eye: 0 0% 10%;
-    }
-
-    .dark {
-      --background: 210 11.1% 3.53%;
-      --foreground: 0 0% 98%;
-
-      --card: 210 11.1% 3.53%;
-      --card-foreground: 0 0% 98%;
-
-      --popover: 210 11.1% 3.53%;
-      --popover-foreground: 0 0% 98%;
-
-      --primary: 0 0% 98%;
-      --primary-foreground: 0 0% 9%;
-
-      --secondary: 0 0% 14.9%;
-      --secondary-foreground: 0 0% 98%;
-
-      --muted: 0 0% 14.9%;
-      --muted-foreground: 0 0% 63.9%;
-
-      --accent: 0 0% 14.9%;
-      --accent-foreground: 0 0% 98%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 0 0% 98%;
-
-      --border: 0 0% 14.9%;
-      --input: 0 0% 14.9%;
-      --ring: 0 0% 83.1%;
-      --color-1: 0 100% 63%;
-      --color-2: 270 100% 63%;
-      --color-3: 210 100% 63%;
-      --color-4: 195 100% 63%;
-      --color-5: 90 100% 63%;
-
-      --ghibli-element-fill: 0 0% 100%;
-      --ghibli-element-opacity: 0.9;
-
-      /* Atmospheric background tokens (Dark Mode) */
-      --ghibli-cloud-core: 220 15% 60%;
-      --cloud-opacity-core: 0.35;
-      --cloud-opacity-mid: 0.12;
-      --spirit-glow-core: 210 30% 75% / 0.5;
-      --spirit-glow-mid: 220 20% 60% / 0.2;
-      --spirit-body-bright: 210 15% 85%;
-      --spirit-body-dim: 220 10% 60%;
-      --spirit-eye: 0 0% 10%;
-    }
+    --ghibli-element-fill: 210 11.1% 85%;
+    --ghibli-element-opacity: 0.6;
+    --ghibli-cloud-core: 215 35% 78%;
+    --cloud-opacity-core: 0.55;
+    --cloud-opacity-mid: 0.22;
   }
 
-  @layer base {
-    * {
-      @apply border-border;
-    }
-    html {
-      scrollbar-width: thin;
-      scrollbar-color: hsl(var(--muted-foreground) / 0.25) transparent;
-    }
-    body {
-      @apply bg-background text-foreground;
-      overflow-x: clip;
-    }
+  /* ─── Default Dark Mode ─── */
+  .dark,
+  [data-theme="dark"] {
+    --background: 210 11.1% 3.53%;
+    --foreground: 0 0% 98%;
 
-    /* Custom modern themed scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
+    --card: 210 11.1% 3.53%;
+    --card-foreground: 0 0% 98%;
 
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
+    --popover: 210 11.1% 3.53%;
+    --popover-foreground: 0 0% 98%;
 
-    ::-webkit-scrollbar-thumb {
-      background: hsl(var(--muted-foreground) / 0.25);
-      border-radius: 9999px;
-      border: 2px solid transparent;
-      background-clip: padding-box;
-      transition: background-color 0.2s ease;
-    }
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
 
-    ::-webkit-scrollbar-thumb:hover {
-      background: hsl(var(--muted-foreground) / 0.45);
-      background-clip: padding-box;
-    }
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
 
-    ::-webkit-scrollbar-thumb:active {
-      background: hsl(var(--muted-foreground) / 0.65);
-      background-clip: padding-box;
-    }
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
 
-    ::-webkit-scrollbar-corner {
-      background: transparent;
-    }
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
 
-    ::-webkit-scrollbar-button {
-      display: none;
-      width: 0;
-      height: 0;
-    }
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --radius: 0.5rem;
+
+    --ghibli-element-fill: 0 0% 100%;
+    --ghibli-element-opacity: 0.9;
+    --ghibli-cloud-core: 220 15% 60%;
+    --cloud-opacity-core: 0.35;
+    --cloud-opacity-mid: 0.12;
   }
 
-  /* Utility to hide scrollbar while preserving scroll functionality */
-  .scrollbar-none {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-none::-webkit-scrollbar {
-    display: none;
+  /* ─── Theme 1: Old Japanese Theme (Ronin / Katana / Sumi-e) ─── */
+  [data-theme="japanese"] {
+    --background: 25 15% 5%;          /* #0e0c0b - Deep Sumi-e lacquer black */
+    --foreground: 40 28% 90%;         /* #ebe5d8 - Aged washi parchment */
+
+    --card: 25 14% 8%;               /* #181412 - Darkened cedar panel */
+    --card-foreground: 40 28% 90%;
+
+    --popover: 25 14% 8%;
+    --popover-foreground: 40 28% 90%;
+
+    --primary: 6 72% 48%;            /* #d0342c - Cinnabar vermilion */
+    --primary-foreground: 40 28% 98%;
+
+    --secondary: 43 55% 22%;         /* Antique gold leaf bronze */
+    --secondary-foreground: 43 75% 82%;
+
+    --muted: 25 12% 14%;
+    --muted-foreground: 35 18% 62%;  /* Weathered ink grey */
+
+    --accent: 43 68% 52%;            /* #d4af37 - Polished gold tsuba */
+    --accent-foreground: 25 15% 5%;
+
+    --destructive: 6 82% 42%;
+    --destructive-foreground: 40 28% 98%;
+
+    --border: 43 45% 24%;            /* Weathered gold rim */
+    --input: 25 14% 16%;
+    --ring: 43 68% 52%;
+    --radius: 0.25rem;
   }
 
-  /* GitHub Contributions Calendar responsive scaling & scrollbar elimination */
-  .github-calendar-wrapper {
-    position: relative;
-    width: 100%;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
+  /* ─── Theme 2: Minecraft Theme (Voxel / Bedrock / Redstone) ─── */
+  [data-theme="minecraft"] {
+    --background: 0 0% 8%;           /* #141414 - Bedrock dark */
+    --foreground: 0 0% 96%;          /* Crisp 8-bit text */
+
+    --card: 0 0% 14%;                /* #242424 - Cobblestone grey */
+    --card-foreground: 0 0% 96%;
+
+    --popover: 0 0% 14%;
+    --popover-foreground: 0 0% 96%;
+
+    --primary: 179 82% 61%;          /* #4deeea - Diamond blue */
+    --primary-foreground: 0 0% 5%;
+
+    --secondary: 28 45% 32%;         /* #754f2a - Oak wood planks */
+    --secondary-foreground: 0 0% 96%;
+
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 68%;    /* Gravel grey */
+
+    --accent: 0 82% 52%;             /* #e72424 - Redstone pulse */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 82% 52%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 28%;              /* Stepped 8-bit pixel border */
+    --input: 0 0% 20%;
+    --ring: 179 82% 61%;
+    --radius: 0px;                   /* Strictly 0px radius for authentic voxel feel */
   }
 
-  .github-calendar-wrapper::-webkit-scrollbar {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
+  /* ─── Theme 3: Electric 100kV x Cyberpunk (NO blue, NO purple!) ─── */
+  [data-theme="cyberpunk"] {
+    --background: 60 10% 4%;         /* #0b0b08 - Carbon graphite */
+    --foreground: 60 20% 96%;        /* #fafbf5 - Stark tungsten white */
+
+    --card: 60 8% 8%;                /* #151611 - Industrial junction box */
+    --card-foreground: 60 20% 96%;
+
+    --popover: 60 8% 8%;
+    --popover-foreground: 60 20% 96%;
+
+    --primary: 54 100% 50%;          /* #ffe600 - High-voltage hazard electric yellow */
+    --primary-foreground: 60 10% 4%;
+
+    --secondary: 28 100% 50%;        /* #ff7700 - Hazard caution orange */
+    --secondary-foreground: 60 10% 4%;
+
+    --muted: 60 6% 15%;              /* Conduit dark */
+    --muted-foreground: 48 35% 68%;  /* Amber data label */
+
+    --accent: 110 100% 54%;          /* #39ff14 - Radioactive acid green */
+    --accent-foreground: 60 10% 4%;
+
+    --destructive: 15 100% 50%;
+    --destructive-foreground: 60 20% 96%;
+
+    --border: 54 100% 50%;           /* Electric yellow wire frame */
+    --input: 60 8% 14%;
+    --ring: 54 100% 50%;
+    --radius: 0.125rem;              /* Sharp industrial edge */
   }
 
+  /* ─── Theme 4: Expedition 33 (Belle Epoque / Midnight / Petals) ─── */
+  [data-theme="e33"] {
+    --background: 230 30% 4%;        /* #07080d - Midnight sky */
+    --foreground: 43 55% 85%;        /* #d9d3c3 - Velvet cream */
+
+    --card: 230 25% 7%;              /* #0d0f16 - Gilded salon */
+    --card-foreground: 43 55% 85%;
+
+    --popover: 230 25% 7%;
+    --popover-foreground: 43 55% 85%;
+
+    --primary: 3 68% 55%;            /* #d9453f - Crimson rose petal */
+    --primary-foreground: 43 55% 98%;
+
+    --secondary: 43 45% 42%;         /* Antique gold leaf */
+    --secondary-foreground: 43 55% 95%;
+
+    --muted: 230 15% 15%;
+    --muted-foreground: 230 10% 65%;
+
+    --accent: 45 68% 73%;            /* #e8d08a - Gold filigree */
+    --accent-foreground: 230 30% 4%;
+
+    --destructive: 3 68% 55%;
+    --destructive-foreground: 43 55% 98%;
+
+    --border: 43 45% 45%;
+    --input: 230 20% 12%;
+    --ring: 45 68% 73%;
+    --radius: 0.5rem;
+  }
+
+  /* ─── Theme 5: Ember & Ash (Warm Noir / Reticle) ─── */
+  [data-theme="ember"] {
+    --background: 22 25% 7%;         /* #17120f - Hearth noir */
+    --foreground: 34 30% 78%;        /* #d8cbb8 - Hearth ash */
+
+    --card: 24 30% 4%;               /* #0f0b09 - Soot charcoal */
+    --card-foreground: 34 30% 78%;
+
+    --popover: 24 30% 4%;
+    --popover-foreground: 34 30% 78%;
+
+    --primary: 12 55% 49%;           /* #c2553a - Glowing ember rust */
+    --primary-foreground: 34 30% 98%;
+
+    --secondary: 24 21% 24%;         /* #4a3a30 - Forged iron */
+    --secondary-foreground: 34 30% 88%;
+
+    --muted: 22 18% 13%;
+    --muted-foreground: 28 15% 55%;
+
+    --accent: 32 68% 62%;            /* #e0a45c - Warm gold reticle */
+    --accent-foreground: 22 25% 7%;
+
+    --destructive: 6 55% 45%;
+    --destructive-foreground: 34 30% 98%;
+
+    --border: 24 21% 24%;
+    --input: 24 25% 10%;
+    --ring: 32 68% 62%;
+    --radius: 0.375rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.25) transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    overflow-x: clip;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  /* ─── Theme-Specific Typography & Surfaces ─── */
+  [data-theme="japanese"] {
+    font-family: 'EB Garamond', Georgia, serif;
+    letter-spacing: 0.015em;
+  }
+  [data-theme="japanese"] h1,
+  [data-theme="japanese"] h2,
+  [data-theme="japanese"] h3,
+  [data-theme="japanese"] h4 {
+    font-family: 'Cormorant Garamond', 'EB Garamond', serif !important;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  [data-theme="japanese"] .card,
+  [data-theme="japanese"] [data-slot="card"] {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(212, 175, 55, 0.15);
+  }
+
+  [data-theme="minecraft"] {
+    font-family: 'Pixelify Sans', monospace !important;
+  }
+  [data-theme="minecraft"] * {
+    border-radius: 0px !important;
+  }
+  [data-theme="minecraft"] h1,
+  [data-theme="minecraft"] h2,
+  [data-theme="minecraft"] h3,
+  [data-theme="minecraft"] h4,
+  [data-theme="minecraft"] button,
+  [data-theme="minecraft"] a {
+    font-family: 'Pixelify Sans', monospace !important;
+    letter-spacing: 0.03em;
+  }
+  [data-theme="minecraft"] button:active,
+  [data-theme="minecraft"] .btn:active {
+    transform: translate(2px, 2px) !important;
+  }
+
+  [data-theme="cyberpunk"] {
+    font-family: 'Oxanium', 'JetBrains Mono', monospace;
+  }
+  [data-theme="cyberpunk"] h1,
+  [data-theme="cyberpunk"] h2,
+  [data-theme="cyberpunk"] h3,
+  [data-theme="cyberpunk"] h4 {
+    font-family: 'Oxanium', monospace !important;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  [data-theme="cyberpunk"] .card,
+  [data-theme="cyberpunk"] [data-slot="card"] {
+    border: 1px solid rgba(255, 230, 0, 0.4) !important;
+    box-shadow: 0 0 14px rgba(255, 230, 0, 0.12), inset 0 0 8px rgba(57, 255, 20, 0.04);
+  }
+
+  [data-theme="ember"] {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  [data-theme="ember"] h1,
+  [data-theme="ember"] h2,
+  [data-theme="ember"] h3,
+  [data-theme="ember"] h4 {
+    font-family: 'JetBrains Mono', monospace !important;
+    letter-spacing: -0.02em;
+  }
+
+  [data-theme="e33"] {
+    font-family: 'EB Garamond', Georgia, serif;
+  }
+  [data-theme="e33"] h1,
+  [data-theme="e33"] h2,
+  [data-theme="e33"] h3,
+  [data-theme="e33"] h4 {
+    font-family: 'Cormorant Garamond', serif !important;
+    font-weight: 700;
+  }
+
+  /* ─── Custom Hardware-Themed Scrollbar ─── */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.25);
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.45);
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: hsl(var(--muted-foreground) / 0.65);
+    background-clip: padding-box;
+  }
+}
+
+/* ─── Cursor FX Safe Hide (Fine pointer only, never hide on touch) ─── */
+@media (hover: hover) and (pointer: fine) {
+  html.cursor-fx,
+  html.cursor-fx * {
+    cursor: none !important;
+  }
+}
+
+/* ─── Selection Colors per Theme ─── */
+[data-theme="japanese"] ::selection {
+  background: #c93a2b;
+  color: #ebe5d8;
+}
+[data-theme="minecraft"] ::selection {
+  background: #4deeea;
+  color: #141414;
+}
+[data-theme="cyberpunk"] ::selection {
+  background: #ffe600;
+  color: #0b0b08;
+}
+[data-theme="e33"] ::selection {
+  background: #d9453f;
+  color: #ffffff;
+}
+[data-theme="ember"] ::selection {
+  background: #c2553a;
+  color: #ffffff;
+}
+
+/* ─── GitHub Contributions Calendar ─── */
+.github-calendar-wrapper {
+  position: relative;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.github-calendar-wrapper::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.github-calendar-wrapper .react-activity-calendar {
+  width: auto !important;
+  min-width: 680px !important;
+}
+
+@media (min-width: 768px) {
   .github-calendar-wrapper .react-activity-calendar {
-    width: auto !important;
-    min-width: 680px !important;
+    width: 100% !important;
+    min-width: 0 !important;
   }
+}
 
-  @media (min-width: 768px) {
-    .github-calendar-wrapper .react-activity-calendar {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-  }
+.github-calendar-wrapper .react-activity-calendar__scroll-container {
+  width: auto !important;
+  min-width: 680px !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
 
+@media (min-width: 768px) {
   .github-calendar-wrapper .react-activity-calendar__scroll-container {
-    width: auto !important;
-    min-width: 680px !important;
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
+    width: 100% !important;
+    min-width: 0 !important;
   }
+}
 
-  @media (min-width: 768px) {
-    .github-calendar-wrapper .react-activity-calendar__scroll-container {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
+.github-calendar-wrapper .react-activity-calendar__calendar rect {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.22s ease, opacity 0.2s ease;
+  transform-origin: center;
+  transform-box: fill-box;
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .github-calendar-wrapper .react-activity-calendar__calendar rect:hover {
+    transform: scale(1.48) !important;
+    filter: brightness(1.35) drop-shadow(0 0 10px rgba(52, 211, 153, 0.95)) !important;
+    stroke: rgba(255, 255, 255, 0.95) !important;
+    stroke-width: 1px !important;
+    z-index: 50;
   }
+}
 
-  .github-calendar-wrapper .react-activity-calendar__scroll-container::-webkit-scrollbar {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-  }
+.github-calendar-wrapper .react-activity-calendar text {
+  fill: hsl(var(--muted-foreground)) !important;
+  font-size: 10px !important;
+  font-family: inherit !important;
+  font-weight: 500 !important;
+  opacity: 0.75;
+}
 
-  .github-calendar-wrapper .react-activity-calendar__calendar {
-    width: auto !important;
-    min-width: 680px !important;
-    height: auto !important;
-    overflow: visible !important;
-  }
-
-  @media (min-width: 768px) {
-    .github-calendar-wrapper .react-activity-calendar__calendar {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-  }
-
-  /* Interactive Matrix Cells with 3D Pop & Neon Bloom */
-  .github-calendar-wrapper .react-activity-calendar__calendar rect {
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 0.22s ease,
-                opacity 0.2s ease,
-                stroke 0.2s ease;
-    transform-origin: center;
-    transform-box: fill-box;
-    cursor: pointer;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .github-calendar-wrapper .react-activity-calendar__calendar rect:hover {
-      transform: scale(1.48) !important;
-      filter: brightness(1.35) drop-shadow(0 0 10px rgba(52, 211, 153, 0.95)) !important;
-      stroke: rgba(255, 255, 255, 0.95) !important;
-      stroke-width: 1px !important;
-      z-index: 50;
-    }
-  }
-
-  .github-calendar-wrapper .react-activity-calendar text {
-    fill: hsl(var(--muted-foreground)) !important;
-    font-size: 10px !important;
-    font-family: inherit !important;
-    font-weight: 500 !important;
-    opacity: 0.75;
-  }
-
-  /* GitHub Stats 4-column responsive grid */
+.github-stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 0.75rem !important;
+}
+@media (max-width: 640px) {
   .github-stats-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 0.75rem !important;
-  }
-  @media (max-width: 640px) {
-    .github-stats-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 0.5rem !important;
-    }
-  }
-
-  h3 code {
-    @apply !text-lg md:!text-xl;
-  }
-  
-  pre {
-    @apply !px-0 rounded-lg overflow-x-auto py-4
-  }
-   
-  pre [data-line] {
-    @apply px-4
-  }
-
-  code {
-    @apply text-sm md:text-base !leading-loose;
-  }
-  
-  pre > code {
-    counter-reset: line;
-  }
-  
-  code[data-theme*=" "],
-  code[data-theme*=" "] span {
-    color: var(--shiki-light);
-    background-color: var(--shiki-light-bg);
-  }
-   
-  @media (prefers-color-scheme: dark) {
-    code[data-theme*=" "],
-    code[data-theme*=" "] span {
-      color: var(--shiki-dark);
-      background-color: var(--shiki-dark-bg);
-    }
-  }
-  
-  code[data-line-numbers] {
-    counter-reset: line;
-  }
-  
-  code[data-line-numbers] > [data-line]::before {
-    counter-increment: line;
-    content: counter(line);
-    @apply inline-block w-4 mr-4 text-right text-gray-500;
-  }
- 
-  code {
-    counter-reset: line;
-  }
- 
-  code > [data-line]::before {
-  counter-increment: line;
-  content: counter(line);
- 
-  /* Other styling */
-  display: inline-block;
-  width: 1rem;
-  margin-right: 2rem;
-  text-align: right;
-  color: gray;
-}
- 
-code[data-line-numbers-max-digits="2"] > [data-line]::before {
-  width: 2rem;
-}
- 
-code[data-line-numbers-max-digits="3"] > [data-line]::before {
-  width: 3rem;
-}
-
-@keyframes border-pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.5rem !important;
   }
 }
 
-.profile-pic {
-  border: 2px solid transparent;
-  animation: border-pulse 2s infinite;
-  transition: transform 0.3s ease;
-}
-
-.profile-pic:hover {
-  transform: scale(1.05);
-}
-
+/* ─── Profile Avatar Ring ─── */
 .profile-wrapper {
   position: relative;
   border-radius: 50%;
-  padding: 2px; 
+  padding: 2px;
 }
 
 .profile-wrapper::before {
   content: '';
   position: absolute;
-  inset: -2px; 
+  inset: -2px;
   border-radius: 50%;
   padding: 2px;
   background: linear-gradient(
     45deg,
     hsl(var(--muted-foreground)),
-    hsl(var(--foreground)) 45%,
-    hsl(var(--muted-foreground))
+    hsl(var(--primary)) 45%,
+    hsl(var(--accent))
   );
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   animation: rotate 8s linear infinite;
-}
-
-.profile-wrapper:hover::before {
-  animation: rotate 4s linear infinite;
 }
 
 @keyframes rotate {
@@ -407,119 +557,6 @@ code[data-line-numbers-max-digits="3"] > [data-line]::before {
   to {
     transform: rotate(360deg);
   }
-}
-
-.cloud-container {
-  position: relative;
-  isolation: isolate;
-}
-
-.mix-blend-overlay {
-  mix-blend-mode: overlay;
-  filter: contrast(1.2);
-}
-
-
-/* Marquee animations for testimonials */
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes marquee-reverse {
-  0% {
-    transform: translateX(-50%);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-/* Clean tweets - minimal CSS to avoid hiding everything */
-.clean-tweet time {
-  display: none !important;
-}
-
-/* Blog article - prevent overflow on mobile */
-.prose {
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-.prose h2,
-.prose h3 {
-  scroll-margin-top: 6rem;
-}
-
-.prose pre {
-  max-width: 100%;
-}
-
-/* Blog article images - clickable with hover effect */
-.prose img {
-  max-width: 100%;
-  cursor: zoom-in;
-  border-radius: 0.75rem;
-  border: 1px solid hsl(var(--border) / 0.5);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.prose img:hover {
-  transform: scale(1.01);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-
-html,
-body {
-  scroll-behavior: smooth;
-}
-
-html {
-  overflow-x: clip;
-}
-
-/* ─── Skill badge hover glow ─── */
-@keyframes glow-pulse {
-  0%, 100% {
-    box-shadow: 0 0 4px var(--skill-color, transparent),
-                0 0 8px color-mix(in srgb, var(--skill-color, transparent) 30%, transparent);
-  }
-  50% {
-    box-shadow: 0 0 8px var(--skill-color, transparent),
-                0 0 16px color-mix(in srgb, var(--skill-color, transparent) 40%, transparent);
-  }
-}
-
-/* ─── Floating animation ─── */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
-/* ─── Social icon ring glow ─── */
-.social-icon-glow {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.social-icon-glow:hover {
-  transform: translateY(-3px) scale(1.08);
 }
 
 /* ─── Skill badge interactive hover ─── */
@@ -540,44 +577,6 @@ html {
   filter: drop-shadow(0 0 3px var(--skill-color));
 }
 
-/* ─── Card tilt effect base ─── */
-.card-tilt {
-  transition: transform 0.15s ease-out;
-  transform-style: preserve-3d;
-}
-
-/* ─── Section reveal ─── */
-@keyframes section-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ─── Ghibli twinkle star pure GPU animation ─── */
-@keyframes ghibli-twinkle {
-  0%, 100% {
-    opacity: 0.25;
-    transform: scale(0.9);
-  }
-  50% {
-    opacity: 0.95;
-    transform: scale(1.15);
-  }
-}
-
-.ghibli-twinkle-star {
-  animation-name: ghibli-twinkle;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  will-change: opacity, transform;
-}
-
 /* ─── Touch & no-scrollbar utilities ─── */
 .no-scrollbar::-webkit-scrollbar {
   display: none !important;
@@ -590,13 +589,15 @@ html {
   scrollbar-width: none !important;
 }
 
+/* ─── Accessible Reduced Motion Intentional Path ─── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .profile-wrapper::before {
+    animation: none !important;
   }
 }

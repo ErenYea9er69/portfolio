@@ -1,6 +1,7 @@
 "use client";
 
 import { ModeToggle } from "@/components/mode-toggle";
+import { SoundToggle } from "@/components/sound-toggle";
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -153,7 +154,7 @@ export default function Navbar() {
 
                   <div className="mx-1.5 h-4 w-px bg-border/60" />
 
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex items-center gap-1">
                     <Link
                       href="/cli"
                       className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/60"
@@ -161,12 +162,14 @@ export default function Navbar() {
                     >
                       <Terminal className="size-4" />
                     </Link>
+                    <SoundToggle />
                     <ModeToggle />
                   </div>
                 </div>
 
                 {/* Mobile controls */}
                 <div className="flex md:hidden items-center gap-1">
+                  <SoundToggle />
                   <ModeToggle />
                   <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -365,6 +368,10 @@ export default function Navbar() {
                     <p>CLI Mode</p>
                   </TooltipContent>
                 </Tooltip>
+              </DockIcon>
+
+              <DockIcon>
+                <SoundToggle />
               </DockIcon>
 
               <DockIcon>
