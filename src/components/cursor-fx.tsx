@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
@@ -5,7 +6,7 @@ import { useTheme } from "next-themes";
 import { sound } from "@/lib/sound-fx";
 
 interface Particle {
-  type: "spark" | "ink" | "voxel" | "lightning" | "petal";
+  type: "spark" | "ink" | "voxel" | "petal";
   x: number;
   y: number;
   vx: number;
@@ -18,7 +19,6 @@ interface Particle {
   life: number;
   maxLife: number;
   gravity?: number;
-  extra?: unknown;
 }
 
 interface SlashEffect {
@@ -26,7 +26,7 @@ interface SlashEffect {
   y: number;
   angle: number;
   length: number;
-  progress: number; // 0 to 1
+  progress: number;
   color: string;
   glowColor: string;
 }
@@ -103,10 +103,9 @@ export function CursorFx() {
 
   // Spawn Katana Slash Click Effect
   const spawnKatanaSlash = useCallback((x: number, y: number) => {
-    // Random angle between -25deg and -50deg or 25deg and 50deg
     const sign = Math.random() > 0.5 ? 1 : -1;
     const angle = (Math.PI / 4 + (Math.random() * 0.2 - 0.1)) * sign;
-    const length = 220 + Math.random() * 100;
+    const length = 240 + Math.random() * 120;
 
     slashes.current.push({
       x,
@@ -115,7 +114,7 @@ export function CursorFx() {
       length,
       progress: 0,
       color: "#ffffff",
-      glowColor: "#c93a2b", // Vermilion crimson
+      glowColor: "#c93a2b",
     });
 
     // Splatter ink & crimson droplets along the cut
@@ -127,7 +126,6 @@ export function CursorFx() {
       const offset = (Math.random() - 0.5) * length * 0.9;
       const originX = x + cos * offset;
       const originY = y + sin * offset;
-      // Perpendicular splatter
       const perpAngle = angle + (Math.PI / 2) * (Math.random() > 0.5 ? 1 : -1) + (Math.random() * 0.4 - 0.2);
       const speed = 70 + Math.random() * 200;
 
@@ -149,7 +147,6 @@ export function CursorFx() {
 
   // Spawn Minecraft Voxel Cube Burst
   const spawnMinecraftBurst = useCallback((x: number, y: number) => {
-    // Block colors: Stone, Oak Wood, Redstone, Diamond, Grass/Emerald
     const voxelColors = ["#737373", "#855b32", "#e72424", "#4deeea", "#38c02b", "#b0b0b0"];
     const count = 30;
 
@@ -161,8 +158,8 @@ export function CursorFx() {
         x,
         y,
         vx: Math.cos(ang) * spd,
-        vy: Math.sin(ang) * spd - 90, // Upward initial toss
-        size: 5 + Math.floor(Math.random() * 4) * 2, // 5, 7, 9, 11px stepped cubes
+        vy: Math.sin(ang) * spd - 90,
+        size: 5 + Math.floor(Math.random() * 4) * 2,
         color: voxelColors[Math.floor(Math.random() * voxelColors.length)],
         alpha: 1,
         rotation: Math.random() * Math.PI,
@@ -176,7 +173,6 @@ export function CursorFx() {
 
   // Spawn Cyberpunk High-Voltage Electric Arc Discharge (NO blue, NO purple!)
   const spawnElectricLightning = useCallback((x: number, y: number) => {
-    // Colors: Electric Yellow, Acid Green, Hazard Orange, Stark Tungsten White
     const arcColors = ["#ffe600", "#39ff14", "#ff7700", "#ffffff"];
     const boltCount = 6 + Math.floor(Math.random() * 4);
 
@@ -185,7 +181,7 @@ export function CursorFx() {
       const branches = 4 + Math.floor(Math.random() * 4);
       let curX = x;
       let curY = y;
-      const stepLen = 22 + Math.random() * 25;
+      const stepLen = 24 + Math.random() * 28;
       const pts: { x: number; y: number }[] = [{ x: curX, y: curY }];
 
       for (let s = 0; s < branches; s++) {
@@ -194,7 +190,6 @@ export function CursorFx() {
         curY += Math.sin(segAngle) * stepLen;
         pts.push({ x: curX, y: curY });
 
-        // Spawn high-voltage ionization sparks at arc knuckles
         if (Math.random() > 0.4) {
           particles.current.push({
             type: "spark",
@@ -218,28 +213,6 @@ export function CursorFx() {
         alpha: 1,
         life: 0,
         maxLife: 0.25 + Math.random() * 0.15,
-      });
-    }
-  }, []);
-
-  // Spawn Ember sparks
-  const spawnEmberBurst = useCallback((x: number, y: number) => {
-    const emberColors = ["#ff5722", "#ff9800", "#ffc107", "#f5ead6"];
-    for (let i = 0; i < 32; i++) {
-      const ang = Math.random() * Math.PI * 2;
-      const spd = 60 + Math.random() * 220;
-      particles.current.push({
-        type: "spark",
-        x,
-        y,
-        vx: Math.cos(ang) * spd,
-        vy: Math.sin(ang) * spd - 60,
-        size: 1.5 + Math.random() * 3.5,
-        color: emberColors[Math.floor(Math.random() * emberColors.length)],
-        alpha: 1,
-        life: 0,
-        maxLife: 0.7 + Math.random() * 0.5,
-        gravity: 120,
       });
     }
   }, []);
@@ -283,7 +256,6 @@ export function CursorFx() {
         return;
       }
 
-      // Play matching Web Audio synthesized acoustic feedback
       sound.playClickForTheme(activeTheme);
 
       if (reducedMotion) return;
@@ -294,19 +266,16 @@ export function CursorFx() {
         spawnMinecraftBurst(clientX, clientY);
       } else if (activeTheme === "cyberpunk") {
         spawnElectricLightning(clientX, clientY);
-      } else if (activeTheme === "ember") {
-        spawnEmberBurst(clientX, clientY);
       } else if (activeTheme === "e33") {
         spawnPetalBurst(clientX, clientY);
       } else {
-        // Standard clean ripple
-        spawnEmberBurst(clientX, clientY);
+        spawnElectricLightning(clientX, clientY);
       }
     };
 
     window.addEventListener("click", handleClick, { passive: true });
     return () => window.removeEventListener("click", handleClick);
-  }, [activeTheme, reducedMotion, spawnKatanaSlash, spawnMinecraftBurst, spawnElectricLightning, spawnEmberBurst, spawnPetalBurst]);
+  }, [activeTheme, reducedMotion, spawnKatanaSlash, spawnMinecraftBurst, spawnElectricLightning, spawnPetalBurst]);
 
   // Track Mouse Movement and hover states
   useEffect(() => {
@@ -332,7 +301,7 @@ export function CursorFx() {
       // Spawn trail particles sparingly
       trailCounter++;
       if (!reducedMotion && trailCounter % 3 === 0 && (Math.abs(dx) > 1 || Math.abs(dy) > 1)) {
-        if (activeTheme === "japanese" && particles.current.length < 80) {
+        if (activeTheme === "japanese" && particles.current.length < 70) {
           particles.current.push({
             type: "ink",
             x: x + (Math.random() - 0.5) * 4,
@@ -346,7 +315,7 @@ export function CursorFx() {
             maxLife: 0.45,
             gravity: 15,
           });
-        } else if (activeTheme === "cyberpunk" && particles.current.length < 80) {
+        } else if (activeTheme === "cyberpunk" && particles.current.length < 70) {
           particles.current.push({
             type: "spark",
             x: x + (Math.random() - 0.5) * 6,
@@ -359,20 +328,6 @@ export function CursorFx() {
             life: 0,
             maxLife: 0.35,
             gravity: 10,
-          });
-        } else if (activeTheme === "ember" && particles.current.length < 80) {
-          particles.current.push({
-            type: "spark",
-            x: x + (Math.random() - 0.5) * 4,
-            y: y + (Math.random() - 0.5) * 4,
-            vx: (Math.random() - 0.5) * 20,
-            vy: -15 - Math.random() * 30,
-            size: 1.6 + Math.random() * 2,
-            color: Math.random() > 0.5 ? "#c2553a" : "#e0a45c",
-            alpha: 0.85,
-            life: 0,
-            maxLife: 0.5,
-            gravity: -10,
           });
         }
       }
@@ -423,7 +378,7 @@ export function CursorFx() {
       // ─── 1. Draw Slashes (Katana Cut) ───
       for (let i = slashes.current.length - 1; i >= 0; i--) {
         const slash = slashes.current[i];
-        slash.progress += dt * 3.5; // Fast sword slice (~280ms)
+        slash.progress += dt * 3.5;
 
         if (slash.progress >= 1) {
           slashes.current.splice(i, 1);
@@ -448,7 +403,7 @@ export function CursorFx() {
 
         // Outer glow
         ctx.strokeStyle = slash.glowColor;
-        ctx.lineWidth = 9 * (1 - t * 0.7);
+        ctx.lineWidth = 10 * (1 - t * 0.7);
         ctx.lineCap = "round";
         ctx.globalAlpha = alpha * 0.75;
         ctx.beginPath();
@@ -465,7 +420,6 @@ export function CursorFx() {
         ctx.lineTo(curEndX, curEndY);
         ctx.stroke();
 
-        // High intensity cut flash in center
         if (t < 0.25) {
           ctx.fillStyle = "#ffffff";
           ctx.beginPath();
@@ -485,15 +439,15 @@ export function CursorFx() {
           continue;
         }
 
-        const alpha = (1 - bolt.life / bolt.maxLife);
+        const alpha = 1 - bolt.life / bolt.maxLife;
         ctx.save();
         ctx.globalCompositeOperation = "lighter";
         ctx.strokeStyle = bolt.color;
-        ctx.lineWidth = 2.5 * alpha;
+        ctx.lineWidth = 2.8 * alpha;
         ctx.lineCap = "round";
         ctx.lineJoin = "miter";
         ctx.shadowColor = bolt.color;
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 14;
         ctx.globalAlpha = alpha;
 
         ctx.beginPath();
@@ -503,7 +457,6 @@ export function CursorFx() {
         });
         ctx.stroke();
 
-        // Core white streak
         ctx.strokeStyle = "#ffffff";
         ctx.lineWidth = 1 * alpha;
         ctx.stroke();
@@ -524,7 +477,6 @@ export function CursorFx() {
         const lifeFrac = p.life / p.maxLife;
         const currentAlpha = p.alpha * (1 - lifeFrac);
 
-        // Update physics
         if (p.gravity) p.vy += p.gravity * dt;
         p.x += p.vx * dt;
         p.y += p.vy * dt;
@@ -539,28 +491,23 @@ export function CursorFx() {
         ctx.globalAlpha = Math.max(0, currentAlpha);
 
         if (p.type === "voxel") {
-          // Authentic Minecraft Block Voxel (drawn as isometric-accented 2D pixel square)
           ctx.translate(p.x, p.y);
           if (p.rotation !== undefined) ctx.rotate(p.rotation);
           const sz = p.size;
           ctx.fillStyle = p.color;
           ctx.fillRect(-sz / 2, -sz / 2, sz, sz);
-          // 8-bit black border edge
           ctx.strokeStyle = "rgba(0,0,0,0.6)";
           ctx.lineWidth = 1.5;
           ctx.strokeRect(-sz / 2, -sz / 2, sz, sz);
-          // Highlight edge on top-left
           ctx.fillStyle = "rgba(255,255,255,0.4)";
           ctx.fillRect(-sz / 2, -sz / 2, sz, 2);
           ctx.fillRect(-sz / 2, -sz / 2, 2, sz);
         } else if (p.type === "ink") {
-          // Japanese Sumi-e droplet (smooth organic circular splat)
           ctx.fillStyle = p.color;
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size * (1 - lifeFrac * 0.3), 0, Math.PI * 2);
           ctx.fill();
         } else if (p.type === "petal") {
-          // Delicate rose petal ellipse
           ctx.translate(p.x, p.y);
           if (p.rotation !== undefined) ctx.rotate(p.rotation);
           ctx.fillStyle = p.color;
@@ -568,7 +515,6 @@ export function CursorFx() {
           ctx.ellipse(0, 0, p.size * 0.5, p.size, 0, 0, Math.PI * 2);
           ctx.fill();
         } else {
-          // Spark (additive glowing point)
           ctx.globalCompositeOperation = "lighter";
           ctx.fillStyle = p.color;
           ctx.beginPath();
@@ -592,149 +538,125 @@ export function CursorFx() {
 
   return (
     <>
-      {/* Hardware-accelerated canvas for slashes, lightning, and physics particles */}
       <canvas
         ref={canvasRef}
         aria-hidden="true"
         className="fixed inset-0 pointer-events-none z-[9998]"
       />
 
-      {/* Custom DOM Cursor (only enabled when pointer is fine and hover is supported) */}
       {isPointerFine && (
         <div
           ref={cursorRef}
           aria-hidden="true"
-          className="fixed top-0 left-0 pointer-events-none z-[9999] will-change-transform -translate-x-1/2 -translate-y-1/2"
+          className="fixed top-0 left-0 pointer-events-none z-[9999] will-change-transform"
         >
+          {/* 🗡️ Japanese Katana Sword Cursor */}
           {activeTheme === "japanese" && (
-            <div className="relative flex items-center justify-center">
-              {/* Katana Tsuba (Sword Guard) with crosshair and kanji */}
-              <div
-                className={`relative flex items-center justify-center transition-all duration-200 ${
-                  isHoveringClickable ? "scale-125 rotate-45" : "scale-100 rotate-0"
+            <div className="relative -translate-x-[2px] -translate-y-[2px]">
+              <img
+                src={isHoveringClickable ? "/cursors/katana-hover.svg" : "/cursors/katana-sword.svg"}
+                alt=""
+                width={36}
+                height={36}
+                className={`transition-transform duration-150 drop-shadow-md ${
+                  isHoveringClickable ? "scale-115 rotate-[-5deg]" : "scale-100"
                 }`}
-              >
-                {/* Outer lacquer ring with sumi-e notches */}
-                <div className="size-8 rounded-full border-2 border-[#d4af37]/80 bg-[#120f0e]/60 backdrop-blur-xs flex items-center justify-center shadow-[0_0_10px_rgba(201,58,43,0.35)]">
-                  <div className="size-1.5 rounded-full bg-[#c93a2b] shadow-[0_0_6px_#c93a2b]" />
-                </div>
-                {/* Crosshair blade marks */}
-                <div className="absolute top-0 bottom-0 w-px bg-[#d4af37]/70" />
-                <div className="absolute left-0 right-0 h-px bg-[#d4af37]/70" />
-              </div>
+              />
               {isHoveringClickable && (
-                <div className="absolute left-6 -top-2 flex items-center gap-1 font-serif text-[11px] font-bold tracking-widest text-[#d4af37] bg-[#141210]/90 px-1.5 py-0.5 rounded border border-[#d4af37]/40 shadow-md whitespace-nowrap">
+                <div className="absolute left-8 top-1 flex items-center gap-1.5 font-serif text-[11px] font-bold tracking-widest text-[#d4af37] bg-[#141210]/95 px-2 py-0.5 rounded border border-[#d4af37]/50 shadow-md whitespace-nowrap">
                   <span>斬</span>
-                  {hoverLabel && <span className="text-[9px] text-[#ebe5d8]/80">{hoverLabel}</span>}
+                  {hoverLabel && <span className="text-[10px] text-[#ebe5d8]/80 font-sans">{hoverLabel}</span>}
                 </div>
               )}
             </div>
           )}
 
+          {/* ⛏️ Minecraft Diamond Sword / Pickaxe Cursor */}
           {activeTheme === "minecraft" && (
-            <div className="relative flex items-center justify-center select-none font-pixel">
-              {/* Authentic Minecraft 8-bit Crosshair / Pickaxe Reticle */}
-              <div
-                className={`transition-transform duration-100 ${
-                  isHoveringClickable ? "scale-125" : "scale-100"
+            <div className="relative -translate-x-[2px] -translate-y-[2px]">
+              <img
+                src={isHoveringClickable ? "/cursors/minecraft-pickaxe.svg" : "/cursors/minecraft-sword.svg"}
+                alt=""
+                width={32}
+                height={32}
+                className={`transition-transform duration-100 image-rendering-pixelated ${
+                  isHoveringClickable ? "scale-115" : "scale-100"
                 }`}
-              >
-                {/* 8-bit stepped crosshair: center hollow with 4 corner blocks */}
-                <svg width="24" height="24" viewBox="0 0 24 24" className="drop-shadow-[0_2px_0_rgba(0,0,0,0.8)]">
-                  {/* Top tick */}
-                  <rect x="10" y="2" width="4" height="6" fill="#ffffff" />
-                  <rect x="10" y="2" width="4" height="6" fill="none" stroke="#000000" strokeWidth="1" />
-                  {/* Bottom tick */}
-                  <rect x="10" y="16" width="4" height="6" fill="#ffffff" />
-                  <rect x="10" y="16" width="4" height="6" fill="none" stroke="#000000" strokeWidth="1" />
-                  {/* Left tick */}
-                  <rect x="2" y="10" width="6" height="4" fill="#ffffff" />
-                  <rect x="2" y="10" width="6" height="4" fill="none" stroke="#000000" strokeWidth="1" />
-                  {/* Right tick */}
-                  <rect x="16" y="10" width="6" height="4" fill="#ffffff" />
-                  <rect x="16" y="10" width="6" height="4" fill="none" stroke="#000000" strokeWidth="1" />
-                  {/* Center Dot if hovering */}
-                  {isHoveringClickable && (
-                    <rect x="10" y="10" width="4" height="4" fill="#4deeea" />
-                  )}
-                </svg>
-              </div>
+              />
               {isHoveringClickable && (
-                <div className="absolute left-6 -top-2 px-2 py-0.5 bg-[#100010] text-[#55ffff] border-2 border-[#2b0055] text-[10px] tracking-wider uppercase font-pixel shadow-[2px_2px_0_#000000] whitespace-nowrap">
+                <div className="absolute left-8 top-0 px-2 py-0.5 bg-[#100010] text-[#55ffff] border-2 border-[#2b0055] text-[10px] tracking-wider uppercase font-pixel shadow-[2px_2px_0_#000000] whitespace-nowrap">
                   ⛏ {hoverLabel || "Use"}
                 </div>
               )}
             </div>
           )}
 
+          {/* ⚡ 100kV Cyberpunk Industrial Pointer / Reticle (NO blue, NO purple!) */}
           {activeTheme === "cyberpunk" && (
-            <div className="relative flex items-center justify-center font-mono">
-              {/* Electric 100kV Reticle (Strictly NO blue, NO purple!) */}
-              <div
-                className={`relative flex items-center justify-center transition-all duration-150 ${
-                  isHoveringClickable ? "scale-130 rotate-90" : "scale-100 rotate-0"
-                }`}
-              >
-                {/* Diamond hazard brackets */}
-                <div className="size-7 border border-[#ffe600] bg-[#0a0b08]/80 flex items-center justify-center shadow-[0_0_12px_rgba(255,230,0,0.6)]">
-                  <div className="size-1.5 bg-[#39ff14] shadow-[0_0_8px_#39ff14]" />
+            <div className="relative">
+              {isHoveringClickable ? (
+                <div className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+                  <img
+                    src="/cursors/cyberpunk-crosshair.svg"
+                    alt=""
+                    width={32}
+                    height={32}
+                    className="scale-110 drop-shadow-[0_0_10px_rgba(255,230,0,0.8)] animate-pulse"
+                  />
+                  <div className="absolute left-8 -top-1 flex items-center gap-1.5 text-[10px] font-mono font-bold text-[#ffe600] bg-[#090a07] px-2 py-0.5 border border-[#ffe600] shadow-[0_0_10px_rgba(255,230,0,0.5)] whitespace-nowrap uppercase tracking-widest">
+                    <span className="text-[#39ff14]">⚡</span>
+                    <span>100kV</span>
+                    {hoverLabel && <span className="text-white/80 font-normal">{hoverLabel}</span>}
+                  </div>
                 </div>
-                {/* High voltage corner notches */}
-                <div className="absolute -top-1 -left-1 size-2 border-t-2 border-l-2 border-[#ff7700]" />
-                <div className="absolute -bottom-1 -right-1 size-2 border-b-2 border-r-2 border-[#ff7700]" />
-              </div>
-              {isHoveringClickable && (
-                <div className="absolute left-6 -top-2 flex items-center gap-1.5 text-[10px] font-bold text-[#ffe600] bg-[#0a0b08] px-2 py-0.5 border border-[#ffe600] shadow-[0_0_8px_rgba(255,230,0,0.4)] whitespace-nowrap uppercase tracking-widest">
-                  <span className="text-[#39ff14]">⚡</span>
-                  <span>100kV</span>
-                  {hoverLabel && <span className="text-[#ffffff]/80 font-normal">{hoverLabel}</span>}
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTheme === "ember" && (
-            <div className="relative flex items-center justify-center">
-              {/* Ember reticle */}
-              <div
-                className={`relative flex items-center justify-center transition-transform duration-200 ${
-                  isHoveringClickable ? "scale-125 rotate-45" : "scale-100 rotate-0"
-                }`}
-              >
-                <div className="size-7 rounded-full border border-dashed border-[#e0a45c]/80 bg-[#17120f]/60 flex items-center justify-center shadow-[0_0_8px_rgba(194,85,58,0.4)]">
-                  <div className="size-1.5 rounded-full bg-[#c2553a]" />
-                </div>
-              </div>
-              {isHoveringClickable && (
-                <div className="absolute left-6 -top-2 text-[10px] font-mono font-medium text-[#e0a45c] bg-[#17120f]/90 px-1.5 py-0.5 rounded border border-[#4a3a30] whitespace-nowrap">
-                  jmp {hoverLabel || "Target"}
+              ) : (
+                <div className="-translate-x-[2px] -translate-y-[2px]">
+                  <img
+                    src="/cursors/cyberpunk-pointer.svg"
+                    alt=""
+                    width={32}
+                    height={32}
+                    className="drop-shadow-[0_0_8px_rgba(255,230,0,0.6)]"
+                  />
                 </div>
               )}
             </div>
           )}
 
+          {/* 🌹 Expedition 33 Belle Epoque Brush Petal */}
           {activeTheme === "e33" && (
-            <div className="relative flex items-center justify-center">
-              {/* Belle Epoque Petal */}
-              <div
-                className={`relative flex items-center justify-center transition-transform duration-300 ${
-                  isHoveringClickable ? "scale-130 rotate-180" : "scale-100 rotate-0"
-                }`}
-              >
-                <div className="size-6 rounded-full border border-[#e8d08a]/80 bg-[#07080d]/60 flex items-center justify-center shadow-[0_0_8px_rgba(217,69,63,0.35)]">
-                  <div className="size-2 rounded-full bg-[#d9453f]" />
+            <div className="relative">
+              {isHoveringClickable ? (
+                <div className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+                  <img
+                    src="/cursors/e33-flower.svg"
+                    alt=""
+                    width={32}
+                    height={32}
+                    className="scale-120 drop-shadow-[0_0_10px_rgba(232,208,138,0.7)]"
+                  />
                 </div>
-              </div>
+              ) : (
+                <div className="-translate-x-[2px] -translate-y-[2px]">
+                  <img
+                    src="/cursors/e33-petal.svg"
+                    alt=""
+                    width={32}
+                    height={32}
+                    className="drop-shadow-[0_0_8px_rgba(217,69,63,0.5)]"
+                  />
+                </div>
+              )}
             </div>
           )}
 
-          {(activeTheme === "dark" || activeTheme === "light" || !["japanese", "minecraft", "cyberpunk", "ember", "e33"].includes(activeTheme)) && (
-            <div className="relative flex items-center justify-center">
-              {/* Modern Minimalist Magnetic Dot & Halo */}
+          {/* Modern Dark / Light Minimalist Dot */}
+          {(activeTheme === "dark" || activeTheme === "light" || !["japanese", "minecraft", "cyberpunk", "e33"].includes(activeTheme)) && (
+            <div className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
               <div
                 className={`rounded-full transition-all duration-200 flex items-center justify-center ${
                   isHoveringClickable
-                    ? "size-8 bg-foreground/15 border border-foreground/30 shadow-sm"
+                    ? "size-8 bg-foreground/15 border border-foreground/30 shadow-xs"
                     : "size-4 bg-foreground/25 border border-foreground/40"
                 }`}
               >

@@ -241,36 +241,6 @@ class SoundEngine {
   }
 
   /**
-   * Ember & Ash spark crackle
-   */
-  public playEmberSpark() {
-    if (this.isMuted || typeof window === "undefined") return;
-    this.initContext();
-    if (!this.ctx) return;
-
-    try {
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = "triangle";
-      osc.frequency.setValueAtTime(440, now);
-      osc.frequency.exponentialRampToValueAtTime(160, now + 0.06);
-
-      gain.gain.setValueAtTime(0.09, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-
-      osc.start(now);
-      osc.stop(now + 0.06);
-    } catch {
-      // safe ignore
-    }
-  }
-
-  /**
    * Expedition 33 Belle Epoque crystal chime
    */
   public playE33Chime() {
@@ -315,9 +285,6 @@ class SoundEngine {
       case "cyberpunk":
         this.playElectricZap();
         break;
-      case "ember":
-        this.playEmberSpark();
-        break;
       case "e33":
         this.playE33Chime();
         break;
@@ -341,26 +308,18 @@ class SoundEngine {
       let wave: OscillatorType = "sine";
 
       if (theme === "japanese") {
-        // Pentatonic Insen scale chord (D, Eb, G, A)
         notes = [293.66, 311.13, 392.0, 440.0];
         wave = "triangle";
         this.playKatanaSlash();
       } else if (theme === "minecraft") {
-        // 8-bit Level up arpeggio
         notes = [261.63, 329.63, 392.0, 523.25];
         wave = "square";
       } else if (theme === "cyberpunk") {
-        // Industrial power up
         notes = [110.0, 220.0, 440.0, 880.0];
         wave = "sawtooth";
         this.playElectricZap();
       } else if (theme === "e33") {
-        // Belle Epoque golden chime
         notes = [329.63, 440.0, 659.25, 880.0];
-        wave = "sine";
-      } else if (theme === "ember") {
-        // Warm noir chord
-        notes = [220.0, 277.18, 329.63, 440.0];
         wave = "sine";
       }
 
@@ -387,4 +346,3 @@ class SoundEngine {
 }
 
 export const sound = new SoundEngine();
-

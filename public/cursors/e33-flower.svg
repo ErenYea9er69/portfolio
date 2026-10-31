@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <!-- Expedition 33 5-Petal Blooming Rosette (Hotspot: 16, 16) -->
+  <defs>
+    <filter id="bloomGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#e8d08a" flood-opacity="0.8"/>
+      <feDropShadow dx="0" dy="1" stdDeviation="2.5" flood-color="#d9453f" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#bloomGlow)">
+    <!-- 5 Blooming Rose Petals -->
+    <g transform="translate(16, 16)">
+      <!-- Petal 1 (0 deg) -->
+      <ellipse cx="0" cy="-7" rx="3.5" ry="6" fill="#d9453f" stroke="#e8d08a" stroke-width="0.8"/>
+      <!-- Petal 2 (72 deg) -->
+      <ellipse cx="0" cy="-7" rx="3.5" ry="6" transform="rotate(72)" fill="#c93a2b" stroke="#e8d08a" stroke-width="0.8"/>
+      <!-- Petal 3 (144 deg) -->
+      <ellipse cx="0" cy="-7" rx="3.5" ry="6" transform="rotate(144)" fill="#d9453f" stroke="#e8d08a" stroke-width="0.8"/>
+      <!-- Petal 4 (216 deg) -->
+      <ellipse cx="0" cy="-7" rx="3.5" ry="6" transform="rotate(216)" fill="#c93a2b" stroke="#e8d08a" stroke-width="0.8"/>
+      <!-- Petal 5 (288 deg) -->
+      <ellipse cx="0" cy="-7" rx="3.5" ry="6" transform="rotate(288)" fill="#d9453f" stroke="#e8d08a" stroke-width="0.8"/>
+
+      <!-- Center Gold Leaf Core -->
+      <circle cx="0" cy="0" r="3.5" fill="#e8d08a" stroke="#ffffff" stroke-width="0.8"/>
+      <circle cx="0" cy="0" r="1.4" fill="#d9453f"/>
+    </g>
+  </g>
+</svg>
+

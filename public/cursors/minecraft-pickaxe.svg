@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" shape-rendering="crispEdges">
+  <!-- Minecraft Diamond Pickaxe Pixel Art -->
+  <g transform="scale(2)">
+    <!-- Pickaxe Head (Diamond) -->
+    <rect x="7" y="1" width="6" height="2" fill="#0e4a47"/>
+    <rect x="8" y="2" width="5" height="1" fill="#4deeea"/>
+    <rect x="13" y="2" width="2" height="3" fill="#2bc5be"/>
+    <rect x="14" y="3" width="1" height="3" fill="#0e4a47"/>
+    <rect x="6" y="2" width="2" height="3" fill="#4deeea"/>
+    <rect x="5" y="3" width="1" height="3" fill="#0e4a47"/>
+    <rect x="4" y="5" width="2" height="2" fill="#2bc5be"/>
+    <rect x="3" y="6" width="1" height="2" fill="#0e4a47"/>
+
+    <!-- Shaft / Handle -->
+    <rect x="9" y="4" width="2" height="2" fill="#855b32"/>
+    <rect x="8" y="6" width="2" height="2" fill="#855b32"/>
+    <rect x="7" y="8" width="2" height="2" fill="#5c3d1f"/>
+    <rect x="6" y="10" width="2" height="2" fill="#855b32"/>
+    <rect x="5" y="12" width="2" height="2" fill="#5c3d1f"/>
+    <rect x="4" y="14" width="2" height="2" fill="#855b32"/>
+  </g>
+</svg>
+

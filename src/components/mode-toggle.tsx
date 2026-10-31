@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { sound } from "@/lib/sound-fx";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Sun, Moon, Flame, Flower2, Zap } from "lucide-react";
+import { Sun, Moon, Flower2, Zap } from "lucide-react";
 
 export const THEME_CYCLE = [
   { id: "dark", name: "Modern Dark", icon: Moon, color: "#a1a1aa" },
@@ -14,7 +14,6 @@ export const THEME_CYCLE = [
   { id: "minecraft", name: "Minecraft (Voxel)", icon: PickaxeIcon, color: "#4deeea" },
   { id: "cyberpunk", name: "100kV Cyberpunk", icon: Zap, color: "#ffe600" },
   { id: "e33", name: "Expedition 33", icon: Flower2, color: "#e8d08a" },
-  { id: "ember", name: "Ember & Ash", icon: Flame, color: "#e0a45c" },
   { id: "light", name: "Daylight", icon: Sun, color: "#f59e0b" },
 ];
 
@@ -78,7 +77,6 @@ export function ModeToggle() {
 
     sound.playThemeSwitch(targetTheme);
 
-    // Synchronize HTML data-theme and dark class
     const updateDOM = () => {
       setTheme(targetTheme);
       document.documentElement.setAttribute("data-theme", targetTheme);

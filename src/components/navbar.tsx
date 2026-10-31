@@ -1,7 +1,6 @@
 "use client";
 
 import { ModeToggle } from "@/components/mode-toggle";
-import { SoundToggle } from "@/components/sound-toggle";
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -12,6 +11,14 @@ import { Menu, X, Terminal, Home, Code2, Briefcase, GraduationCap, Mail, FolderK
 import { Dock, DockIcon } from "@/components/magicui/dock";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { buttonVariants } from "@/components/ui/button";
+
+const DESKTOP_NAV_LINKS = [
+  { href: "/projects", label: "Projects" },
+  { href: "/#skills", label: "Skills" },
+  { href: "/#work", label: "Experience" },
+  { href: "/#education", label: "Education" },
+  { href: "/#contact", label: "Contact" },
+];
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -49,8 +56,7 @@ export default function Navbar() {
   useEffect(() => {
     if (isScrolled) return;
     const raf = requestAnimationFrame(() => {
-      const navItems = DATA.navbar.slice(1);
-      const activeIndex = navItems.findIndex((item) => item.href === pathname);
+      const activeIndex = DESKTOP_NAV_LINKS.findIndex((item) => item.href === pathname);
       if (activeIndex !== -1 && itemRefs.current[activeIndex] && navRef.current) {
         const itemEl = itemRefs.current[activeIndex]!;
         const navEl = navRef.current;
@@ -71,8 +77,6 @@ export default function Navbar() {
     return null;
   }
 
-  const navItems = DATA.navbar.slice(1);
-
   return (
     <>
       {/* ─── Expanded navbar (top of page / always on mobile) ─── */}
@@ -85,39 +89,44 @@ export default function Navbar() {
             transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="fixed top-0 left-0 right-0 z-50"
           >
+            {/* Generous width container so navbar is well-proportioned and never looks cramped or small */}
             <div className="mx-auto max-w-4xl px-4 sm:px-6">
               <div className={cn(
-                "mt-3 flex items-center justify-between rounded-2xl py-2 px-3 backdrop-blur-xl border border-border/20 transition-all duration-300",
+                "mt-3 flex items-center justify-between rounded-2xl py-2 px-4 backdrop-blur-xl border border-border/30 transition-all duration-300 w-full shadow-xs",
                 isScrolled
-                  ? "bg-background/85 dark:bg-zinc-950/85 shadow-md border-border/40"
-                  : "bg-background/50 shadow-sm"
+                  ? "bg-background/90 dark:bg-zinc-950/90 shadow-md border-border/50"
+                  : "bg-background/60 shadow-xs"
               )}>
+                {/* Brand / Home on Left */}
                 <Link
                   href="/"
-                  className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/60"
+                  className="flex items-center gap-2 rounded-xl p-2 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/60"
                   aria-label="Home"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Home className="size-5" />
+                  <Home className="size-4.5" />
+                  <span className="hidden sm:inline-block text-xs font-semibold tracking-tight text-foreground">
+                    {DATA.name}
+                  </span>
                 </Link>
 
-                {/* Desktop nav links */}
-                <div className="hidden md:flex items-center gap-0.5">
+                {/* Desktop nav links - spacious and prominent */}
+                <div className="hidden md:flex items-center gap-1">
                   <div
                     ref={navRef}
-                    className="relative flex items-center rounded-xl bg-muted/40 p-0.5"
+                    className="relative flex items-center gap-0.5 rounded-xl bg-muted/40 p-1 border border-border/30"
                     onMouseLeave={() => setHoveredIndex(null)}
                   >
                     {activeRect && (
                       <motion.div
                         layoutId="nav-active"
-                        className="absolute top-0.5 bottom-0.5 rounded-[10px] bg-background shadow-[0_1px_3px_hsl(var(--foreground)/0.08)]"
+                        className="absolute top-1 bottom-1 rounded-[9px] bg-background shadow-xs border border-border/20"
                         style={{ left: activeRect.left, width: activeRect.width }}
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
                       />
                     )}
 
-                    {navItems.map((item, index) => {
+                    {DESKTOP_NAV_LINKS.map((item, index) => {
                       const isActive = pathname === item.href;
                       const isHovered = hoveredIndex === index;
                       return (
@@ -127,9 +136,9 @@ export default function Navbar() {
                           href={item.href}
                           onMouseEnter={() => setHoveredIndex(index)}
                           className={cn(
-                            "relative z-10 rounded-[10px] px-3 py-1.5 text-[13px] font-medium transition-colors duration-200",
+                            "relative z-10 rounded-[9px] px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-200",
                             isActive
-                              ? "text-foreground"
+                              ? "text-foreground font-semibold"
                               : isHovered
                                 ? "text-foreground"
                                 : "text-muted-foreground"
@@ -138,7 +147,7 @@ export default function Navbar() {
                           {isHovered && !isActive && (
                             <motion.span
                               layoutId="nav-hover"
-                              className="absolute inset-0 rounded-[10px] bg-muted/60"
+                              className="absolute inset-0 rounded-[9px] bg-muted/60"
                               style={{ zIndex: -1 }}
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
@@ -152,24 +161,31 @@ export default function Navbar() {
                     })}
                   </div>
 
-                  <div className="mx-1.5 h-4 w-px bg-border/60" />
+                  <div className="mx-2 h-4 w-px bg-border/60" />
 
+                  {/* Actions on right: CLI & Theme Toggle (Sound toggle deleted as requested) */}
                   <div className="flex items-center gap-1">
-                    <Link
-                      href="/cli"
-                      className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/60"
-                      aria-label="CLI Mode"
-                    >
-                      <Terminal className="size-4" />
-                    </Link>
-                    <SoundToggle />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link
+                          href="/cli"
+                          className="rounded-lg p-2 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/60"
+                          aria-label="CLI Mode"
+                        >
+                          <Terminal className="size-4.5" />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" sideOffset={8}>
+                        <p className="text-xs font-medium">CLI Terminal Mode</p>
+                      </TooltipContent>
+                    </Tooltip>
+
                     <ModeToggle />
                   </div>
                 </div>
 
                 {/* Mobile controls */}
-                <div className="flex md:hidden items-center gap-1">
-                  <SoundToggle />
+                <div className="flex md:hidden items-center gap-1.5">
                   <ModeToggle />
                   <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -254,7 +270,6 @@ export default function Navbar() {
 
                       <div className="my-1 h-px bg-border/40" />
 
-                      {/* Quick Section Jump Links */}
                       <Link
                         href="/#skills"
                         onClick={() => setIsMobileMenuOpen(false)}
@@ -323,7 +338,7 @@ export default function Navbar() {
             <Dock
               magnification={50}
               distance={120}
-              className="border border-white/20 bg-background/30 dark:border-white/10 dark:bg-background/20 backdrop-saturate-150 shadow-lg"
+              className="border border-white/20 bg-background/30 dark:border-white/10 dark:bg-background/20 backdrop-saturate-150 shadow-lg px-3"
             >
               {DATA.navbar.map((item) => (
                 <DockIcon key={item.href}>
@@ -368,10 +383,6 @@ export default function Navbar() {
                     <p>CLI Mode</p>
                   </TooltipContent>
                 </Tooltip>
-              </DockIcon>
-
-              <DockIcon>
-                <SoundToggle />
               </DockIcon>
 
               <DockIcon>

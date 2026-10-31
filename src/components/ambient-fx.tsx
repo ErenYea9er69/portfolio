@@ -59,31 +59,27 @@ export function AmbientFx() {
       activeTheme === "japanese"
         ? 35
         : activeTheme === "minecraft"
-        ? 28
-        : activeTheme === "cyberpunk"
         ? 32
-        : activeTheme === "ember"
-        ? 30
+        : activeTheme === "cyberpunk"
+        ? 40
         : activeTheme === "e33"
-        ? 34
+        ? 36
         : 0;
 
     for (let i = 0; i < count; i++) {
       items.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 20 + (activeTheme === "japanese" ? 15 : 0),
+        vx: (Math.random() - 0.5) * 20 + (activeTheme === "japanese" ? 18 : 0),
         vy:
-          activeTheme === "ember"
-            ? -20 - Math.random() * 25
-            : activeTheme === "cyberpunk"
-            ? 35 + Math.random() * 45
+          activeTheme === "cyberpunk"
+            ? 45 + Math.random() * 65
             : 15 + Math.random() * 25,
         size:
           activeTheme === "minecraft"
             ? 4 + Math.floor(Math.random() * 3) * 2
             : activeTheme === "cyberpunk"
-            ? 1.5 + Math.random() * 2
+            ? 1.5 + Math.random() * 2.5
             : 5 + Math.random() * 8,
         color:
           activeTheme === "japanese"
@@ -91,9 +87,7 @@ export function AmbientFx() {
             : activeTheme === "minecraft"
             ? Math.random() > 0.5 ? "#38c02b" : "#4deeea"
             : activeTheme === "cyberpunk"
-            ? Math.random() > 0.5 ? "#ffe600" : "#39ff14"
-            : activeTheme === "ember"
-            ? Math.random() > 0.5 ? "#c2553a" : "#e0a45c"
+            ? Math.random() > 0.6 ? "#ffe600" : Math.random() > 0.3 ? "#39ff14" : "#ff7700"
             : "#d9453f",
         alpha: 0.2 + Math.random() * 0.4,
         rot: Math.random() * Math.PI * 2,
@@ -114,9 +108,9 @@ export function AmbientFx() {
 
       // Cyberpunk background grid scanlines (NO blue, NO purple!)
       if (activeTheme === "cyberpunk") {
-        ctx.strokeStyle = "rgba(255, 230, 0, 0.035)";
+        ctx.strokeStyle = "rgba(255, 230, 0, 0.05)";
         ctx.lineWidth = 1;
-        const gridSize = 48;
+        const gridSize = 40;
         ctx.beginPath();
         for (let x = 0; x < width; x += gridSize) {
           ctx.moveTo(x, 0);
@@ -126,6 +120,15 @@ export function AmbientFx() {
           ctx.moveTo(0, y);
           ctx.lineTo(width, y);
         }
+        ctx.stroke();
+
+        // Horizontal high-voltage scanning line
+        const scanY = (ts * 0.08) % height;
+        ctx.strokeStyle = "rgba(57, 255, 20, 0.12)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, scanY);
+        ctx.lineTo(width, scanY);
         ctx.stroke();
       }
 
@@ -166,17 +169,11 @@ export function AmbientFx() {
           ctx.ellipse(0, 0, item.size * 0.4, item.size, 0, 0, Math.PI * 2);
           ctx.fill();
         } else if (activeTheme === "cyberpunk") {
-          // Electric spark data dust
+          // Electric spark data rain
           ctx.fillStyle = item.color;
           ctx.shadowColor = item.color;
-          ctx.shadowBlur = 6;
-          ctx.fillRect(item.x, item.y, item.size, item.size * 2.5);
-        } else {
-          // Ember spark
-          ctx.fillStyle = item.color;
-          ctx.beginPath();
-          ctx.arc(item.x, item.y, item.size * 0.5, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.shadowBlur = 8;
+          ctx.fillRect(item.x, item.y, item.size, item.size * 3.5);
         }
 
         ctx.restore();
@@ -185,7 +182,7 @@ export function AmbientFx() {
       rafId = requestAnimationFrame(render);
     };
 
-    if (["japanese", "minecraft", "cyberpunk", "ember", "e33"].includes(activeTheme)) {
+    if (["japanese", "minecraft", "cyberpunk", "e33"].includes(activeTheme)) {
       rafId = requestAnimationFrame(render);
     }
 
@@ -211,4 +208,3 @@ export function AmbientFx() {
     />
   );
 }
-

@@ -25,7 +25,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
       attribute="data-theme"
       defaultTheme="dark"
       enableSystem={false}
-      themes={["dark", "japanese", "minecraft", "cyberpunk", "e33", "ember", "light"]}
+      themes={["dark", "japanese", "minecraft", "cyberpunk", "e33", "light"]}
       {...props}
     >
       <ThemeWatcher>{children}</ThemeWatcher>
