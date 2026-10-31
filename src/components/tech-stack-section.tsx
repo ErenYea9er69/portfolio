@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DATA } from "@/data/resume";
@@ -21,7 +21,6 @@ const CATEGORIES: { label: string; value: CategoryType }[] = [
   { label: "Tools", value: "Tools" },
   { label: "Exploring", value: "Exploring" },
 ];
-
 
 export function TechStackSection() {
   const [activeCategory, setActiveCategory] = useState<CategoryType>("All");
@@ -45,30 +44,27 @@ export function TechStackSection() {
 
   return (
     <div className="relative flex min-h-0 flex-col gap-y-4">
-      {/* Subtle neutral ambient backlight */}
+      {/* Subtle neutral ambient backlight clipped inside */}
       <div
-        className="pointer-events-none absolute -inset-x-8 -top-12 h-40 blur-3xl opacity-15 dark:opacity-10 transition-opacity duration-500 -z-10 rounded-full bg-muted-foreground/10"
+        className="pointer-events-none absolute inset-x-0 -top-12 h-40 blur-3xl opacity-15 dark:opacity-10 transition-opacity duration-500 -z-10 rounded-full bg-muted-foreground/10"
       />
 
       {/* Header section */}
       <div className="flex flex-col gap-1.5 sm:flex-row sm:items-end sm:justify-between">
         <BlurFade delay={BLUR_FADE_DELAY * 10}>
           <div className="flex items-center gap-2">
-            <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/75 dark:text-muted-foreground">
-              Skills & Stack
-            </span>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              Tech Stack
+            </h2>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
               <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              {DATA.skills.length} Tools
+              {DATA.skills.length} Technologies
             </span>
           </div>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Tech Stack
-          </h2>
         </BlurFade>
       </div>
 
-      {/* Segmented Category Glass Filter */}
+      {/* Segmented Category Filter */}
       <BlurFade delay={BLUR_FADE_DELAY * 10.3}>
         <div
           role="tablist"
@@ -115,13 +111,17 @@ export function TechStackSection() {
         </div>
       </BlurFade>
 
-      {/* Compact Interactive Pills with Hover Shine & Magnification */}
+      {/* Stable, glitch-free skill badges */}
       <BlurFade delay={BLUR_FADE_DELAY * 10.6}>
-        <motion.div
-          layout
-          className="flex flex-wrap gap-2 sm:gap-2.5 pt-1"
-        >
-          <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeCategory}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.16, ease: "easeOut" }}
+            className="flex flex-wrap gap-2 sm:gap-2.5 pt-1"
+          >
             {filteredSkills.map((skill, index) => (
               <SkillPill
                 key={skill.name}
@@ -132,8 +132,8 @@ export function TechStackSection() {
                 onMouseLeave={() => setHoveredSkill(null)}
               />
             ))}
-          </AnimatePresence>
-        </motion.div>
+          </motion.div>
+        </AnimatePresence>
       </BlurFade>
     </div>
   );
@@ -152,37 +152,25 @@ function SkillPill({
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 }) {
-  const pillRef = useRef<HTMLDivElement>(null);
   const brandColor = (skill.color as string) || "#6366f1";
 
   return (
-    <motion.div
-      ref={pillRef}
-      initial={{ opacity: 0, scale: 0.95, y: 4 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9, y: -2 }}
-      whileHover={{ y: -2 }}
-      transition={{
-        type: "spring",
-        stiffness: 400,
-        damping: 26,
-      }}
+    <div
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       className={cn(
         "group relative inline-flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-200 select-none cursor-default",
-        "bg-card/70 dark:bg-zinc-900/60 backdrop-blur-md",
-        "border border-border/60 dark:border-white/10",
-        "hover:border-border hover:bg-card dark:hover:bg-zinc-800/70 hover:shadow-xs",
-        isHovered ? "z-20 border-foreground/20" : "z-10"
+        "bg-card/75 dark:bg-zinc-900/65 backdrop-blur-md",
+        "border border-border/70 dark:border-white/10",
+        "hover:border-foreground/25 hover:bg-card dark:hover:bg-zinc-800/80 hover:-translate-y-0.5 hover:shadow-xs",
+        isHovered ? "z-20 border-foreground/30 shadow-xs" : "z-10"
       )}
     >
-
-      {/* Floating Tooltip displaying Role & Level */}
+      {/* Floating Tooltip displaying Role & Level on desktop */}
       <div
         className={cn(
-          "pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-md whitespace-nowrap text-[10px] font-medium tracking-tight shadow-md border transition-all duration-200 z-40",
-          "bg-popover text-popover-foreground border-border/60",
+          "pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-md whitespace-nowrap text-[10px] font-medium tracking-tight shadow-md border transition-all duration-150 z-40 hidden md:block",
+          "bg-popover text-popover-foreground border-border/70",
           isHovered
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 translate-y-1 scale-95 pointer-events-none"
@@ -194,18 +182,16 @@ function SkillPill({
         )}
       </div>
 
-      {/* Icon with glowing aura on hover */}
-      <div
-        className="relative flex size-4.5 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-115"
-      >
+      {/* Icon with clean scale */}
+      <div className="relative flex size-4 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-110">
         <SkillIcon skill={skill} brandColor={brandColor} />
       </div>
 
       {/* Skill Name */}
-      <span className="text-xs sm:text-sm font-medium tracking-tight text-foreground transition-colors group-hover:text-foreground">
+      <span className="text-xs sm:text-[13px] font-medium tracking-tight text-foreground transition-colors">
         {skill.name}
       </span>
-    </motion.div>
+    </div>
   );
 }
 

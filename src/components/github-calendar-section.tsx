@@ -229,10 +229,9 @@ export function GitHubCalendarSection() {
   return (
     <div className="flex flex-col gap-y-3">
       <BlurFade delay={0.04 * 14}>
-        <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/75 dark:text-muted-foreground">
-          OPEN SOURCE TELEMETRY
-        </span>
-        <h2 className="mt-1.5 text-xl font-bold tracking-tight">GitHub Contributions</h2>
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+          GitHub Contributions
+        </h2>
       </BlurFade>
 
       <BlurFade delay={0.04 * 14.5}>

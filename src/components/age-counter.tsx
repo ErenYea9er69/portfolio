@@ -2,43 +2,70 @@
 
 import { useEffect, useState } from "react";
 
+const BIRTH_DATE = new Date("2004-09-16T16:00:00").getTime();
+const MS_PER_YEAR = 1000 * 60 * 60 * 24 * 365.2425;
+
 const calculateYears = () => {
-  const birthDate = new Date('2004-09-16T16:00:00');
-  const now = new Date();
-  const ageInYears = (now.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
-  return ageInYears.toFixed(9);
+  const now = Date.now();
+  const ageInYears = (now - BIRTH_DATE) / MS_PER_YEAR;
+  return ageInYears.toFixed(2);
 };
 
 export function AgeCounter() {
   const [years, setYears] = useState<string | null>(null);
 
   useEffect(() => {
-    // Only calculate on client to avoid hydration mismatch
+    // Immediate calculation on client
     setYears(calculateYears());
-    
-    const interval = setInterval(() => {
-      setYears(calculateYears());
-    }, 100);
 
-    return () => clearInterval(interval);
+    let intervalId: NodeJS.Timeout | null = null;
+
+    const startTicker = () => {
+      if (intervalId) clearInterval(intervalId);
+      intervalId = setInterval(() => {
+        if (!document.hidden) {
+          setYears(calculateYears());
+        }
+      }, 1000);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+      } else {
+        setYears(calculateYears());
+        startTicker();
+      }
+    };
+
+    startTicker();
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
-  // show placeholder until mounted to prevent hydration mismatch
+  // Placeholder with identical layout dimensions to prevent layout shifts
   if (years === null) {
     return (
-      <div className="text-sm font-bold min-h-[20px]">
-        <span className="tabular-nums opacity-0">been on earth for 00.000000000 years</span>
+      <div className="text-xs sm:text-sm font-medium text-muted-foreground min-h-[20px] flex items-center">
+        <span className="tabular-nums opacity-0">21.00 years old</span>
       </div>
     );
   }
 
   return (
-    <div className="text-sm font-bold min-h-[20px]">
-      <span className="tabular-nums">
-        been on earth for {years} years
+    <div className="text-xs sm:text-sm font-medium text-muted-foreground min-h-[20px] flex items-center gap-1.5 select-none">
+      <span className="inline-block size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+      <span className="tabular-nums text-foreground font-semibold">
+        {years}
       </span>
+      <span>years old</span>
     </div>
   );
 }
-
-// I hope you guys understand this code, if you don't, please ask me.

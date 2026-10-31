@@ -68,18 +68,15 @@ export default function ProjectsPage() {
       {/* ─── Hero Header ─── */}
       <section className="space-y-4">
         <BlurFade delay={BLUR_FADE_DELAY * 1.5}>
-          <div className="flex items-center gap-2">
-            <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/75 dark:text-muted-foreground">
-              PROJECTS DIRECTORY
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Projects
+            </h1>
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
               <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
               {DATA.projects.length} Repositories
             </span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mt-1">
-            Projects
-          </h1>
         </BlurFade>
 
         {/* Telemetry quick stats */}
@@ -187,13 +184,11 @@ export default function ProjectsPage() {
       {/* ─── Projects Grid ─── */}
       <section>
         {filteredProjects.length > 0 ? (
-          <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-            <AnimatePresence mode="popLayout">
-              {filteredProjects.map((project, idx) => (
-                <ProjectCard key={project.title} project={project as any} index={idx} />
-              ))}
-            </AnimatePresence>
-          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            {filteredProjects.map((project, idx) => (
+              <ProjectCard key={project.title} project={project as any} index={idx} />
+            ))}
+          </div>
         ) : (
           <BlurFade delay={BLUR_FADE_DELAY * 3.5}>
             <div className="rounded-2xl border border-dashed border-border/70 p-12 text-center bg-card/30 backdrop-blur-md">

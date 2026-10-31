@@ -119,7 +119,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={cn(fontSans.variable, "font-sans antialiased")}>
         {/* Background container */}
-        <div className="fixed inset-0 z-[-1]">
+        <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
           <PageBackground />
         </div>
 

@@ -19,17 +19,14 @@ export function ProjectsSection() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <BlurFade delay={BLUR_FADE_DELAY * 11}>
           <div className="flex items-center gap-2">
-            <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/75 dark:text-muted-foreground">
-              Selected Works
-            </span>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              Featured Projects
+            </h2>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
               <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
               {DATA.projects.length} Shipped
             </span>
           </div>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Featured Projects
-          </h2>
         </BlurFade>
 
         <BlurFade delay={BLUR_FADE_DELAY * 11.2}>

@@ -112,24 +112,26 @@ export const DATA = {
     {
       company: "Freelance",
       href: "",
-      badges: [],
+      badges: ["Next.js", "TypeScript", "React"],
       location: "Tunisia",
-      title: "Freelance Developer",
+      title: "Full Stack Developer",
       logoUrl: "",
-      start: "",
+      start: "2023",
       end: "Present",
       description:
-        "Freelance Developer.",
+        "Building responsive, high-performance web applications and backend APIs for international clients.",
     },
   ],
   education: [
     {
-      school: "B.Tech in CS & IT",
+      school: "Higher Institute of Computer Science",
       href: "",
-      degree: "B.Tech in CS & IT",
+      degree: "Bachelor of Technology in CS & IT",
       logoUrl: "",
-      start: "",
-      end: "",
+      start: "2022",
+      end: "2025",
+      description:
+        "Focus on software engineering, distributed systems, web architectures, and database design.",
     },
   ],
   projects: [

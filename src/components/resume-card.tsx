@@ -2,15 +2,13 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import { ChevronRightIcon } from "lucide-react";
-import Link from "next/link";
+import { ArrowUpRight, Briefcase, GraduationCap } from "lucide-react";
 import React from "react";
 
 interface ResumeCardProps {
-  logoUrl: string;
+  logoUrl?: string;
   altText: string;
   title: string;
   subtitle?: string;
@@ -19,7 +17,9 @@ interface ResumeCardProps {
   period: string;
   description?: string;
   redacted?: boolean;
+  type?: "work" | "education";
 }
+
 export const ResumeCard = ({
   logoUrl,
   altText,
@@ -30,87 +30,104 @@ export const ResumeCard = ({
   period,
   description,
   redacted,
+  type = "work",
 }: ResumeCardProps) => {
-  const [isExpanded, setIsExpanded] = React.useState(false);
+  const isRealLink = Boolean(href && href.trim() !== "" && href !== "#");
+  const cleanPeriod = period && period.trim() !== "-" && period.trim() !== " - " ? period : null;
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    if (description) {
-      e.preventDefault();
-      setIsExpanded(!isExpanded);
-    }
-  };
-
-  return (
-    <Link
-      href={href || "#"}
-      className="block cursor-pointer"
-      onClick={handleClick}
+  const cardContent = (
+    <Card
+      className={cn(
+        "group relative flex flex-col p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card/60 dark:bg-zinc-950/50 backdrop-blur-md transition-all duration-200",
+        isRealLink
+          ? "hover:border-foreground/30 hover:bg-card/90 dark:hover:bg-zinc-900/70 hover:shadow-sm cursor-pointer"
+          : "hover:border-border"
+      )}
     >
-      <Card className="group flex border-border/60 bg-card/40 transition-all duration-300 hover:bg-card/70 hover:border-border hover:shadow-sm hover:translate-x-1">
-        <div className="flex-none relative">
-          <Avatar className={cn(
-            "border size-12 m-auto bg-muted-background dark:bg-foreground transition-transform duration-300 group-hover:scale-105",
-            redacted && "rounded-lg"
-          )}>
-            <AvatarImage
-              src={logoUrl}
-              alt={altText}
-              className={cn("object-contain", redacted && "scale-75")}
-            />
-            <AvatarFallback>{altText[0]}</AvatarFallback>
+      <div className="flex items-start gap-3">
+        {/* Organization / Degree Icon or Avatar */}
+        <div className="flex-none">
+          <Avatar
+            className={cn(
+              "size-10 rounded-lg border border-border/60 bg-muted/40 dark:bg-zinc-900 flex items-center justify-center transition-transform duration-200 group-hover:scale-105",
+              redacted && "rounded-lg"
+            )}
+          >
+            {logoUrl ? (
+              <AvatarImage
+                src={logoUrl}
+                alt={altText}
+                className={cn("object-contain", redacted && "scale-75")}
+              />
+            ) : null}
+            <AvatarFallback className="rounded-lg bg-transparent text-foreground/70 font-semibold text-xs">
+              {type === "work" ? (
+                <Briefcase className="size-4 text-muted-foreground" />
+              ) : (
+                <GraduationCap className="size-4 text-muted-foreground" />
+              )}
+            </AvatarFallback>
           </Avatar>
         </div>
-        <div className="group ml-4 flex flex-grow flex-col items-center">
-          <CardHeader className="w-full px-0 py-3">
-            <div className="flex items-center justify-between gap-x-2 text-base">
-              <h3 className="inline-flex items-center justify-center font-semibold leading-none text-xs sm:text-sm gap-x-2">
-                <span className={cn(redacted && "blur-[3px] select-none")}>{title}</span>
-                {badges && (
-                  <span className="inline-flex gap-x-1">
-                    {badges.map((badge, index) => (
-                      <Badge
-                        variant="secondary"
-                        className="align-middle text-xs"
-                        key={index}
-                      >
-                        {badge}
-                      </Badge>
-                    ))}
-                  </span>
-                )}
-                <ChevronRightIcon
-                  className={cn(
-                    "size-4 translate-x-0 transform opacity-70 transition-all duration-300 ease-out",
-                    isExpanded ? "rotate-90" : "rotate-0 group-hover:translate-x-1"
-                  )}
-                />
-              </h3>
-              <div className="text-right text-xs tabular-nums text-muted-foreground sm:text-sm">
-                {period}
-              </div>
+
+        {/* Header & Details */}
+        <div className="flex flex-1 flex-col min-w-0">
+          <div className="flex items-baseline justify-between gap-2">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground truncate inline-flex items-center gap-1.5">
+              <span className={cn(redacted && "blur-[3px] select-none")}>{title}</span>
+              {isRealLink && (
+                <ArrowUpRight className="size-3.5 opacity-50 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              )}
+            </h3>
+            {cleanPeriod && (
+              <span className="text-[11px] font-mono text-muted-foreground tabular-nums shrink-0">
+                {cleanPeriod}
+              </span>
+            )}
+          </div>
+
+          {subtitle && (
+            <p className="text-xs text-muted-foreground mt-0.5 font-medium">
+              {subtitle}
+            </p>
+          )}
+
+          {badges && badges.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {badges.map((badge, index) => (
+                <Badge
+                  variant="secondary"
+                  className="text-[10px] px-1.5 py-0 font-normal"
+                  key={index}
+                >
+                  {badge}
+                </Badge>
+              ))}
             </div>
-            {subtitle && <div className="pt-1 font-sans text-xs text-muted-foreground">{subtitle}</div>}
-          </CardHeader>
+          )}
+
           {description && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: isExpanded ? 1 : 0,
-                height: isExpanded ? "auto" : 0,
-              }}
-              transition={{
-                duration: 0.5,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="overflow-hidden pb-2 text-xs text-muted-foreground sm:text-sm"
-            >
+            <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
               {description}
-            </motion.div>
+            </p>
           )}
         </div>
-        {/* Left accent border on hover */}
-        <div className="absolute left-0 top-0 h-full w-0.5 bg-foreground/0 transition-all duration-300 group-hover:bg-foreground/20 rounded-l-lg" />
-      </Card>
-    </Link>
+      </div>
+    </Card>
   );
+
+  if (isRealLink) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20 rounded-xl"
+      >
+        {cardContent}
+      </a>
+    );
+  }
+
+  return <div>{cardContent}</div>;
 };

@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { DATA } from '@/data/resume';
-import { ArrowLeft, Terminal as TerminalIcon, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Terminal as TerminalIcon, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface CliInterfaceProps {
   onGuiCommand?: () => void;
@@ -15,7 +16,7 @@ interface CommandOutput {
   content?: React.ReactNode;
 }
 
-// Calculate precise age/uptime based on birth date (2004-09-16T16:00:00)
+// Calculate uptime from birth date (2004-09-16T16:00:00)
 function calculateUptime() {
   const birthDate = new Date('2004-09-16T16:00:00');
   const now = new Date();
@@ -31,12 +32,14 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [outputList, setOutputList] = useState<CommandOutput[]>([]);
+  const [showDemoArt, setShowDemoArt] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalBoxRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Initial neofetch load
+  // Initial fetch load
   useEffect(() => {
     setOutputList([
       {
@@ -49,10 +52,12 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
 
   // Auto-scroll when output updates
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    }
   }, [outputList]);
 
-  // Focus input on mount or when clicking inside terminal
+  // Focus input on mount
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
@@ -84,7 +89,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
           id: newId,
           command: trimmed,
           type: 'text',
-          content: <span className="text-emerald-400">⚡ Returning to web portfolio...</span>,
+          content: <span className="text-emerald-400 font-semibold">⚡ Returning to web portfolio...</span>,
         },
       ]);
       setTimeout(() => {
@@ -93,7 +98,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
         } else if (typeof window !== 'undefined') {
           window.location.href = '/';
         }
-      }, 400);
+      }, 350);
       return;
     }
 
@@ -114,7 +119,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
       return;
     }
 
-    if (cmd === 'neofetch' || cmd === 'nerdfetch' || cmd === 'fetch') {
+    if (cmd === 'neofetch' || cmd === 'fetch' || cmd === 'info') {
       setOutputList((prev) => [
         ...prev,
         {
@@ -150,7 +155,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
       return;
     }
 
-    if (cmd === 'about' || cmd === 'whoami') {
+    if (cmd === 'about' || cmd === 'whoami' || cmd === 'bio') {
       setOutputList((prev) => [
         ...prev,
         {
@@ -158,14 +163,12 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
           command: trimmed,
           type: 'text',
           content: (
-            <div className="space-y-2 text-zinc-300">
-              <p className="text-white font-bold">{DATA.name} (@ErenYea9er69)</p>
-              <p className="text-zinc-400">{DATA.description} • {DATA.location}</p>
-              <p className="text-sm text-zinc-400">
-                Full stack developer passionate about building fast, highly responsive web apps,
-                sleek interfaces, and interactive experiences.
+            <div className="space-y-1.5 text-zinc-300 py-1">
+              <p className="text-white font-bold text-sm">{DATA.name} (@ErenYea9er)</p>
+              <p className="text-zinc-400 text-xs">{DATA.description} • {DATA.location}</p>
+              <p className="text-xs text-zinc-300 leading-relaxed max-w-xl">
+                Full Stack Developer with 2+ years of experience building responsive, high-performance web applications and backend systems with Next.js, React, TypeScript, and Node.js.
               </p>
-              <p className="text-xs text-zinc-500">Status: {DATA.summary}</p>
             </div>
           ),
         },
@@ -181,22 +184,24 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
           command: trimmed,
           type: 'text',
           content: (
-            <div className="space-y-1.5 text-xs text-zinc-300">
-              <p className="text-cyan-400 font-semibold mb-1">🔗 Connect & Links:</p>
-              {Object.entries(DATA.contact.social).map(([name, social]) => (
-                <div key={name} className="flex items-center gap-2">
-                  <span className="text-zinc-400 w-24">› {name}:</span>
-                  <a
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-pink-400 hover:underline flex items-center gap-1"
-                  >
-                    {social.url}
-                    <ExternalLink className="size-3" />
-                  </a>
-                </div>
-              ))}
+            <div className="space-y-1.5 text-xs text-zinc-300 py-1">
+              <p className="text-emerald-400 font-semibold mb-1">🔗 Socials & Links:</p>
+              {Object.entries(DATA.contact.social)
+                .filter(([_, social]) => social.navbar !== false)
+                .map(([name, social]) => (
+                  <div key={name} className="flex items-center gap-2">
+                    <span className="text-zinc-400 w-20">› {name}:</span>
+                    <a
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sky-400 hover:text-sky-300 underline flex items-center gap-1"
+                    >
+                      {social.url}
+                      <ExternalLink className="size-3" />
+                    </a>
+                  </div>
+                ))}
             </div>
           ),
         },
@@ -212,12 +217,12 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
           command: trimmed,
           type: 'text',
           content: (
-            <div className="flex flex-wrap gap-4 text-xs font-mono">
-              <span className="text-cyan-400">📄 about.txt</span>
+            <div className="flex flex-wrap gap-4 text-xs font-mono py-1">
+              <span className="text-sky-400">📄 about.txt</span>
               <span className="text-emerald-400">📁 projects/</span>
-              <span className="text-yellow-400">📄 skills.json</span>
-              <span className="text-pink-400">⚙️ neofetch</span>
-              <span className="text-purple-400">🚀 gui.sh</span>
+              <span className="text-amber-400">📄 skills.json</span>
+              <span className="text-purple-400">⚙️ neofetch</span>
+              <span className="text-zinc-300">🚀 return_web</span>
             </div>
           ),
         },
@@ -234,7 +239,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
             id: newId,
             command: trimmed,
             type: 'text',
-            content: <span className="text-yellow-400">Usage: cat &lt;filename&gt; (try: cat about.txt)</span>,
+            content: <span className="text-amber-400">Usage: cat &lt;filename&gt; (try: cat about.txt)</span>,
           },
         ]);
         return;
@@ -245,10 +250,6 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
       }
       if (file === 'skills.json') {
         handleCommand('skills');
-        return;
-      }
-      if (file === 'gui.sh') {
-        handleCommand('gui');
         return;
       }
       setOutputList((prev) => [
@@ -285,7 +286,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
         type: 'error',
         content: (
           <span className="text-rose-400">
-            command not found: {cmd}. Type <span className="text-cyan-300 underline font-bold cursor-pointer" onClick={() => handleCommand('help')}>help</span> to view all commands.
+            command not found: {cmd}. Type <span className="text-sky-300 underline font-bold cursor-pointer" onClick={() => handleCommand('help')}>help</span> to view available commands.
           </span>
         ),
       },
@@ -320,66 +321,68 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 py-2 text-xs font-mono">
-        {/* Left: Pixel ASCII art */}
-        <div className="md:col-span-5 flex flex-col items-center justify-center p-2 rounded bg-black/40 border border-zinc-800/60 select-none">
-          <pre className="text-pink-400 leading-tight text-[11px] font-bold tracking-widest text-center">
+        {/* Left: Clean Developer Monogram ASCII */}
+        <div className="md:col-span-5 flex flex-col items-center justify-center p-3 rounded-lg bg-zinc-950/80 border border-zinc-800/80 select-none">
+          <pre className="text-emerald-400 leading-tight text-[11px] font-bold tracking-widest text-center">
 {`
-    /\\___/\\
-   (  o.o  )
-    > ^ <
-  [ Eren.OS ]
-  ╭─────────╮
-  │ 4.20.69 │
-  ╰─────────╯
+  ██████╗ ██████╗ 
+  ██╔══██╗██╔══██╗
+  ██████╔╝██████╔╝
+  ██╔══██╗██╔══██╗
+  ██║  ██║██████╔╝
+  ╚═╝  ╚═╝╚═════╝ 
 `}
           </pre>
-          <div className="text-[10px] text-zinc-500 mt-1 font-sans">
-            serial.exp.portfolio
+          <div className="text-[11px] text-zinc-400 font-mono mt-1">
+            rayen@portfolio.local
+          </div>
+          <div className="text-[10px] text-zinc-500 font-mono">
+            Tunisia • Full Stack
           </div>
         </div>
 
-        {/* Right: Spec Info matching reference image */}
+        {/* Right: Spec Info matching clean terminal */}
         <div className="md:col-span-7 space-y-1.5 flex flex-col justify-center">
           <div className="flex items-center gap-2 pb-1 border-b border-zinc-800">
-            <span className="text-pink-400 font-bold">rayen</span>
+            <span className="text-emerald-400 font-bold">rayen</span>
             <span className="text-zinc-500">@</span>
-            <span className="text-emerald-400 font-bold">portfolio</span>
+            <span className="text-sky-400 font-bold">portfolio</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-pink-400 w-20">👤 User</span>
-            <span className="text-zinc-500 font-bold">&gt;</span>
-            <span className="text-zinc-200 font-bold">{DATA.name} (@ErenYea9er69)</span>
+          <div className="flex items-center gap-2 text-[11px]">
+            <span className="text-zinc-400 w-24">User</span>
+            <span className="text-zinc-600">:</span>
+            <span className="text-zinc-200 font-semibold">{DATA.name}</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-emerald-400 w-20">💻 OS</span>
-            <span className="text-zinc-500 font-bold">&gt;</span>
-            <span className="text-zinc-200">AmogOS / Arch Linux x86_64</span>
+          <div className="flex items-center gap-2 text-[11px]">
+            <span className="text-zinc-400 w-24">Role</span>
+            <span className="text-zinc-600">:</span>
+            <span className="text-emerald-400 font-medium">Full Stack Software Engineer</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-blue-400 w-20">⚙️ Kernel</span>
-            <span className="text-zinc-500 font-bold">&gt;</span>
-            <span className="text-zinc-200">4.20.69-lts</span>
+          <div className="flex items-center gap-2 text-[11px]">
+            <span className="text-zinc-400 w-24">Stack</span>
+            <span className="text-zinc-600">:</span>
+            <span className="text-zinc-200">React, Next.js, TypeScript, Node.js</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-cyan-400 w-20">⚡ Role</span>
-            <span className="text-zinc-500 font-bold">&gt;</span>
-            <span className="text-cyan-300">{DATA.description}</span>
+          <div className="flex items-center gap-2 text-[11px]">
+            <span className="text-zinc-400 w-24">Databases</span>
+            <span className="text-zinc-600">:</span>
+            <span className="text-zinc-200">PostgreSQL, Supabase, MongoDB</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-amber-400 w-20">🎮 Stack</span>
-            <span className="text-zinc-500 font-bold">&gt;</span>
-            <span className="text-zinc-200">React • Next.js • TypeScript • Node</span>
+          <div className="flex items-center gap-2 text-[11px]">
+            <span className="text-zinc-400 w-24">Uptime</span>
+            <span className="text-zinc-600">:</span>
+            <span className="text-amber-400 font-mono">{uptimeStr}</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-purple-400 w-20">⏳ Uptime</span>
-            <span className="text-zinc-500 font-bold">&gt;</span>
-            <span className="text-zinc-300">{uptimeStr}</span>
+          <div className="flex items-center gap-2 text-[11px]">
+            <span className="text-zinc-400 w-24">Terminal</span>
+            <span className="text-zinc-600">:</span>
+            <span className="text-zinc-400 font-mono">zsh 5.9 (xterm-256color)</span>
           </div>
 
           {/* Color palette test blocks */}
@@ -388,10 +391,10 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
             <span className="inline-block size-3 rounded-sm bg-rose-500" />
             <span className="inline-block size-3 rounded-sm bg-emerald-500" />
             <span className="inline-block size-3 rounded-sm bg-amber-400" />
-            <span className="inline-block size-3 rounded-sm bg-blue-500" />
-            <span className="inline-block size-3 rounded-sm bg-pink-500" />
+            <span className="inline-block size-3 rounded-sm bg-sky-500" />
+            <span className="inline-block size-3 rounded-sm bg-purple-500" />
             <span className="inline-block size-3 rounded-sm bg-cyan-400" />
-            <span className="inline-block size-3 rounded-sm bg-zinc-100" />
+            <span className="inline-block size-3 rounded-sm bg-zinc-200" />
           </div>
         </div>
       </div>
@@ -400,31 +403,31 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
 
   const renderProjects = () => {
     return (
-      <div className="space-y-3 py-1">
+      <div className="space-y-2 py-1">
         <p className="text-emerald-400 font-bold text-xs">📂 Featured Projects ({DATA.projects.length}):</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {DATA.projects.map((proj) => (
             <div
               key={proj.title}
-              className="p-2.5 rounded bg-zinc-950/80 border border-zinc-800 hover:border-zinc-700 transition-colors"
+              className="p-2.5 rounded-lg bg-zinc-950/80 border border-zinc-800 hover:border-zinc-700 transition-colors"
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-white font-bold text-xs">{proj.title}</span>
+                <span className="text-white font-semibold text-xs">{proj.title}</span>
                 {proj.href && (
                   <a
                     href={proj.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-cyan-400 hover:text-cyan-300"
+                    className="text-sky-400 hover:text-sky-300"
                   >
                     <ExternalLink className="size-3" />
                   </a>
                 )}
               </div>
-              <p className="text-[11px] text-zinc-400 line-clamp-2 mb-2">{proj.description}</p>
+              <p className="text-[11px] text-zinc-400 line-clamp-2 mb-1.5">{proj.description}</p>
               <div className="flex flex-wrap gap-1">
                 {proj.technologies.slice(0, 4).map((t) => (
-                  <span key={t} className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-300 font-mono">
+                  <span key={t} className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-300 font-mono border border-zinc-800">
                     {t}
                   </span>
                 ))}
@@ -439,12 +442,12 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
   const renderSkills = () => {
     return (
       <div className="space-y-2 py-1 text-xs">
-        <p className="text-cyan-400 font-bold">🛠️ Tech Stack & Skills:</p>
+        <p className="text-sky-400 font-bold">🛠️ Tech Stack & Skills:</p>
         <div className="flex flex-wrap gap-1.5">
           {DATA.skills.map((s) => (
             <span
               key={s.name}
-              className="px-2 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-200 font-mono text-[11px] flex items-center gap-1.5"
+              className="px-2 py-1 rounded bg-zinc-950 border border-zinc-800 text-zinc-200 font-mono text-[11px] flex items-center gap-1.5"
             >
               <span className="size-1.5 rounded-full" style={{ backgroundColor: s.color || '#38bdf8' }} />
               {s.name}
@@ -458,15 +461,15 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
   const renderHelp = () => {
     return (
       <div className="space-y-1.5 py-1 text-xs text-zinc-300">
-        <p className="text-yellow-400 font-bold">Available Commands:</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 font-mono">
-          <div><span className="text-pink-400 font-bold">neofetch</span> - System specs & ASCII card</div>
-          <div><span className="text-emerald-400 font-bold">projects</span> - View portfolio projects</div>
-          <div><span className="text-cyan-400 font-bold">skills</span> - List technologies & tools</div>
-          <div><span className="text-amber-400 font-bold">about</span> - About developer & bio</div>
-          <div><span className="text-purple-400 font-bold">contact</span> - Socials & contact links</div>
-          <div><span className="text-blue-400 font-bold">gui</span> - Return to web portfolio</div>
-          <div><span className="text-zinc-400 font-bold">clear</span> - Clear terminal screen</div>
+        <p className="text-amber-400 font-bold">Available Commands:</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 font-mono text-[11px]">
+          <div><span className="text-emerald-400 font-bold">neofetch</span> - System specs & developer card</div>
+          <div><span className="text-sky-400 font-bold">projects</span> - View shipped portfolio projects</div>
+          <div><span className="text-amber-400 font-bold">skills</span> - List technologies & tools</div>
+          <div><span className="text-purple-400 font-bold">about</span> - Developer bio & background</div>
+          <div><span className="text-cyan-400 font-bold">contact</span> - Socials & contact links</div>
+          <div><span className="text-rose-400 font-bold">gui</span> - Return to web portfolio</div>
+          <div><span className="text-zinc-400 font-bold">clear</span> - Clear terminal buffer</div>
           <div><span className="text-zinc-400 font-bold">whoami</span> - Display current user</div>
         </div>
       </div>
@@ -474,144 +477,128 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#06070a] text-zinc-200 font-mono flex flex-col select-text relative overflow-hidden">
-      {/* Subtle background grid & CRT overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage: `radial-gradient(#ffffff 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      {/* ─── TOP STATUS & GUI RETURN BAR ─── */}
-      <header className="relative z-20 flex items-center justify-between px-4 py-3 border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md">
-        <div className="flex items-center gap-3">
+    <div className="h-[100dvh] w-full bg-[#0a0c10] text-zinc-200 font-mono flex flex-col select-text relative overflow-hidden">
+      {/* ─── TOP STATUS & EXIT BAR ─── */}
+      <header className="shrink-0 relative z-20 flex items-center justify-between px-3 sm:px-4 py-2.5 border-b border-zinc-800/80 bg-zinc-950/95 backdrop-blur-md">
+        <div className="flex items-center gap-2.5">
           <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-xs font-semibold tracking-wide text-zinc-200">
-              rayen@AmogOS: ~
+              rayen@portfolio: ~
             </span>
           </div>
-          <span className="hidden sm:inline-block text-[11px] text-zinc-500">
-            [Unix Mode]
+          <span className="hidden sm:inline-block text-[10px] text-zinc-500 font-mono">
+            [zsh 5.9]
           </span>
         </div>
 
-        {/* Prominent Back to Web / GUI button */}
-        <button
-          onClick={() => {
-            if (onGuiCommand) onGuiCommand();
-            else if (typeof window !== 'undefined') window.location.href = '/';
-          }}
-          className="group flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 hover:border-pink-500 hover:bg-zinc-800/90 text-zinc-200 hover:text-white transition-all text-xs shadow-lg cursor-pointer"
-          title="Return to standard web portfolio"
-        >
-          <ArrowLeft className="size-3.5 group-hover:-translate-x-0.5 transition-transform text-pink-400" />
-          <span className="font-semibold">Return to Web Portfolio</span>
-          <span className="hidden md:inline text-[10px] text-zinc-400 bg-zinc-800 px-1 rounded">
-            or type &apos;gui&apos;
-          </span>
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Toggle ASCII art visibility button */}
+          <button
+            type="button"
+            onClick={() => setShowDemoArt(!showDemoArt)}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-300 text-xs transition-colors cursor-pointer"
+            title="Toggle ASCII art side panel"
+          >
+            <ImageIcon className="size-3 text-zinc-400" />
+            <span className="hidden sm:inline">{showDemoArt ? "Hide Art" : "Art Panel"}</span>
+          </button>
+
+          {/* Return to Web / GUI button */}
+          <button
+            type="button"
+            onClick={() => {
+              if (onGuiCommand) onGuiCommand();
+              else if (typeof window !== 'undefined') window.location.href = '/';
+            }}
+            className="group flex items-center gap-1.5 px-3 py-1 rounded-md bg-zinc-900 border border-zinc-700 hover:border-emerald-500 hover:bg-zinc-800 text-zinc-200 hover:text-white transition-all text-xs cursor-pointer"
+            title="Return to standard web portfolio"
+          >
+            <ArrowLeft className="size-3.5 group-hover:-translate-x-0.5 transition-transform text-emerald-400" />
+            <span className="font-medium">Web View</span>
+            <span className="hidden md:inline text-[9px] text-zinc-400 bg-zinc-800 px-1 rounded">
+              gui
+            </span>
+          </button>
+        </div>
       </header>
 
-      {/* ─── MAIN WORKSPACE (Split with demo.gif decoration + Terminal) ─── */}
-      <main className="flex-1 relative z-10 p-3 sm:p-6 md:p-8 flex flex-col justify-center max-w-7xl mx-auto w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      {/* ─── MAIN WORKSPACE (Full height flex on mobile, split on desktop when art enabled) ─── */}
+      <main className="flex-1 min-h-0 relative z-10 p-2 sm:p-4 md:p-6 flex flex-col max-w-7xl mx-auto w-full">
+        <div className="flex-1 min-h-0 flex gap-4 items-stretch">
           
-          {/* ─── LEFT COLUMN: DEMO.GIF RETRO DECORATION (Like User Image 2) ─── */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center">
-            <div className="w-full max-w-md rounded-xl border border-zinc-800/80 bg-zinc-950/70 backdrop-blur-md overflow-hidden shadow-2xl shadow-black/80 flex flex-col">
-              {/* Window Header */}
-              <div className="flex items-center justify-between px-3 py-2 bg-zinc-900/90 border-b border-zinc-800 text-[11px] text-zinc-400 select-none">
-                <div className="flex items-center gap-1.5">
-                  <span className="size-2.5 rounded-full bg-rose-500/80 inline-block" />
-                  <span className="size-2.5 rounded-full bg-amber-500/80 inline-block" />
-                  <span className="size-2.5 rounded-full bg-emerald-500/80 inline-block" />
-                  <span className="ml-2 font-mono text-[10px] text-zinc-400">ascii_matrix.gif</span>
+          {/* ─── OPTIONAL LEFT COLUMN: DEMO.GIF (Only on desktop or when toggled) ─── */}
+          {showDemoArt && (
+            <div className="w-80 shrink-0 hidden lg:flex flex-col justify-center animate-in fade-in duration-200">
+              <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/90 overflow-hidden shadow-xl flex flex-col">
+                <div className="flex items-center justify-between px-3 py-2 bg-zinc-900/90 border-b border-zinc-800 text-[11px] text-zinc-400 select-none">
+                  <span className="font-mono text-[10px]">ascii_matrix.gif</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">
+                    LIVE
+                  </span>
                 </div>
-                <span className="text-[9px] px-1.5 py-0.2 rounded bg-pink-500/20 text-pink-300 font-semibold">
-                  LIVE
-                </span>
-              </div>
-
-              {/* Animated GIF Display */}
-              <div className="relative bg-black flex items-center justify-center p-1 sm:p-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/demo.gif"
-                  alt="Anime ASCII art decoration"
-                  className="w-full h-auto object-contain rounded filter contrast-125 brightness-95"
-                />
-              </div>
-
-              {/* Footer Quote & Info */}
-              <div className="p-3 bg-zinc-950/90 border-t border-zinc-900/80 flex items-center justify-between text-xs">
-                <div>
-                  <p className="text-zinc-300 font-bold text-[12px]">{DATA.name}</p>
-                  <p className="text-[10px] text-zinc-500 italic">&ldquo;I knew nothing...&rdquo;</p>
+                <div className="relative bg-black flex items-center justify-center p-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/demo.gif"
+                    alt="ASCII art decoration"
+                    className="w-full h-auto object-contain rounded filter contrast-125 brightness-95"
+                  />
                 </div>
-                <div className="text-right">
-                  <span className="text-[10px] text-emerald-400 font-mono block">TUNISIA 🇹🇳</span>
-                  <span className="text-[9px] text-zinc-600 font-mono">Arch // 4.20.69</span>
+                <div className="p-3 bg-zinc-950 border-t border-zinc-900 text-xs flex justify-between items-center">
+                  <span className="text-zinc-300 font-semibold">{DATA.name}</span>
+                  <span className="text-[10px] text-emerald-400 font-mono">Tunisia</span>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* ─── RIGHT COLUMN: RETRO TERMINAL WINDOW ─── */}
-          <div className="lg:col-span-7 flex flex-col">
+          {/* ─── TERMINAL WINDOW (Takes 100% space on phones) ─── */}
+          <div className="flex-1 min-w-0 min-h-0 flex flex-col">
             <div
               ref={terminalBoxRef}
               onClick={handleTerminalClick}
-              className="flex-1 flex flex-col rounded-xl border border-zinc-800/90 bg-[#090b10]/95 backdrop-blur-xl shadow-2xl shadow-black overflow-hidden min-h-[480px] max-h-[75vh]"
+              className="flex-1 min-h-0 flex flex-col rounded-xl border border-zinc-800/90 bg-[#090b10] shadow-2xl overflow-hidden"
             >
-              {/* Terminal Window Chrome (Classic Unix Style like Image 2) */}
-              <div className="flex flex-col bg-zinc-900/95 border-b border-zinc-800 select-none">
-                {/* Dots + Title */}
-                <div className="flex items-center justify-between px-3 py-2">
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => {
-                        if (onGuiCommand) onGuiCommand();
-                        else if (typeof window !== 'undefined') window.location.href = '/';
-                      }}
-                      className="size-3 rounded-full bg-[#ff5f56] hover:brightness-110 flex items-center justify-center cursor-pointer"
-                      title="Exit to Web"
-                    />
-                    <span className="size-3 rounded-full bg-[#ffbd2e]" />
-                    <span className="size-3 rounded-full bg-[#27c93f]" />
-                  </div>
-                  <div className="text-xs text-zinc-300 font-mono font-medium flex items-center gap-1.5">
-                    <TerminalIcon className="size-3 text-emerald-400" />
-                    <span>rayen@AmogOS: ~ (zsh)</span>
-                  </div>
-                  <div className="text-[10px] text-zinc-500 font-mono">
-                    80x24
-                  </div>
+              {/* Terminal Window Chrome */}
+              <div className="shrink-0 flex items-center justify-between px-3 py-2 bg-zinc-900/95 border-b border-zinc-800 select-none">
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onGuiCommand) onGuiCommand();
+                      else if (typeof window !== 'undefined') window.location.href = '/';
+                    }}
+                    className="size-3 rounded-full bg-[#ff5f56] hover:brightness-110 flex items-center justify-center cursor-pointer"
+                    title="Exit to Web"
+                  />
+                  <span className="size-3 rounded-full bg-[#ffbd2e]" />
+                  <span className="size-3 rounded-full bg-[#27c93f]" />
                 </div>
-
-                {/* Classic Unix Menu Bar (File Actions Edit View Help) matching Image 2 */}
-                <div className="flex items-center gap-4 px-3 py-1 bg-zinc-950/60 border-t border-zinc-800/60 text-[11px] text-zinc-400 font-sans">
-                  <span className="hover:text-white cursor-pointer" onClick={() => handleCommand('help')}>File</span>
-                  <span className="hover:text-white cursor-pointer" onClick={() => handleCommand('projects')}>Projects</span>
-                  <span className="hover:text-white cursor-pointer" onClick={() => handleCommand('skills')}>Skills</span>
-                  <span className="hover:text-white cursor-pointer" onClick={() => handleCommand('about')}>About</span>
-                  <span className="hover:text-white cursor-pointer text-emerald-400 font-semibold" onClick={() => handleCommand('gui')}>Back to GUI</span>
+                <div className="text-xs text-zinc-300 font-mono font-medium flex items-center gap-1.5">
+                  <TerminalIcon className="size-3 text-emerald-400" />
+                  <span>rayen@portfolio: ~ (zsh)</span>
+                </div>
+                <div className="text-[10px] text-zinc-500 font-mono">
+                  80×24
                 </div>
               </div>
 
               {/* Scrollable Terminal Output Body */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 font-mono text-xs custom-scrollbar">
+              <div
+                ref={scrollContainerRef}
+                className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 space-y-3 font-mono text-xs overscroll-contain"
+                style={{ WebkitOverflowScrolling: 'touch' }}
+              >
                 {outputList.map((item) => (
-                  <div key={item.id} className="space-y-1.5">
+                  <div key={item.id} className="space-y-1">
                     {/* Prompt replay */}
                     <div className="flex items-center gap-2 text-zinc-400">
-                      <span className="text-emerald-400 font-bold">rayen@portfolio:~$</span>
+                      <span className="text-emerald-400 font-bold shrink-0">rayen@portfolio:~$</span>
                       <span className="text-zinc-100">{item.command}</span>
                     </div>
 
-                    {/* Output according to type */}
+                    {/* Output */}
                     <div className="pl-2">
                       {item.type === 'fetch' && renderNeofetch()}
                       {item.type === 'projects' && renderProjects()}
@@ -633,8 +620,8 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="flex-1 bg-transparent border-none outline-none text-zinc-100 font-mono caret-pink-500 placeholder-zinc-700"
-                    placeholder="Type a command (try: help, projects, gui)..."
+                    className="flex-1 min-w-0 bg-transparent border-none outline-none text-zinc-100 font-mono caret-emerald-400 placeholder-zinc-700"
+                    placeholder="Type command (help, projects, gui)..."
                     autoFocus
                     spellCheck={false}
                     autoComplete="off"
@@ -644,24 +631,29 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
                 <div ref={bottomRef} />
               </div>
 
-              {/* ─── QUICK COMMAND SUGGESTION CHIPS ─── */}
-              <div className="p-2.5 bg-zinc-950/90 border-t border-zinc-800/80 flex items-center justify-between gap-2 overflow-x-auto select-none">
-                <span className="text-[10px] text-zinc-500 hidden sm:inline shrink-0">
-                  Quick commands:
+              {/* ─── QUICK COMMAND SUGGESTION CHIPS (Always visible & docked on mobile) ─── */}
+              <div className="shrink-0 p-2 sm:p-2.5 bg-zinc-950 border-t border-zinc-800/80 flex items-center justify-between gap-1.5 overflow-x-auto select-none no-scrollbar">
+                <span className="text-[10px] text-zinc-500 hidden md:inline shrink-0">
+                  Quick:
                 </span>
-                <div className="flex items-center gap-1.5 flex-wrap">
+                <div className="flex items-center gap-1.5 shrink-0 flex-nowrap sm:flex-wrap">
                   {[
-                    { label: 'neofetch', cmd: 'neofetch', color: 'hover:text-pink-400 hover:border-pink-500/50' },
-                    { label: 'projects', cmd: 'projects', color: 'hover:text-emerald-400 hover:border-emerald-500/50' },
+                    { label: 'neofetch', cmd: 'neofetch', color: 'hover:text-emerald-400 hover:border-emerald-500/50' },
+                    { label: 'projects', cmd: 'projects', color: 'hover:text-sky-400 hover:border-sky-500/50' },
                     { label: 'skills', cmd: 'skills', color: 'hover:text-cyan-400 hover:border-cyan-500/50' },
                     { label: 'about', cmd: 'about', color: 'hover:text-amber-400 hover:border-amber-500/50' },
+                    { label: 'contact', cmd: 'contact', color: 'hover:text-purple-400 hover:border-purple-500/50' },
                     { label: 'clear', cmd: 'clear', color: 'hover:text-zinc-300 hover:border-zinc-500' },
                     { label: 'exit to web', cmd: 'gui', color: 'hover:text-rose-400 hover:border-rose-500/50 text-rose-300' },
                   ].map((chip) => (
                     <button
                       key={chip.cmd}
+                      type="button"
                       onClick={() => handleCommand(chip.cmd)}
-                      className={`text-[11px] font-mono px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 transition-all cursor-pointer ${chip.color}`}
+                      className={cn(
+                        "text-[10px] sm:text-[11px] font-mono px-2 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 transition-colors cursor-pointer shrink-0 active:scale-95",
+                        chip.color
+                      )}
                     >
                       {chip.label}
                     </button>

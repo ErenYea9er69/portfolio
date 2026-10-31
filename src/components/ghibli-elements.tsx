@@ -35,7 +35,7 @@ export function FloatingCloud({
         willChange: "transform",
       }}
       initial={{ x: "-120%" }}
-      animate={{ x: "110vw" }}
+      animate={{ x: "100vw" }}
       transition={{
         duration,
         repeat: Infinity,
