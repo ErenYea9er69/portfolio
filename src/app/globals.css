@@ -394,30 +394,30 @@
   }
 }
 
-/* ─── Native SVG Cursor Fallbacks ─── */
+/* ─── Native SVG Cursor Fallbacks (Hotspots calibrated to pixel-exact 0,0 tip) ─── */
 [data-theme="japanese"] body,
 [data-theme="japanese"] * {
-  cursor: url('/cursors/katana-sword.svg') 2 2, auto;
+  cursor: url('/cursors/katana-sword.svg') 0 0, auto;
 }
 [data-theme="japanese"] a,
 [data-theme="japanese"] button,
 [data-theme="japanese"] [role="button"] {
-  cursor: url('/cursors/katana-hover.svg') 2 2, pointer;
+  cursor: url('/cursors/katana-hover.svg') 0 0, pointer;
 }
 
 [data-theme="minecraft"] body,
 [data-theme="minecraft"] * {
-  cursor: url('/cursors/minecraft-sword.svg') 2 2, auto;
+  cursor: url('/cursors/minecraft-sword.svg') 0 0, auto;
 }
 [data-theme="minecraft"] a,
 [data-theme="minecraft"] button,
 [data-theme="minecraft"] [role="button"] {
-  cursor: url('/cursors/minecraft-pickaxe.svg') 4 4, pointer;
+  cursor: url('/cursors/minecraft-pickaxe.svg') 0 0, pointer;
 }
 
 [data-theme="cyberpunk"] body,
 [data-theme="cyberpunk"] * {
-  cursor: url('/cursors/cyberpunk-pointer.svg') 2 2, auto;
+  cursor: url('/cursors/cyberpunk-pointer.svg') 0 0, auto;
 }
 [data-theme="cyberpunk"] a,
 [data-theme="cyberpunk"] button,
@@ -427,7 +427,7 @@
 
 [data-theme="e33"] body,
 [data-theme="e33"] * {
-  cursor: url('/cursors/e33-petal.svg') 2 2, auto;
+  cursor: url('/cursors/e33-petal.svg') 0 0, auto;
 }
 [data-theme="e33"] a,
 [data-theme="e33"] button,

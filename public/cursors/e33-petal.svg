@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <!-- Expedition 33 Belle Epoque Brush Petal Cursor (Hotspot: 2, 2) -->
+  <!-- Expedition 33 Belle Epoque Brush Petal Cursor (Hotspot: 0, 0) -->
   <defs>
     <filter id="e33Glow" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#d9453f" flood-opacity="0.5"/>
       <feDropShadow dx="0" dy="0" stdDeviation="1" flood-color="#e8d08a" flood-opacity="0.6"/>
     </filter>
-    <linearGradient id="petalFill" x1="2" y1="2" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+    <linearGradient id="petalFill" x1="0" y1="0" x2="22" y2="22" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#f43f5e"/>
       <stop offset="45%" stop-color="#d9453f"/>
       <stop offset="100%" stop-color="#881337"/>
@@ -14,16 +14,15 @@
 
   <g filter="url(#e33Glow)">
     <!-- Ornate Gilded Outer Ring -->
-    <circle cx="16" cy="16" r="11" stroke="#e8d08a" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <circle cx="15" cy="15" r="11" stroke="#e8d08a" stroke-width="1.2" stroke-dasharray="3 3"/>
     
-    <!-- Flowing Brush Petal (Points toward top-left 2, 2) -->
-    <path d="M2 2 C 8 4, 18 10, 22 18 C 18 22, 10 18, 4 8 Z" fill="url(#petalFill)" stroke="#f3e6bf" stroke-width="1.2"/>
+    <!-- Flowing Brush Petal (Tip at 0, 0) -->
+    <path d="M0 0 C 6 2, 16 8, 20 16 C 16 20, 8 16, 2 6 Z" fill="url(#petalFill)" stroke="#f3e6bf" stroke-width="1.2"/>
     
     <!-- Gold Leaf Spine Vein -->
-    <path d="M4 4 C 8 8, 14 14, 20 18" stroke="#e8d08a" stroke-width="1" stroke-linecap="round"/>
+    <path d="M2 2 C 6 6, 12 12, 18 16" stroke="#e8d08a" stroke-width="1" stroke-linecap="round"/>
 
     <!-- Pointer Crystal Core at tip -->
-    <circle cx="3" cy="3" r="1.5" fill="#f3e6bf" stroke="#e8d08a" stroke-width="0.8"/>
+    <circle cx="1" cy="1" r="1.2" fill="#f3e6bf" stroke="#e8d08a" stroke-width="0.8"/>
   </g>
 </svg>
-

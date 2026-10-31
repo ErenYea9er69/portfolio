@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
-  <!-- Japanese Katana Active Unsheathed / Strike Cursor (Hotspot: 2, 2) -->
+  <!-- Japanese Katana Active Unsheathed / Strike Cursor (Hotspot: 0, 0) -->
   <defs>
     <filter id="katanaGlow" x="-30%" y="-30%" width="160%" height="160%">
       <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#ffffff" flood-opacity="0.8"/>
@@ -8,20 +8,19 @@
   </defs>
 
   <g filter="url(#katanaGlow)">
-    <!-- Blade Flash Glow -->
-    <path d="M1 1 L 22 22" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
-    <path d="M1 1 L 18 18" stroke="#c93a2b" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- Blade Flash Glow (Tip at 0, 0) -->
+    <path d="M0 0 L 21 21" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M0 0 L 17 17" stroke="#c93a2b" stroke-width="1.2" stroke-linecap="round"/>
 
     <!-- Tsuba Guard -->
-    <ellipse cx="23" cy="23" rx="5" ry="2.2" transform="rotate(45 23 23)" fill="#1c1917" stroke="#d4af37" stroke-width="1.2"/>
-    <circle cx="23" cy="23" r="1.5" fill="#ffffff"/>
+    <ellipse cx="22" cy="22" rx="5" ry="2.2" transform="rotate(45 22 22)" fill="#1c1917" stroke="#d4af37" stroke-width="1.2"/>
+    <circle cx="22" cy="22" r="1.5" fill="#ffffff"/>
 
     <!-- Hilt Wrapped -->
-    <path d="M24 24 L 32 32" stroke="#c93a2b" stroke-width="3.5" stroke-linecap="round"/>
-    <circle cx="32.5" cy="32.5" r="1.8" fill="#d4af37"/>
+    <path d="M23 23 L 31 31" stroke="#c93a2b" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="31.5" cy="31.5" r="1.8" fill="#d4af37"/>
 
     <!-- Kanji Zan (斬 - Slash) Calligraphy Accent -->
-    <text x="21" y="11" font-family="'EB Garamond', serif" font-weight="700" font-size="9" fill="#d4af37" text-anchor="middle">斬</text>
+    <text x="20" y="10" font-family="'EB Garamond', serif" font-weight="700" font-size="9" fill="#d4af37" text-anchor="middle">斬</text>
   </g>
 </svg>
-

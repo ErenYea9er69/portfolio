@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { MeteorsBackground } from "./meteors-background";
+import { ThemeCompanions } from "./theme-companions";
 
 export function AmbientFx() {
   const { theme, resolvedTheme } = useTheme();
@@ -195,16 +196,19 @@ export function AmbientFx() {
 
   if (!mounted) return null;
 
-  // Use meteors & cloud background for modern dark/light themes
+  // Use meteors & cloud background with Kodama spirits for modern dark/light themes only
   if (activeTheme === "dark" || activeTheme === "light") {
     return <MeteorsBackground />;
   }
 
   return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      className="fixed inset-0 pointer-events-none -z-10"
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        className="fixed inset-0 pointer-events-none -z-10"
+      />
+      <ThemeCompanions theme={activeTheme} />
+    </>
   );
 }

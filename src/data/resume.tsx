@@ -112,7 +112,7 @@ export const DATA = {
     {
       company: "Freelance",
       href: "",
-      badges: ["Next.js", "TypeScript", "React"],
+      badges: [],
       location: "Tunisia",
       title: "Full Stack Developer",
       logoUrl: "",

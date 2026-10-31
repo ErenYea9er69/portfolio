@@ -550,16 +550,16 @@ export function CursorFx() {
           aria-hidden="true"
           className="fixed top-0 left-0 pointer-events-none z-[9999] will-change-transform"
         >
-          {/* 🗡️ Japanese Katana Sword Cursor */}
+          {/* 🗡️ Japanese Katana Sword Cursor (Tip strictly anchored at 0, 0) */}
           {activeTheme === "japanese" && (
-            <div className="relative -translate-x-[2px] -translate-y-[2px]">
+            <div className="relative">
               <img
                 src={isHoveringClickable ? "/cursors/katana-hover.svg" : "/cursors/katana-sword.svg"}
                 alt=""
                 width={36}
                 height={36}
-                className={`transition-transform duration-150 drop-shadow-md ${
-                  isHoveringClickable ? "scale-115 rotate-[-5deg]" : "scale-100"
+                className={`origin-top-left transition-transform duration-150 drop-shadow-md ${
+                  isHoveringClickable ? "scale-115 rotate-[-4deg]" : "scale-100"
                 }`}
               />
               {isHoveringClickable && (
@@ -571,15 +571,15 @@ export function CursorFx() {
             </div>
           )}
 
-          {/* ⛏️ Minecraft Diamond Sword / Pickaxe Cursor */}
+          {/* ⛏️ Minecraft Diamond Sword / Pickaxe Cursor (Tip strictly anchored at 0, 0) */}
           {activeTheme === "minecraft" && (
-            <div className="relative -translate-x-[2px] -translate-y-[2px]">
+            <div className="relative">
               <img
                 src={isHoveringClickable ? "/cursors/minecraft-pickaxe.svg" : "/cursors/minecraft-sword.svg"}
                 alt=""
                 width={32}
                 height={32}
-                className={`transition-transform duration-100 image-rendering-pixelated ${
+                className={`origin-top-left transition-transform duration-100 image-rendering-pixelated ${
                   isHoveringClickable ? "scale-115" : "scale-100"
                 }`}
               />
@@ -601,7 +601,7 @@ export function CursorFx() {
                     alt=""
                     width={32}
                     height={32}
-                    className="scale-110 drop-shadow-[0_0_10px_rgba(255,230,0,0.8)] animate-pulse"
+                    className="origin-center scale-110 drop-shadow-[0_0_10px_rgba(255,230,0,0.8)] animate-pulse"
                   />
                   <div className="absolute left-8 -top-1 flex items-center gap-1.5 text-[10px] font-mono font-bold text-[#ffe600] bg-[#090a07] px-2 py-0.5 border border-[#ffe600] shadow-[0_0_10px_rgba(255,230,0,0.5)] whitespace-nowrap uppercase tracking-widest">
                     <span className="text-[#39ff14]">⚡</span>
@@ -610,13 +610,13 @@ export function CursorFx() {
                   </div>
                 </div>
               ) : (
-                <div className="-translate-x-[2px] -translate-y-[2px]">
+                <div className="relative">
                   <img
                     src="/cursors/cyberpunk-pointer.svg"
                     alt=""
                     width={32}
                     height={32}
-                    className="drop-shadow-[0_0_8px_rgba(255,230,0,0.6)]"
+                    className="origin-top-left drop-shadow-[0_0_8px_rgba(255,230,0,0.6)]"
                   />
                 </div>
               )}
@@ -633,17 +633,17 @@ export function CursorFx() {
                     alt=""
                     width={32}
                     height={32}
-                    className="scale-120 drop-shadow-[0_0_10px_rgba(232,208,138,0.7)]"
+                    className="origin-center scale-120 drop-shadow-[0_0_10px_rgba(232,208,138,0.7)]"
                   />
                 </div>
               ) : (
-                <div className="-translate-x-[2px] -translate-y-[2px]">
+                <div className="relative">
                   <img
                     src="/cursors/e33-petal.svg"
                     alt=""
                     width={32}
                     height={32}
-                    className="drop-shadow-[0_0_8px_rgba(217,69,63,0.5)]"
+                    className="origin-top-left drop-shadow-[0_0_8px_rgba(217,69,63,0.5)]"
                   />
                 </div>
               )}

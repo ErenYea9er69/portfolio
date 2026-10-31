@@ -8,6 +8,7 @@ import { ArrowUpRight, Briefcase, GraduationCap } from "lucide-react";
 import React from "react";
 
 interface ResumeCardProps {
+  className?: string;
   logoUrl?: string;
   altText: string;
   title: string;
@@ -21,6 +22,7 @@ interface ResumeCardProps {
 }
 
 export const ResumeCard = ({
+  className,
   logoUrl,
   altText,
   title,
@@ -38,10 +40,11 @@ export const ResumeCard = ({
   const cardContent = (
     <Card
       className={cn(
-        "group relative flex flex-col p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card/60 dark:bg-zinc-950/50 backdrop-blur-md transition-all duration-200",
+        "group relative flex flex-col justify-between h-full p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card/60 dark:bg-zinc-950/50 backdrop-blur-md transition-all duration-200",
         isRealLink
           ? "hover:border-foreground/30 hover:bg-card/90 dark:hover:bg-zinc-900/70 hover:shadow-sm cursor-pointer"
-          : "hover:border-border"
+          : "hover:border-border",
+        className
       )}
     >
       <div className="flex items-start gap-3">
@@ -122,12 +125,12 @@ export const ResumeCard = ({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20 rounded-xl"
+        className={cn("block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20 rounded-xl", className)}
       >
         {cardContent}
       </a>
     );
   }
 
-  return <div>{cardContent}</div>;
+  return <div className={cn("h-full", className)}>{cardContent}</div>;
 };

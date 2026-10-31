@@ -5,16 +5,16 @@ import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { sound } from "@/lib/sound-fx";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Sun, Moon, Flower2, Zap } from "lucide-react";
+import { Sun, Moon, Flower2, Zap, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const THEME_CYCLE = [
-  { id: "dark", name: "Modern Dark", icon: Moon, color: "#a1a1aa" },
-  { id: "japanese", name: "Old Japanese (Katana)", icon: SwordIcon, color: "#d4af37" },
-  { id: "minecraft", name: "Minecraft (Voxel)", icon: PickaxeIcon, color: "#4deeea" },
-  { id: "cyberpunk", name: "100kV Cyberpunk", icon: Zap, color: "#ffe600" },
-  { id: "e33", name: "Expedition 33", icon: Flower2, color: "#e8d08a" },
-  { id: "light", name: "Daylight", icon: Sun, color: "#f59e0b" },
+  { id: "dark", name: "Modern Dark", tag: "Minimalist obsidian", icon: Moon, color: "#a1a1aa" },
+  { id: "japanese", name: "Old Japanese", tag: "Katana slash & ink", icon: SwordIcon, color: "#d4af37" },
+  { id: "minecraft", name: "Minecraft", tag: "Voxel pickaxe & burst", icon: PickaxeIcon, color: "#4deeea" },
+  { id: "cyberpunk", name: "100kV Cyberpunk", tag: "Industrial electric arc", icon: Zap, color: "#ffe600" },
+  { id: "e33", name: "Expedition 33", tag: "Belle Époque rose petal", icon: Flower2, color: "#e8d08a" },
+  { id: "light", name: "Daylight", tag: "Warm golden sun", icon: Sun, color: "#f59e0b" },
 ];
 
 function SwordIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
@@ -58,7 +58,11 @@ function PickaxeIcon({ className, style }: { className?: string; style?: React.C
 export function ModeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
-  const ref = React.useRef<HTMLButtonElement>(null);
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const closeTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   React.useEffect(() => {
     setMounted(true);
@@ -72,8 +76,68 @@ export function ModeToggle() {
   const nextIndex = (safeIndex + 1) % THEME_CYCLE.length;
   const nextTheme = THEME_CYCLE[nextIndex];
 
-  const cycleTheme = async () => {
-    const targetTheme = nextTheme.id;
+  // Graceful hover open/close logic with 200ms debounce
+  const handleMouseEnter = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+    }
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 200);
+  };
+
+  // Close when focus completely moves outside container
+  const handleBlur = (e: React.FocusEvent) => {
+    if (!containerRef.current?.contains(e.relatedTarget as Node)) {
+      setIsOpen(false);
+    }
+  };
+
+  // Keyboard navigation & outside click dismissal
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
+        buttonRef.current?.focus();
+      }
+    };
+
+    const handlePointerDownOutside = (e: PointerEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("pointerdown", handlePointerDownOutside);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("pointerdown", handlePointerDownOutside);
+    };
+  }, [isOpen]);
+
+  // Clean up timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const applyTheme = async (targetTheme: string) => {
+    if (targetTheme === currentThemeId) return;
 
     sound.playThemeSwitch(targetTheme);
 
@@ -88,7 +152,7 @@ export function ModeToggle() {
     };
 
     if (
-      !ref.current ||
+      !buttonRef.current ||
       !document.startViewTransition ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
@@ -96,7 +160,7 @@ export function ModeToggle() {
       return;
     }
 
-    const { top, left, width, height } = ref.current.getBoundingClientRect();
+    const { top, left, width, height } = buttonRef.current.getBoundingClientRect();
     const x = left + width / 2;
     const y = top + height / 2;
     const right = window.innerWidth - left;
@@ -124,6 +188,10 @@ export function ModeToggle() {
     );
   };
 
+  const cycleTheme = () => {
+    applyTheme(nextTheme.id);
+  };
+
   if (!mounted) {
     return (
       <Button variant="ghost" size="icon" className="size-9 rounded-lg" aria-label="Toggle theme">
@@ -135,29 +203,109 @@ export function ModeToggle() {
   const IconComponent = currentTheme.icon;
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          ref={ref}
-          variant="ghost"
-          size="icon"
-          className="relative size-9 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95"
-          onClick={cycleTheme}
-          aria-label={`Current theme: ${currentTheme.name}. Click to switch to ${nextTheme.name}`}
-        >
-          <IconComponent
-            className="size-4.5 transition-transform duration-300"
-            style={{ color: currentTheme.color }}
-          />
-          <span className="sr-only">Toggle theme (Next: {nextTheme.name})</span>
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent side="bottom" sideOffset={8}>
-        <div className="flex flex-col gap-0.5 text-center">
-          <p className="text-xs font-semibold text-foreground">{currentTheme.name}</p>
-          <p className="text-[10px] text-muted-foreground">Click to cycle: {nextTheme.name}</p>
+    <div
+      ref={containerRef}
+      className="relative inline-block"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onFocus={() => setIsOpen(true)}
+      onBlur={handleBlur}
+    >
+      {/* Switcher Toggle Button */}
+      <Button
+        ref={buttonRef}
+        variant="ghost"
+        size="icon"
+        className="relative size-9 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+        onClick={cycleTheme}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-label={`Current theme: ${currentTheme.name}. Click to switch to ${nextTheme.name}, or hover to view all themes`}
+      >
+        <IconComponent
+          className="size-4.5 transition-transform duration-300"
+          style={{ color: currentTheme.color }}
+        />
+        <span className="sr-only">Toggle theme (Next: {nextTheme.name})</span>
+      </Button>
+
+      {/* Hover Dropdown Theme List */}
+      <div
+        role="listbox"
+        aria-label="Available themes"
+        className={cn(
+          "absolute right-0 top-full pt-2 z-[9990] min-w-[230px] transition-all duration-200 ease-out origin-top-right",
+          isOpen
+            ? "opacity-100 scale-100 pointer-events-auto translate-y-0"
+            : "opacity-0 scale-95 pointer-events-none -translate-y-1"
+        )}
+      >
+        <div className="rounded-xl border border-border/80 bg-background/95 p-1.5 shadow-2xl backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10">
+          <div className="px-2.5 py-1.5 mb-1 border-b border-border/50 flex items-center justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Themes
+            </span>
+            <span className="text-[10px] text-muted-foreground/80 font-mono">
+              {safeIndex + 1}/{THEME_CYCLE.length}
+            </span>
+          </div>
+
+          <div className="space-y-0.5">
+            {THEME_CYCLE.map((t) => {
+              const ItemIcon = t.icon;
+              const isSelected = t.id === currentThemeId;
+
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => {
+                    applyTheme(t.id);
+                    setIsOpen(false);
+                  }}
+                  className={cn(
+                    "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-xs transition-colors group",
+                    isSelected
+                      ? "bg-accent text-accent-foreground font-semibold shadow-xs"
+                      : "text-foreground/80 hover:bg-muted/70 hover:text-foreground"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "size-6 rounded-md flex items-center justify-center shrink-0 border transition-transform duration-150 group-hover:scale-110",
+                      isSelected
+                        ? "border-foreground/30 bg-background/80"
+                        : "border-border/60 bg-muted/40"
+                    )}
+                  >
+                    <ItemIcon className="size-3.5" style={{ color: t.color }} />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="truncate">{t.name}</span>
+                      {isSelected && (
+                        <Check className="size-3.5 text-foreground shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground font-normal truncate">
+                      {t.tag}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-1.5 pt-1.5 border-t border-border/40 px-2 py-0.5 text-center">
+            <span className="text-[10px] text-muted-foreground/75">
+              Click icon to cycle · Click list to pick
+            </span>
+          </div>
         </div>
-      </TooltipContent>
-    </Tooltip>
+      </div>
+    </div>
   );
 }

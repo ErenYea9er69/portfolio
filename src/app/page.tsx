@@ -182,21 +182,23 @@ export default function Page() {
 
         {/* ─── EXPERIENCE & EDUCATION (Merged side-by-side 50/50 to reduce scrolling) ─── */}
         <section id="experience-education" className="scroll-mt-24">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-stretch">
             {/* Left Column (50%): Work Experience */}
-            <div id="work" className="flex min-h-0 flex-col gap-y-3">
+            <div id="work" className="flex min-h-0 flex-col gap-y-3 h-full">
               <BlurFade delay={BLUR_FADE_DELAY * 12}>
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                   Work Experience
                 </h2>
               </BlurFade>
-              <div className="space-y-3">
+              <div className="space-y-3 flex-1 flex flex-col">
                 {DATA.work.map((work, id) => (
                   <BlurFade
                     key={work.company}
                     delay={BLUR_FADE_DELAY * 12.3 + id * 0.05}
+                    className="flex-1 flex flex-col"
                   >
                     <ResumeCard
+                      className="h-full flex-1"
                       logoUrl={work.logoUrl}
                       altText={work.company}
                       title={work.company}
@@ -214,19 +216,21 @@ export default function Page() {
             </div>
 
             {/* Right Column (50%): Education */}
-            <div id="education" className="flex min-h-0 flex-col gap-y-3">
+            <div id="education" className="flex min-h-0 flex-col gap-y-3 h-full">
               <BlurFade delay={BLUR_FADE_DELAY * 12.2}>
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                   Education
                 </h2>
               </BlurFade>
-              <div className="space-y-3">
+              <div className="space-y-3 flex-1 flex flex-col">
                 {DATA.education.map((education, id) => (
                   <BlurFade
                     key={education.school}
                     delay={BLUR_FADE_DELAY * 12.5 + id * 0.05}
+                    className="flex-1 flex flex-col"
                   >
                     <ResumeCard
+                      className="h-full flex-1"
                       logoUrl={education.logoUrl}
                       altText={education.school}
                       title={education.school}
