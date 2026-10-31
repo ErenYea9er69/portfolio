@@ -41,7 +41,7 @@ export function ProjectsSection() {
       </div>
 
       {/* Grid of 4 Projects with pictures */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 pt-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-1">
         {landingProjects.map((project, idx) => (
           <ProjectCard key={project.title} project={project as any} index={idx} />
         ))}

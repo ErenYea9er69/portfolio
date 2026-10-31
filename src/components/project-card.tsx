@@ -80,7 +80,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
 
       {/* ─── Project Visual Preview Banner ─── */}
-      <div className="relative h-48 sm:h-52 w-full overflow-hidden border-b border-border/50 dark:border-white/[0.06] bg-muted/30 dark:bg-zinc-900/40">
+      <div className="relative h-44 sm:h-52 w-full overflow-hidden border-b border-border/50 dark:border-white/[0.06] bg-muted/30 dark:bg-zinc-900/40">
         {project.image ? (
           <div className="relative w-full h-full overflow-hidden">
             <Image
@@ -98,19 +98,19 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
         )}
 
         {/* Category & Status Overlay Floating Pills (Quiet, Calm) */}
-        <div className="absolute top-3 inset-x-3.5 flex items-center justify-between pointer-events-none z-10">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-medium tracking-wider uppercase bg-background/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
+        <div className="absolute top-2.5 sm:top-3 inset-x-2.5 sm:inset-x-3.5 flex items-center justify-between pointer-events-none z-10">
+          <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium tracking-wider uppercase bg-background/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
             <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
             {project.category || "Project"}
           </span>
 
           {websiteLink ? (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-medium uppercase bg-background/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border/60 text-foreground shadow-xs">
+            <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border/60 text-foreground shadow-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
               Live Demo
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-medium uppercase bg-background/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
+            <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
               Source Only
             </span>
@@ -119,20 +119,20 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
       </div>
 
       {/* ─── Content Body ─── */}
-      <div className="flex flex-col flex-1 p-5 sm:p-6 z-10">
+      <div className="flex flex-col flex-1 p-4 sm:p-6 z-10">
         {/* Title & External Link */}
         <div className="flex items-start justify-between gap-3 mb-1.5">
           <a
             href={primaryHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="group/title inline-flex items-center gap-1.5 text-lg sm:text-xl font-bold tracking-tight text-foreground hover:text-foreground/80 transition-colors"
+            className="group/title inline-flex items-center gap-1.5 text-base sm:text-xl font-bold tracking-tight text-foreground hover:text-foreground/80 transition-colors"
           >
             <span>{project.title}</span>
             <ArrowUpRight className="size-4 opacity-40 transition-all duration-200 group-hover/title:opacity-100 group-hover/title:translate-x-0.5 group-hover/title:-translate-y-0.5" />
           </a>
           {project.dates && (
-            <span className="text-[11px] font-mono text-muted-foreground/70 bg-muted/40 px-2 py-0.5 rounded-md">
+            <span className="text-[10px] sm:text-[11px] font-mono text-muted-foreground/70 bg-muted/40 px-2 py-0.5 rounded-md shrink-0">
               {project.dates}
             </span>
           )}
@@ -140,26 +140,26 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
 
         {/* Tagline */}
         {project.tagline && (
-          <p className="text-xs font-medium text-foreground/80 dark:text-zinc-300 mb-2.5 leading-relaxed">
+          <p className="text-xs font-medium text-foreground/80 dark:text-zinc-300 mb-2 leading-relaxed">
             {project.tagline}
           </p>
         )}
 
         {/* Description */}
-        <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed mb-5 flex-1">
+        <p className="text-xs text-muted-foreground line-clamp-2 sm:line-clamp-3 leading-relaxed mb-4 flex-1">
           {project.description}
         </p>
 
-        {/* Technology Badges (Colorful Brand Palette, No Animation) */}
-        <div className="flex flex-wrap gap-1.5 mb-5">
-          {project.technologies.map((tech) => {
+        {/* Technology Badges (Curated on Mobile, Full on Desktop) */}
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          {project.technologies.slice(0, 4).map((tech) => {
             const meta = getTechMeta(tech);
             const isNext = tech.toLowerCase().includes("next");
             return (
               <span
                 key={tech}
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium border select-none transition-colors",
+                  "inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[10px] sm:text-[11px] font-medium border select-none transition-colors",
                   isNext
                     ? "bg-zinc-500/10 dark:bg-zinc-400/10 border-zinc-500/20 dark:border-zinc-400/20 text-foreground"
                     : "text-foreground"
@@ -185,16 +185,56 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
               </span>
             );
           })}
+          {project.technologies.length > 4 && (
+            <>
+              <span className="inline-flex sm:hidden items-center px-2 py-0.5 rounded-lg text-[10px] font-mono text-muted-foreground bg-muted/60 border border-border/60">
+                +{project.technologies.length - 4}
+              </span>
+              {project.technologies.slice(4).map((tech) => {
+                const meta = getTechMeta(tech);
+                const isNext = tech.toLowerCase().includes("next");
+                return (
+                  <span
+                    key={tech}
+                    className={cn(
+                      "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium border select-none transition-colors",
+                      isNext
+                        ? "bg-zinc-500/10 dark:bg-zinc-400/10 border-zinc-500/20 dark:border-zinc-400/20 text-foreground"
+                        : "text-foreground"
+                    )}
+                    style={
+                      !isNext
+                        ? {
+                            backgroundColor: `${meta.color}15`,
+                            borderColor: `${meta.color}35`,
+                          }
+                        : undefined
+                    }
+                  >
+                    <span
+                      className="flex shrink-0 items-center justify-center"
+                      style={{
+                        color: !isNext ? meta.color : undefined,
+                      }}
+                    >
+                      {meta.icon}
+                    </span>
+                    <span>{tech}</span>
+                  </span>
+                );
+              })}
+            </>
+          )}
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2.5 pt-3 border-t border-border/50 dark:border-white/[0.06] mt-auto">
+        <div className="flex items-center gap-2 pt-3 border-t border-border/50 dark:border-white/[0.06] mt-auto">
           {websiteLink && (
             <a
               href={websiteLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 flex-1 rounded-xl px-3.5 py-2 text-xs font-semibold bg-foreground text-background hover:bg-foreground/90 transition-all duration-200 shadow-xs hover:shadow-sm active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-1.5 flex-1 rounded-xl px-3.5 py-2.5 sm:py-2 text-xs font-semibold bg-foreground text-background hover:bg-foreground/90 transition-all duration-200 shadow-xs hover:shadow-sm active:scale-[0.98] min-h-[42px] sm:min-h-0"
             >
               <Globe className="size-3.5" />
               <span>Live Demo</span>
@@ -208,10 +248,10 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                "inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all duration-200",
+                "inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 sm:py-2 text-xs font-semibold transition-all duration-200 min-h-[42px] sm:min-h-0",
                 "bg-muted/60 hover:bg-muted text-foreground border border-border/60 hover:border-border",
                 "dark:bg-zinc-900/80 dark:hover:bg-zinc-800 dark:border-white/10",
-                websiteLink ? "flex-none" : "flex-1"
+                websiteLink ? "flex-none px-4" : "flex-1"
               )}
             >
               <Icons.github className="size-3.5" />

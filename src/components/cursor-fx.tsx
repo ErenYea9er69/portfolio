@@ -88,6 +88,7 @@ export function CursorFx() {
 
   // Resize canvas
   useEffect(() => {
+    if (!isPointerFine || reducedMotion) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -99,7 +100,7 @@ export function CursorFx() {
     handleResize();
     window.addEventListener("resize", handleResize, { passive: true });
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [isPointerFine, reducedMotion]);
 
   // Spawn Katana Slash Click Effect
   const spawnKatanaSlash = useCallback((x: number, y: number) => {
@@ -357,8 +358,9 @@ export function CursorFx() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [isPointerFine, activeTheme, reducedMotion]);
 
-  // Main Canvas Render Loop (Physics & Particles)
+  // Main Canvas Render Loop (Physics & Particles) - Only active on devices with fine pointer
   useEffect(() => {
+    if (!isPointerFine || reducedMotion) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -534,7 +536,11 @@ export function CursorFx() {
       isRunning = false;
       cancelAnimationFrame(rafId.current);
     };
-  }, []);
+  }, [isPointerFine, reducedMotion]);
+
+  if (!isPointerFine || reducedMotion) {
+    return null;
+  }
 
   return (
     <>

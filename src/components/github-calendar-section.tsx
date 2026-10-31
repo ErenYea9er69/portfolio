@@ -327,61 +327,61 @@ export function GitHubCalendarSection() {
           </div>
 
           {/* ─── Stats Grid (4 Focused Cards with Theme-Colored Icons) ─── */}
-          <div className="relative z-10 grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-4 mb-7">
+          <div className="relative z-10 grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4 mb-5 sm:mb-7">
             {/* 1. Contributions (GitHub Emerald Theme) */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(16,185,129,0.12)]">
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-3 sm:p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(16,185,129,0.12)]">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">Contributions</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.12)] transition-all group-hover/stat:bg-emerald-500/20 group-hover/stat:border-emerald-500/40 group-hover/stat:text-emerald-500">
-                  <GitCommitHorizontal className="h-4 w-4" />
+                <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Contributions</span>
+                <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.12)] transition-all group-hover/stat:bg-emerald-500/20 group-hover/stat:border-emerald-500/40 group-hover/stat:text-emerald-500">
+                  <GitCommitHorizontal className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
               </div>
-              <div className="mt-3 flex items-baseline gap-1.5">
-                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              <div className="mt-2 sm:mt-3 flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-3xl font-extrabold tracking-tight text-foreground">
                   {totalContributions.toLocaleString()}
                 </span>
               </div>
-              <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
+              <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground/80">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
                 <span>{selectedYear === "last" ? "Past 365 days" : `Year ${selectedYear}`}</span>
               </div>
             </div>
 
             {/* 2. Current Streak (Flame Orange Theme) */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-orange-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(249,115,22,0.12)]">
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-3 sm:p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-orange-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(249,115,22,0.12)]">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">Current streak</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/25 text-orange-600 dark:text-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.12)] transition-all group-hover/stat:bg-orange-500/20 group-hover/stat:border-orange-500/40 group-hover/stat:text-orange-500">
-                  <Flame className="h-4 w-4" />
+                <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Current streak</span>
+                <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/25 text-orange-600 dark:text-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.12)] transition-all group-hover/stat:bg-orange-500/20 group-hover/stat:border-orange-500/40 group-hover/stat:text-orange-500">
+                  <Flame className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
               </div>
-              <div className="mt-3 flex items-baseline gap-1.5">
-                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              <div className="mt-2 sm:mt-3 flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-3xl font-extrabold tracking-tight text-foreground">
                   {currentStreak}
                 </span>
                 <span className="text-xs font-medium text-muted-foreground">days</span>
               </div>
-              <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
+              <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground/80">
                 <span className={cn("inline-block h-1.5 w-1.5 rounded-full", currentStreak > 0 ? "bg-orange-500 animate-pulse" : "bg-muted-foreground/50")} />
-                <span>{currentStreak > 0 ? "Active streak" : "Ready to commit"}</span>
+                <span>{currentStreak > 0 ? "Active streak" : "Ready"}</span>
               </div>
             </div>
 
             {/* 3. Longest Streak (Lightning Amber Theme) */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(245,158,11,0.12)]">
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-3 sm:p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(245,158,11,0.12)]">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">Longest streak</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-amber-600 dark:text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.12)] transition-all group-hover/stat:bg-amber-500/20 group-hover/stat:border-amber-500/40 group-hover/stat:text-amber-500">
-                  <Zap className="h-4 w-4" />
+                <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Longest streak</span>
+                <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-amber-600 dark:text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.12)] transition-all group-hover/stat:bg-amber-500/20 group-hover/stat:border-amber-500/40 group-hover/stat:text-amber-500">
+                  <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
               </div>
-              <div className="mt-3 flex items-baseline gap-1.5">
-                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              <div className="mt-2 sm:mt-3 flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-3xl font-extrabold tracking-tight text-foreground">
                   {longestStreak}
                 </span>
                 <span className="text-xs font-medium text-muted-foreground">days</span>
               </div>
-              <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
+              <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground/80">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500" />
                 <span>Personal record</span>
               </div>
@@ -392,21 +392,21 @@ export function GitHubCalendarSection() {
               href={`${DATA.contact.social.GitHub.url}?tab=repositories`}
               target="_blank"
               rel="noopener noreferrer"
-              className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(14,165,233,0.12)] cursor-pointer block"
+              className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-background/50 p-3 sm:p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(14,165,233,0.12)] cursor-pointer block"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">Repositories</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-500/10 dark:bg-sky-500/15 border border-sky-500/25 text-sky-600 dark:text-sky-400 shadow-[0_0_10px_rgba(14,165,233,0.12)] transition-all group-hover/stat:bg-sky-500/20 group-hover/stat:border-sky-500/40 group-hover/stat:text-sky-500">
-                  <BookOpen className="h-4 w-4" />
+                <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Repositories</span>
+                <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-sky-500/10 dark:bg-sky-500/15 border border-sky-500/25 text-sky-600 dark:text-sky-400 shadow-[0_0_10px_rgba(14,165,233,0.12)] transition-all group-hover/stat:bg-sky-500/20 group-hover/stat:border-sky-500/40 group-hover/stat:text-sky-500">
+                  <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
               </div>
-              <div className="mt-3 flex items-baseline gap-1.5">
-                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              <div className="mt-2 sm:mt-3 flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-3xl font-extrabold tracking-tight text-foreground">
                   {reposCount ?? "—"}
                 </span>
                 <ArrowUpRight className="h-3.5 w-3.5 opacity-60 text-sky-500 group-hover/stat:opacity-100 group-hover/stat:translate-x-0.5 group-hover/stat:-translate-y-0.5 transition-all ml-1" />
               </div>
-              <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
+              <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground/80">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-sky-500" />
                 <span>Public codebases</span>
               </div>
@@ -457,6 +457,7 @@ export function GitHubCalendarSection() {
                       <span>Today ({todayContributions !== null ? `${todayContributions} commits` : "10/09"})</span>
                     </button>
                     <span className="text-muted-foreground/60 hidden sm:inline">INTERACTIVE MATRIX</span>
+                    <span className="text-muted-foreground/60 text-[10px] inline sm:hidden">Swipe ➔</span>
                   </div>
                 </div>
 

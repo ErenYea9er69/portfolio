@@ -607,3 +607,23 @@
     animation: none !important;
   }
 }
+
+/* ─── Mobile Performance & Low Overhead Layer Compositing ─── */
+@media (max-width: 767px) {
+  /* Alleviate heavy backdrop-filter processing on mobile GPUs */
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-lg {
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
+  }
+
+  /* Prevent mobile scroll jitter and layer thrashing */
+  html,
+  body {
+    overflow-x: hidden;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+

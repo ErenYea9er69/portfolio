@@ -47,6 +47,9 @@ export const Meteors = ({ number = 15 }: MeteorsProps) => {
   );
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      return;
+    }
     const canvas = canvasRef.current;
     if (!canvas) return;
 

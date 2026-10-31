@@ -195,8 +195,15 @@ function useStarField(count: number, seed: number = 42, colorMode: "dark" | "lig
 }
 
 function StarField() {
-  const darkShadows = useStarField(180, 42, "dark");
-  const lightShadows = useStarField(180, 42, "light");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
+  const count = isMobile ? 50 : 160;
+  const darkShadows = useStarField(count, 42, "dark");
+  const lightShadows = useStarField(count, 42, "light");
 
   return (
     <div
@@ -390,14 +397,14 @@ export function GhibliSkyBackground() {
         )}
       </AnimatePresence>
 
-      {/* Layer 4: Ethereal spirits positioned on opposite sides and staggered heights (not on same line) */}
+      {/* Layer 4: Ethereal spirits positioned on opposite sides (Desktop only to prevent mobile GPU blur thrashing) */}
       <GhibliSpirit
-        className="absolute top-[18%] sm:top-[22%] left-4 sm:left-8 md:left-12 lg:left-16 xl:left-24"
+        className="hidden md:block absolute top-[18%] sm:top-[22%] left-4 sm:left-8 md:left-12 lg:left-16 xl:left-24"
         duration={5.2}
         delay={0}
       />
       <GhibliSpirit
-        className="absolute top-[50%] sm:top-[54%] right-4 sm:right-8 md:right-12 lg:right-16 xl:right-24 scale-90"
+        className="hidden md:block absolute top-[50%] sm:top-[54%] right-4 sm:right-8 md:right-12 lg:right-16 xl:right-24 scale-90"
         duration={6.2}
         delay={1.8}
       />

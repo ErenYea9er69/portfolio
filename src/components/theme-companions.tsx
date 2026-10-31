@@ -743,7 +743,7 @@ export function Expedition33Astrolabe({
 export function ThemeCompanions({ theme }: { theme: string }) {
   if (theme === "japanese") {
     return (
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+      <div className="hidden md:block fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         {/* Left Companion: Chochin Paper Lantern */}
         <JapaneseChochinLantern
           className="absolute top-[18%] sm:top-[22%] left-4 sm:left-8 md:left-12 lg:left-16 xl:left-24"
@@ -762,7 +762,7 @@ export function ThemeCompanions({ theme }: { theme: string }) {
 
   if (theme === "minecraft") {
     return (
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+      <div className="hidden md:block fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         {/* Left Companion: Minecraft Allay Pixel Fairy */}
         <MinecraftAllay
           className="absolute top-[18%] sm:top-[22%] left-4 sm:left-8 md:left-12 lg:left-16 xl:left-24"
@@ -781,7 +781,7 @@ export function ThemeCompanions({ theme }: { theme: string }) {
 
   if (theme === "cyberpunk") {
     return (
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+      <div className="hidden md:block fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         {/* Left Companion: Militech Recon Drone */}
         <CyberpunkReconDrone
           className="absolute top-[18%] sm:top-[22%] left-4 sm:left-8 md:left-12 lg:left-16 xl:left-24"
@@ -800,7 +800,7 @@ export function ThemeCompanions({ theme }: { theme: string }) {
 
   if (theme === "e33") {
     return (
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+      <div className="hidden md:block fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         {/* Left Companion: Belle Époque Butterfly */}
         <Expedition33Butterfly
           className="absolute top-[18%] sm:top-[22%] left-4 sm:left-8 md:left-12 lg:left-16 xl:left-24"

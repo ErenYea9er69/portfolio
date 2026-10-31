@@ -81,18 +81,18 @@ export default function ProjectsPage() {
 
         {/* Telemetry quick stats */}
         <BlurFade delay={BLUR_FADE_DELAY * 2}>
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground backdrop-blur-sm">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-1 sm:pt-2">
+            <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs text-muted-foreground backdrop-blur-sm">
               <FolderGit2 className="size-3.5 text-foreground" />
-              <span><strong>{DATA.projects.length}</strong> Total Projects</span>
+              <span><strong>{DATA.projects.length}</strong> Projects</span>
             </div>
-            <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground backdrop-blur-sm">
+            <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs text-muted-foreground backdrop-blur-sm">
               <Globe className="size-3.5 text-emerald-500" />
-              <span><strong>{liveDemosCount}</strong> Live Deployments</span>
+              <span><strong>{liveDemosCount}</strong> Live Demos</span>
             </div>
-            <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground backdrop-blur-sm">
+            <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs text-muted-foreground backdrop-blur-sm">
               <Terminal className="size-3.5 text-sky-500" />
-              <span><strong>100%</strong> Open Source Codebases</span>
+              <span><strong>100%</strong> Open Source</span>
             </div>
           </div>
         </BlurFade>

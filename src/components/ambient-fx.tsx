@@ -56,7 +56,8 @@ export function AmbientFx() {
     }
 
     const items: AmbientItem[] = [];
-    const count =
+    const isMobile = window.innerWidth < 768;
+    const baseCount =
       activeTheme === "japanese"
         ? 35
         : activeTheme === "minecraft"
@@ -66,6 +67,7 @@ export function AmbientFx() {
         : activeTheme === "e33"
         ? 36
         : 0;
+    const count = isMobile ? Math.min(baseCount, 8) : baseCount;
 
     for (let i = 0; i < count; i++) {
       items.push({
@@ -107,8 +109,8 @@ export function AmbientFx() {
 
       ctx.clearRect(0, 0, width, height);
 
-      // Cyberpunk background grid scanlines (NO blue, NO purple!)
-      if (activeTheme === "cyberpunk") {
+      // Cyberpunk background grid scanlines (NO blue, NO purple! - Desktop only for performance)
+      if (activeTheme === "cyberpunk" && !isMobile) {
         ctx.strokeStyle = "rgba(255, 230, 0, 0.05)";
         ctx.lineWidth = 1;
         const gridSize = 40;
