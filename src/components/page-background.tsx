@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { AmbientFx } from "./ambient-fx";
+import { MeteorsBackground } from "./meteors-background";
 
 export function PageBackground() {
   const pathname = usePathname();
@@ -18,5 +18,5 @@ export function PageBackground() {
     return null;
   }
 
-  return <AmbientFx />;
+  return <MeteorsBackground />;
 }
