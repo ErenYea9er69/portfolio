@@ -96,14 +96,11 @@ export default function Navbar() {
                 {/* Brand / Home on Left */}
                 <Link
                   href="/"
-                  className="flex items-center gap-2 rounded-xl p-2 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/60"
+                  className="flex items-center justify-center rounded-xl p-2 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/60"
                   aria-label="Home"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Home className="size-4.5" />
-                  <span className="hidden sm:inline-block text-xs font-semibold tracking-tight text-foreground">
-                    {DATA.name}
-                  </span>
                 </Link>
 
                 {/* Desktop nav links - spacious and prominent */}

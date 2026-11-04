@@ -29,8 +29,8 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Hidden on narrow viewports — not enough room beside content */
-@media (max-width: 1279px) {
+/* Hidden on mobile and tablet — active on desktop (>= 1024px) */
+@media (max-width: 1023px) {
   .vs-scroll-rail {
     display: none !important;
   }

@@ -244,19 +244,43 @@ export function ScrollRail({
       if (reduce.matches || (silent === true && active < 0))
         P.x = p;
 
-      // Use live bounding rects so lazy-loaded content doesn't stale the positions
+      const vH = viewHFn();
+      // Mid-screen trigger (50% of viewport): as soon as a chapter heading
+      // enters the upper half of the screen, it becomes active.
+      const triggerLine = vH * 0.5;
+
       let a = 0;
-      const triggerLine = viewHFn() * 0.25; // 25% from top of viewport
       for (let i = 0; i < chapterEls.length; i++) {
         const rect = chapterEls[i].getBoundingClientRect();
-        if (rect.top <= triggerLine) a = i;
+        if (rect.top <= triggerLine) {
+          a = i;
+        }
       }
-      if (t >= max - 2) a = items.length - 1;
 
-      // Also re-sync the cached absolute positions for the rail tick layout
-      const base = -scrollY;
+      // Special handling for the bottom chapters (Career/Education & Contact):
+      // When nearing the bottom of the page, shorter sections can't scroll all
+      // the way up to 50% because the document terminates.
+      const scrollRemaining = max - t;
+      const scrollRatio = max > 0 ? t / max : 0;
+
+      if (scrollRemaining < vH * 0.45 || scrollRatio > 0.8) {
+        const contactIdx = chapterEls.length - 1;
+        const careerIdx = chapterEls.length - 2;
+        const contactRect = chapterEls[contactIdx]?.getBoundingClientRect();
+        const careerRect = chapterEls[careerIdx]?.getBoundingClientRect();
+
+        if (contactRect && (contactRect.top <= vH * 0.72 || scrollRemaining < 70)) {
+          a = contactIdx;
+        } else if (careerRect && (careerRect.top <= vH * 0.72 || scrollRatio > 0.78)) {
+          a = careerIdx;
+        }
+      }
+
+      // Re-sync cached positions for chapter ticks so they adapt to layout shifts
       items.forEach((it, i) => {
-        const newTop = chapterEls[i].getBoundingClientRect().top - base;
+        const el = chapterEls[i];
+        if (!el) return;
+        const newTop = el.getBoundingClientRect().top + t;
         if (Math.abs(newTop - it.top) > 4) {
           it.top = newTop;
           it.f = clamp(it.top / max, 0, 1);
@@ -438,7 +462,10 @@ export function ScrollRail({
     function goTo(i: number) {
       const it = items[i];
       if (!it) return;
-      const target = clamp(it.top, 0, maxTopFn());
+      const el = chapterEls[i];
+      const target = el
+        ? clamp(el.getBoundingClientRect().top + topFn(), 0, maxTopFn())
+        : clamp(it.top, 0, maxTopFn());
       if (reduce.matches) {
         setTopFn(target);
         return;
@@ -606,6 +633,9 @@ export function ScrollRail({
     const ro = new ResizeObserver(() => measure());
     ro.observe(track);
     chapterEls.forEach((c) => ro.observe(c));
+    if (typeof document !== "undefined" && document.body) {
+      ro.observe(document.body);
+    }
 
     (nav as any).__vsSr = api;
     buildTicks();
