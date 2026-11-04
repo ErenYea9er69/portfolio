@@ -2,10 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── High-Performance View Transitions ─── */
+::view-transition-group(root) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+  height: 100%;
+  overflow: clip;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+/* Prevent layout/color recalculation fighting during theme transition */
+.theme-transitioning,
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+  transition: none !important;
 }
 
 @layer base {
@@ -107,7 +131,6 @@
   body {
     @apply bg-background text-foreground;
     overflow-x: clip;
-    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   ::selection {

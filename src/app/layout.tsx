@@ -134,9 +134,10 @@ export default function RootLayout({
           <JsonLd />
           <ScrollProgress />
           <ThemeProvider
-            attribute="data-theme"
+            attribute={["class", "data-theme"]}
             defaultTheme="dark"
             enableSystem={false}
+            disableTransitionOnChange
           >
               <TooltipProvider delayDuration={0}>
                 {children}

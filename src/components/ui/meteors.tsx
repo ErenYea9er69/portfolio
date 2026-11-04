@@ -28,6 +28,7 @@ export const Meteors = ({ number = 15 }: MeteorsProps) => {
   const meteorsRef = useRef<Meteor[]>([]);
   const animFrameRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
+  const isDarkRef = useRef<boolean>(true);
 
   const createMeteor = useCallback(
     (canvasWidth: number, canvasHeight: number): Meteor => {
@@ -72,6 +73,16 @@ export const Meteors = ({ number = 15 }: MeteorsProps) => {
     resize();
     window.addEventListener("resize", resize);
 
+    // Cache theme state and update via observer to eliminate DOM queries in the render loop
+    isDarkRef.current = document.documentElement.classList.contains("dark");
+    const themeObserver = new MutationObserver(() => {
+      isDarkRef.current = document.documentElement.classList.contains("dark");
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "data-theme"],
+    });
+
     // Initialize meteors
     meteorsRef.current = Array.from({ length: effectiveNumber }, () =>
       createMeteor(window.innerWidth, window.innerHeight)
@@ -114,8 +125,8 @@ export const Meteors = ({ number = 15 }: MeteorsProps) => {
           return;
         }
 
-        // Determine if dark mode or light mode is active
-        const isDark = document.documentElement.classList.contains("dark");
+        // Cached theme determination without querying the DOM
+        const isDark = isDarkRef.current;
 
         // Draw the trail
         const tailX = m.x - dx * m.length;
@@ -197,6 +208,7 @@ export const Meteors = ({ number = 15 }: MeteorsProps) => {
     }
 
     return () => {
+      themeObserver.disconnect();
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", handleVisibility);
       cancelAnimationFrame(animFrameRef.current);
