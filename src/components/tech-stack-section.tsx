@@ -7,6 +7,7 @@ import { DATA } from "@/data/resume";
 import BlurFade from "@/components/magicui/blur-fade";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DecryptedText } from "@/components/decrypted-text";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -55,7 +56,15 @@ export function TechStackSection() {
         <BlurFade delay={BLUR_FADE_DELAY * 10}>
           <div className="flex items-center gap-2">
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-              Tech Stack
+              <DecryptedText
+                text="Tech Stack"
+                animateOn="inViewHover"
+                sequential={true}
+                speed={40}
+                maxIterations={10}
+                className="text-foreground"
+                encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+              />
             </h2>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
               <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />

@@ -15,6 +15,7 @@ import { VisitorCounter, BirthdayFireworks, GitHubCalendarSection, XHoverCard, S
 import { SocialGlowLink } from "@/components/social-glow-link";
 import { TechStackSection } from "@/components/tech-stack-section";
 import { ProjectsSection } from "@/components/projects-section";
+import { DecryptedText } from "@/components/decrypted-text";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -76,23 +77,37 @@ export default function Page() {
           <div className="mx-auto w-full space-y-8">
             <div className="flex flex-col-reverse items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex-col flex flex-1 space-y-2">
-                <BlurFadeText
-                  priority
-                  delay={BLUR_FADE_DELAY}
-                  className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
-                  yOffset={8}
-                  text="Hey, Welcome here"
-                  as="h1"
-                />
+                <BlurFade priority delay={BLUR_FADE_DELAY}>
+                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                    <DecryptedText
+                      text="Hey, Welcome here"
+                      animateOn="inViewHover"
+                      revealDirection="start"
+                      sequential={true}
+                      speed={45}
+                      maxIterations={12}
+                      className="text-foreground"
+                      encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+                    />
+                  </h1>
+                </BlurFade>
                 <BlurFade priority delay={BLUR_FADE_DELAY * 1.5}>
                   <AgeCounter />
                 </BlurFade>
-                <BlurFadeText
-                  priority
-                  className="max-w-[600px] text-muted-foreground md:text-xl"
-                  delay={BLUR_FADE_DELAY}
-                  text={DATA.description}
-                />
+                <BlurFade priority delay={BLUR_FADE_DELAY * 2}>
+                  <p className="max-w-[600px] text-muted-foreground md:text-xl font-medium">
+                    <DecryptedText
+                      text={DATA.description}
+                      animateOn="inViewHover"
+                      revealDirection="start"
+                      sequential={true}
+                      speed={35}
+                      maxIterations={10}
+                      className="text-muted-foreground"
+                      encryptedClassName="text-emerald-500/70 dark:text-emerald-400/70 font-mono"
+                    />
+                  </p>
+                </BlurFade>
               </div>
               <BlurFade priority delay={BLUR_FADE_DELAY}>
                 <div className="profile-wrapper">
@@ -197,7 +212,15 @@ export default function Page() {
             <div id="work" className="flex min-h-0 flex-col gap-y-3 h-full">
               <BlurFade delay={BLUR_FADE_DELAY * 12}>
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-                  Work Experience
+                  <DecryptedText
+                    text="Work Experience"
+                    animateOn="inViewHover"
+                    sequential={true}
+                    speed={40}
+                    maxIterations={10}
+                    className="text-foreground"
+                    encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+                  />
                 </h2>
               </BlurFade>
               <div className="space-y-3 flex-1 flex flex-col">
@@ -229,7 +252,15 @@ export default function Page() {
             <div id="education" className="flex min-h-0 flex-col gap-y-3 h-full">
               <BlurFade delay={BLUR_FADE_DELAY * 12.2}>
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-                  Education
+                  <DecryptedText
+                    text="Education"
+                    animateOn="inViewHover"
+                    sequential={true}
+                    speed={40}
+                    maxIterations={10}
+                    className="text-foreground"
+                    encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+                  />
                 </h2>
               </BlurFade>
               <div className="space-y-3 flex-1 flex flex-col">
@@ -263,7 +294,15 @@ export default function Page() {
             <div className="relative overflow-hidden rounded-2xl border border-border/70 dark:border-white/[0.08] bg-gradient-to-b from-card/80 via-card/50 to-card/30 dark:from-zinc-950/70 dark:via-zinc-900/50 dark:to-zinc-950/70 py-12 text-center group/contact backdrop-blur-xl shadow-xs">
               <div className="relative z-10 flex flex-col items-center justify-center space-y-4 px-4">
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                  Get in touch
+                  <DecryptedText
+                    text="Get in touch"
+                    animateOn="inViewHover"
+                    sequential={true}
+                    speed={40}
+                    maxIterations={10}
+                    className="text-foreground"
+                    encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+                  />
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground max-w-md">
                   Have a project in mind, an opportunity, or just want to chat tech? Let's connect.

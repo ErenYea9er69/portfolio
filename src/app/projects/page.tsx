@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Search, FolderGit2, Sparkles, Filter, ChevronLeft, ArrowUpRight, Terminal, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DecryptedText } from "@/components/decrypted-text";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -70,7 +71,15 @@ export default function ProjectsPage() {
         <BlurFade delay={BLUR_FADE_DELAY * 1.5}>
           <div className="flex items-center gap-2.5">
             <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Projects
+              <DecryptedText
+                text="Projects"
+                animateOn="inViewHover"
+                sequential={true}
+                speed={45}
+                maxIterations={12}
+                className="text-foreground"
+                encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+              />
             </h1>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
               <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
