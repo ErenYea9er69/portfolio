@@ -7,6 +7,7 @@ import { ProjectCard } from "@/components/project-card";
 import Link from "next/link";
 import { ArrowRight, Sparkles, FolderGit2 } from "lucide-react";
 import { DecryptedText } from "@/components/decrypted-text";
+import { StarBorder } from "@/components/ui/star-border";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -73,9 +74,16 @@ export function ProjectsSection() {
       {/* Bottom Explore Banner */}
       <BlurFade delay={BLUR_FADE_DELAY * 12}>
         <div className="mt-3 flex justify-center">
-          <Link
+          <StarBorder
+            as={Link}
             href="/projects"
-            className="group/btn relative inline-flex items-center gap-2.5 rounded-2xl border border-border/70 dark:border-white/10 bg-card/60 dark:bg-zinc-950/60 px-6 py-3 text-xs font-medium text-foreground backdrop-blur-xl shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-card hover:border-foreground/20 hover:shadow-lg"
+            radius={16}
+            duration={4}
+            glow={0.5}
+            sparkle
+            hover="lap"
+            clickPulse
+            className="group/btn inline-flex items-center gap-2.5 px-6 py-3 text-xs font-medium shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg cursor-pointer"
           >
             <FolderGit2 className="size-4 text-muted-foreground group-hover/btn:text-foreground transition-colors" />
             <span>
@@ -84,11 +92,11 @@ export function ProjectsSection() {
                 animateOn="hover"
                 speed={25}
                 maxIterations={6}
-                className="text-foreground"
+                className="text-inherit"
               />
             </span>
             <ArrowRight className="size-3.5 opacity-60 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all" />
-          </Link>
+          </StarBorder>
         </div>
       </BlurFade>
     </div>

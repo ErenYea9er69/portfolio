@@ -16,6 +16,7 @@ import { SocialGlowLink } from "@/components/social-glow-link";
 import { TechStackSection } from "@/components/tech-stack-section";
 import { ProjectsSection } from "@/components/projects-section";
 import { DecryptedText } from "@/components/decrypted-text";
+import { StarBorder } from "@/components/ui/star-border";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -330,13 +331,20 @@ export default function Page() {
                   />
                 </p>
                 <div className="pt-2">
-                  <a
+                  <StarBorder
+                    as="a"
                     href={DATA.contact.social.X.navbar ? DATA.contact.social.X.url : DATA.contact.social.GitHub.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group/cta inline-flex items-center gap-2.5 rounded-full border border-border/80 bg-background/80 px-5 py-2.5 text-sm font-semibold text-foreground shadow-sm backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-background hover:shadow-md hover:border-foreground/30 cursor-pointer"
+                    radius={9999}
+                    duration={4}
+                    glow={0.6}
+                    sparkle
+                    hover="lap"
+                    clickPulse
+                    className="group/cta inline-flex items-center gap-2.5 px-5 py-2.5 text-sm font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
                   >
-                    <div className="relative size-6 overflow-hidden rounded-full">
+                    <div className="relative size-6 overflow-hidden rounded-full shrink-0">
                       <Image
                         src={DATA.avatarUrl}
                         alt={DATA.name}
@@ -351,11 +359,11 @@ export default function Page() {
                         animateOn="hover"
                         speed={30}
                         maxIterations={6}
-                        className="text-foreground"
+                        className="text-inherit"
                       />
                     </span>
                     <span className="transition-transform duration-200 group-hover/cta:translate-x-0.5">→</span>
-                  </a>
+                  </StarBorder>
                 </div>
               </div>
             </div>

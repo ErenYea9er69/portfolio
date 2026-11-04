@@ -7,6 +7,7 @@ import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, Globe, Sparkles, Tv, Monitor, BookOpen, Layers, ShieldCheck, FileText, Terminal, Search, Code, Radio, Volume2 } from "lucide-react";
 import { DecryptedText } from "@/components/decrypted-text";
+import { StarBorder } from "@/components/ui/star-border";
 
 export interface ProjectItem {
   title: string;
@@ -249,40 +250,67 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
           )}
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons (When there are 2 buttons, only the primary button has StarBorder) */}
         <div className="flex items-center gap-2 pt-3 border-t border-border/50 dark:border-white/[0.06] mt-auto">
           {websiteLink && (
-            <a
+            <StarBorder
+              as="a"
               href={websiteLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 flex-1 rounded-xl px-3.5 py-2.5 sm:py-2 text-xs font-semibold bg-foreground text-background hover:bg-foreground/90 transition-all duration-200 shadow-xs hover:shadow-sm active:scale-[0.98] min-h-[42px] sm:min-h-0"
+              radius={12}
+              duration={3.5}
+              glow={0.5}
+              sparkle
+              hover="lap"
+              className="inline-flex items-center justify-center gap-1.5 flex-1 px-3.5 py-2.5 sm:py-2 text-xs font-semibold shadow-xs hover:shadow-sm active:scale-[0.98] min-h-[42px] sm:min-h-0 cursor-pointer"
             >
               <Globe className="size-3.5" />
               <span>
                 <DecryptedText text="Live Demo" animateOn="hover" speed={25} maxIterations={5} />
               </span>
               <ArrowUpRight className="size-3.5 opacity-80" />
-            </a>
+            </StarBorder>
           )}
 
           {sourceLink && (
-            <a
-              href={sourceLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                "inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 sm:py-2 text-xs font-semibold transition-all duration-200 min-h-[42px] sm:min-h-0",
-                "bg-muted/60 hover:bg-muted text-foreground border border-border/60 hover:border-border",
-                "dark:bg-zinc-900/80 dark:hover:bg-zinc-800 dark:border-white/10",
-                websiteLink ? "flex-none px-4" : "flex-1"
-              )}
-            >
-              <Icons.github className="size-3.5" />
-              <span>
-                <DecryptedText text="Source" animateOn="hover" speed={25} maxIterations={5} />
-              </span>
-            </a>
+            websiteLink ? (
+              /* Secondary button when 2 buttons exist: clean calm style without competing StarBorder */
+              <a
+                href={sourceLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  "inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 sm:py-2 text-xs font-semibold transition-all duration-200 min-h-[42px] sm:min-h-0",
+                  "bg-muted/60 hover:bg-muted text-foreground border border-border/60 hover:border-border",
+                  "dark:bg-zinc-900/80 dark:hover:bg-zinc-800 dark:border-white/10 flex-none"
+                )}
+              >
+                <Icons.github className="size-3.5" />
+                <span>
+                  <DecryptedText text="Source" animateOn="hover" speed={25} maxIterations={5} />
+                </span>
+              </a>
+            ) : (
+              /* Only 1 button exists: gets StarBorder */
+              <StarBorder
+                as="a"
+                href={sourceLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                radius={12}
+                duration={3.5}
+                glow={0.5}
+                sparkle
+                hover="lap"
+                className="inline-flex items-center justify-center gap-1.5 flex-1 px-3.5 py-2.5 sm:py-2 text-xs font-semibold transition-all duration-200 min-h-[42px] sm:min-h-0 cursor-pointer"
+              >
+                <Icons.github className="size-3.5" />
+                <span>
+                  <DecryptedText text="Source" animateOn="hover" speed={25} maxIterations={5} />
+                </span>
+              </StarBorder>
+            )
           )}
         </div>
       </div>
