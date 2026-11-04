@@ -459,6 +459,8 @@ export function ScrollRail({
       glide = null;
     };
 
+    const scrollHandler = () => onScroll();
+
     // ── Event listeners ──
     window.addEventListener("wheel", stopGlide, {
       passive: true,
@@ -466,9 +468,14 @@ export function ScrollRail({
     window.addEventListener("touchstart", stopGlide, {
       passive: true,
     });
-    window.addEventListener("scroll", () => onScroll(), {
+    window.addEventListener("scroll", scrollHandler, {
       passive: true,
     });
+
+    // ── Periodic re-measure to catch lazy-loaded content shifting positions ──
+    const remeasureInterval = setInterval(() => {
+      measure();
+    }, 2000);
 
     items.forEach((it, i) => {
       it.a.addEventListener("click", (e) => {
@@ -618,8 +625,10 @@ export function ScrollRail({
       live.clear();
       ro.disconnect();
       mo.disconnect();
+      clearInterval(remeasureInterval);
       window.removeEventListener("wheel", stopGlide);
       window.removeEventListener("touchstart", stopGlide);
+      window.removeEventListener("scroll", scrollHandler);
       // Remove data-rail-label from chapter elements
       chapterEls.forEach((el) => {
         delete el.dataset.railLabel;
@@ -630,11 +639,12 @@ export function ScrollRail({
   }, [chapters]);
 
   useEffect(() => {
-    // Short delay to ensure all sections are mounted in the DOM
+    // Delay mount so lazy-loaded content (GitHub calendar, images) has
+    // time to render before we measure chapter positions.
     let cleanup: (() => void) | undefined;
     const timer = setTimeout(() => {
       cleanup = mountRail();
-    }, 120);
+    }, 600);
 
     return () => {
       clearTimeout(timer);

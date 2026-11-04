@@ -2,6 +2,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
 
+import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { DATA } from "@/data/resume";
@@ -12,8 +13,7 @@ import "./globals.css";
 import { JsonLd } from "@/components/json-ld";
 import { PageBackground } from "@/components/page-background";
 import { DomainGuardedAnalytics } from "@/components/domain-guarded-analytics";
-import { CommandPalette, BackToTop } from "@/components/lazy-client";
-import { FloatingControls } from "@/components/floating-controls";
+import { CommandPalette, BackToTop, ScrollProgress } from "@/components/lazy-client";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -129,9 +129,10 @@ export default function RootLayout({
 
 
         {/* Main content */}
-        <div className="relative z-10 max-w-4xl mx-auto pt-10 sm:pt-14 pb-24 px-4 sm:px-6">
+        <div className="relative z-10 max-w-4xl mx-auto pt-20 sm:pt-24 pb-24 px-4 sm:px-6">
           <DomainGuardedAnalytics gaId="G-XVF0SFD4GW" />
           <JsonLd />
+          <ScrollProgress />
           <ThemeProvider
             attribute={["class", "data-theme"]}
             defaultTheme="dark"
@@ -140,7 +141,7 @@ export default function RootLayout({
           >
               <TooltipProvider delayDuration={0}>
                 {children}
-                <FloatingControls />
+                <Navbar />
                 <CommandPalette />
                 <BackToTop />
               </TooltipProvider>
