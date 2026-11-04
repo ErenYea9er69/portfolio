@@ -14,10 +14,6 @@ import { buttonVariants } from "@/components/ui/button";
 
 const DESKTOP_NAV_LINKS = [
   { href: "/projects", label: "Projects" },
-  { href: "/#skills", label: "Skills" },
-  { href: "/#work", label: "Experience" },
-  { href: "/#education", label: "Education" },
-  { href: "/#contact", label: "Contact" },
 ];
 
 export default function Navbar() {
@@ -266,44 +262,6 @@ export default function Navbar() {
                       >
                         <FolderKanban className="size-4" />
                         Projects
-                      </Link>
-
-                      <div className="my-1 h-px bg-border/40" />
-
-                      <Link
-                        href="/#skills"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
-                      >
-                        <Code2 className="size-3.5 text-emerald-500" />
-                        Skills & Stack
-                      </Link>
-
-                      <Link
-                        href="/#work"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
-                      >
-                        <Briefcase className="size-3.5 text-blue-500" />
-                        Work Experience
-                      </Link>
-
-                      <Link
-                        href="/#education"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
-                      >
-                        <GraduationCap className="size-3.5 text-amber-500" />
-                        Education
-                      </Link>
-
-                      <Link
-                        href="/#contact"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
-                      >
-                        <Mail className="size-3.5 text-purple-500" />
-                        Contact
                       </Link>
 
                       <div className="my-1 h-px bg-border/40" />
