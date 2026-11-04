@@ -89,3 +89,8 @@ export const XHoverCard = dynamic(
   () => import("@/components/x-hover-card").then((mod) => mod.XHoverCard),
   { ssr: false }
 );
+
+export const SwarmCursor = dynamic(
+  () => import("@/components/ui/swarm-cursor").then((mod) => mod.SwarmCursor),
+  { ssr: false }
+);

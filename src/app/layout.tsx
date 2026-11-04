@@ -13,7 +13,7 @@ import "./globals.css";
 import { JsonLd } from "@/components/json-ld";
 import { PageBackground } from "@/components/page-background";
 import { DomainGuardedAnalytics } from "@/components/domain-guarded-analytics";
-import { CommandPalette, BackToTop, ScrollProgress } from "@/components/lazy-client";
+import { CommandPalette, BackToTop, ScrollProgress, SwarmCursor } from "@/components/lazy-client";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -140,6 +140,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
               <TooltipProvider delayDuration={0}>
+                <SwarmCursor global count={600} size={2.5} spread={85} swirl={0.6} clickEffect="burst" />
                 {children}
                 <Navbar />
                 <CommandPalette />
