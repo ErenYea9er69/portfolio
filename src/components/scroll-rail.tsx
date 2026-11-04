@@ -313,8 +313,8 @@ export function ScrollRail({
             { transform: "translateY(0)", opacity: 1 },
           ],
           {
-            duration: 520,
-            easing: "cubic-bezier(.2,1.25,.35,1)",
+            duration: 480,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
           }
         );
       }
