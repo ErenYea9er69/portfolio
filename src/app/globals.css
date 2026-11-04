@@ -169,6 +169,17 @@
   }
 }
 
+/* ─── Hide browser scrollbar when Scroll Rail is visible ─── */
+@media (min-width: 1280px) {
+  html {
+    scrollbar-width: none !important;
+  }
+  ::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+  }
+}
+
 /* ─── GitHub Contributions Calendar ─── */
 .github-calendar-wrapper {
   position: relative;

@@ -238,16 +238,32 @@ export function ScrollRail({
 
     function onScroll(silent?: boolean) {
       const t = topFn();
-      const p = clamp(t / maxTopFn(), 0, 1);
+      const max = maxTopFn();
+      const p = clamp(t / max, 0, 1);
       P.g = p;
       if (reduce.matches || (silent === true && active < 0))
         P.x = p;
+
+      // Use live bounding rects so lazy-loaded content doesn't stale the positions
       let a = 0;
-      const line = t + viewHFn() * 0.12;
+      const triggerLine = viewHFn() * 0.25; // 25% from top of viewport
+      for (let i = 0; i < chapterEls.length; i++) {
+        const rect = chapterEls[i].getBoundingClientRect();
+        if (rect.top <= triggerLine) a = i;
+      }
+      if (t >= max - 2) a = items.length - 1;
+
+      // Also re-sync the cached absolute positions for the rail tick layout
+      const base = -scrollY;
       items.forEach((it, i) => {
-        if (it.top <= line) a = i;
+        const newTop = chapterEls[i].getBoundingClientRect().top - base;
+        if (Math.abs(newTop - it.top) > 4) {
+          it.top = newTop;
+          it.f = clamp(it.top / max, 0, 1);
+          it.li.style.transform = `translateY(${(it.f * H).toFixed(2)}px)`;
+        }
       });
-      if (t >= maxTopFn() - 2) a = items.length - 1;
+
       if (a !== active) setActive(a);
       wake(api);
     }

@@ -6,9 +6,9 @@
 .vs-scroll-rail {
   --vs-scroll-rail-accent: hsl(var(--foreground));
   --vs-scroll-rail-ink: hsl(var(--muted-foreground));
-  --vs-scroll-rail-size: 0.8rem;
-  --vs-scroll-rail-height: min(68vh, 34em);
-  --vs-scroll-rail-edge: 1.6em;
+  --vs-scroll-rail-size: 0.95rem;
+  --vs-scroll-rail-height: min(78vh, 42em);
+  --vs-scroll-rail-edge: 2.2em;
   --vs-scroll-rail-font: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo,
     Consolas, monospace;
 
@@ -120,14 +120,14 @@
 }
 
 .vs-scroll-rail-fill {
-  width: 2px;
-  margin-right: -0.5px;
+  width: 2.5px;
+  margin-right: -0.75px;
   background: var(--vs-scroll-rail-accent);
   transform-origin: 50% 0;
   transform: scaleY(0);
   will-change: transform;
-  box-shadow: 0 0 0.6em
-    color-mix(in srgb, var(--vs-scroll-rail-accent) 55%, transparent);
+  box-shadow: 0 0 0.8em
+    color-mix(in srgb, var(--vs-scroll-rail-accent) 60%, transparent);
 }
 
 /* ── Ticks ── */
@@ -245,13 +245,13 @@
 }
 .vs-scroll-rail-head i {
   position: absolute;
-  right: -0.7em;
-  top: -1px;
-  width: 1.4em;
-  height: 2px;
+  right: -0.8em;
+  top: -1.5px;
+  width: 1.6em;
+  height: 3px;
   border-radius: 2px;
   background: var(--vs-scroll-rail-accent);
-  box-shadow: 0 0 0.8em var(--vs-scroll-rail-accent);
+  box-shadow: 0 0 1em var(--vs-scroll-rail-accent);
 }
 .vs-scroll-rail-head em {
   position: absolute;
