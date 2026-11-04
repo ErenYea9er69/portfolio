@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, Globe, Sparkles, Tv, Monitor, BookOpen, Layers, ShieldCheck, FileText, Terminal, Search, Code, Radio, Volume2 } from "lucide-react";
+import { DecryptedText } from "@/components/decrypted-text";
 
 export interface ProjectItem {
   title: string;
@@ -101,18 +102,18 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
         <div className="absolute top-2.5 sm:top-3 inset-x-2.5 sm:inset-x-3.5 flex items-center justify-between pointer-events-none z-10">
           <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium tracking-wider uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
             <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
-            {project.category || "Project"}
+            <DecryptedText text={project.category || "Project"} animateOn="hover" speed={25} maxIterations={5} />
           </span>
 
           {websiteLink ? (
             <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-foreground shadow-xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              Live Demo
+              <span className="h-1.5 w-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500" />
+              <DecryptedText text="Live Demo" animateOn="hover" speed={25} maxIterations={5} />
             </span>
           ) : (
             <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
-              Source Only
+              <DecryptedText text="Source Only" animateOn="hover" speed={25} maxIterations={5} />
             </span>
           )}
         </div>
@@ -128,12 +129,19 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
             rel="noopener noreferrer"
             className="group/title inline-flex items-center gap-1.5 text-base sm:text-xl font-bold tracking-tight text-foreground hover:text-foreground/80 transition-colors"
           >
-            <span>{project.title}</span>
+            <DecryptedText
+              text={project.title}
+              animateOn="inViewHover"
+              speed={30}
+              maxIterations={8}
+              sequential={true}
+              className="text-base sm:text-xl font-bold tracking-tight text-foreground"
+            />
             <ArrowUpRight className="size-4 opacity-40 transition-all duration-200 group-hover/title:opacity-100 group-hover/title:translate-x-0.5 group-hover/title:-translate-y-0.5" />
           </a>
           {project.dates && (
             <span className="text-[10px] sm:text-[11px] font-mono text-muted-foreground/70 bg-muted/40 px-2 py-0.5 rounded-md shrink-0">
-              {project.dates}
+              <DecryptedText text={project.dates} animateOn="hover" speed={25} maxIterations={5} />
             </span>
           )}
         </div>
@@ -141,13 +149,27 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
         {/* Tagline */}
         {project.tagline && (
           <p className="text-xs font-medium text-foreground/80 dark:text-zinc-300 mb-2 leading-relaxed">
-            {project.tagline}
+            <DecryptedText
+              text={project.tagline}
+              animateOn="inViewHover"
+              speed={20}
+              maxIterations={6}
+              sequential={false}
+              className="text-xs font-medium text-foreground/80 dark:text-zinc-300"
+            />
           </p>
         )}
 
         {/* Description */}
         <p className="text-xs text-muted-foreground line-clamp-2 sm:line-clamp-3 leading-relaxed mb-4 flex-1">
-          {project.description}
+          <DecryptedText
+            text={project.description}
+            animateOn="inViewHover"
+            speed={20}
+            maxIterations={6}
+            sequential={false}
+            className="text-xs text-muted-foreground"
+          />
         </p>
 
         {/* Technology Badges (Curated on Mobile, Full on Desktop) */}
@@ -181,7 +203,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
                 >
                   {meta.icon}
                 </span>
-                <span>{tech}</span>
+                <DecryptedText text={tech} animateOn="hover" speed={20} maxIterations={5} className="text-foreground" />
               </span>
             );
           })}
@@ -219,7 +241,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
                     >
                       {meta.icon}
                     </span>
-                    <span>{tech}</span>
+                    <DecryptedText text={tech} animateOn="hover" speed={20} maxIterations={5} className="text-foreground" />
                   </span>
                 );
               })}
@@ -237,7 +259,9 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
               className="inline-flex items-center justify-center gap-1.5 flex-1 rounded-xl px-3.5 py-2.5 sm:py-2 text-xs font-semibold bg-foreground text-background hover:bg-foreground/90 transition-all duration-200 shadow-xs hover:shadow-sm active:scale-[0.98] min-h-[42px] sm:min-h-0"
             >
               <Globe className="size-3.5" />
-              <span>Live Demo</span>
+              <span>
+                <DecryptedText text="Live Demo" animateOn="hover" speed={25} maxIterations={5} />
+              </span>
               <ArrowUpRight className="size-3.5 opacity-80" />
             </a>
           )}
@@ -255,7 +279,9 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
               )}
             >
               <Icons.github className="size-3.5" />
-              <span>Source</span>
+              <span>
+                <DecryptedText text="Source" animateOn="hover" speed={25} maxIterations={5} />
+              </span>
             </a>
           )}
         </div>
@@ -590,7 +616,7 @@ function getTechMeta(tech: string): { color: string; icon: React.ReactNode } {
   // Consumet API
   if (t.includes("consumet") || t.includes("api")) {
     return {
-      color: "#10b981",
+      color: "#71717a",
       icon: <Code className="size-3" />,
     };
   }
@@ -606,7 +632,7 @@ function getTechMeta(tech: string): { color: string; icon: React.ReactNode } {
   // ARP Spoofing
   if (t.includes("arp") || t.includes("spoof")) {
     return {
-      color: "#10b981",
+      color: "#71717a",
       icon: <ShieldCheck className="size-3" />,
     };
   }

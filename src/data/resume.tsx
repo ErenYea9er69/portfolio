@@ -176,7 +176,7 @@ export const DATA = {
       description:
         "Windows networking tool (C# / .NET 8) that scans your local network, discovers devices, and lets you block or throttle their bandwidth using ARP spoofing / Layer-2 techniques.",
       technologies: ["C#", ".NET 8", "ARP Spoofing", "Layer-2", "WinPcap"],
-      accentColor: "#10b981",
+      accentColor: "#71717a",
       badge: "Open Source",
       links: [
         {

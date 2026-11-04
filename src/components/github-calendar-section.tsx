@@ -12,6 +12,7 @@ import { DATA } from "@/data/resume";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useTheme } from "next-themes";
 import { GitHubSnake } from "@/components/github-snake";
+import { DecryptedText } from "@/components/decrypted-text";
 
 const YEARS = ["last", "2026", "2025"];
 
@@ -287,16 +288,33 @@ export function GitHubCalendarSection() {
                     href={DATA.contact.social.GitHub.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-bold text-foreground hover:text-emerald-500 transition-colors flex items-center gap-1 group/link text-base tracking-tight"
+                    className="font-bold text-foreground hover:text-foreground/80 transition-colors flex items-center gap-1 group/link text-base tracking-tight"
                   >
-                    <span>@{username}</span>
+                    <span>
+                      <DecryptedText
+                        text={`@${username}`}
+                        animateOn="hover"
+                        speed={25}
+                        maxIterations={6}
+                        className="font-bold text-foreground"
+                      />
+                    </span>
                     <ArrowUpRight className="h-3.5 w-3.5 opacity-50 group-hover/link:opacity-100 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-all" />
                   </a>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-mono font-medium text-emerald-600 dark:text-emerald-400">
-                    LIVE FEED
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 dark:bg-muted/40 border border-border/70 px-2 py-0.5 text-[10px] font-mono font-medium text-muted-foreground">
+                    <span className="size-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
+                    <DecryptedText text="LIVE FEED" animateOn="hover" speed={20} maxIterations={5} />
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground">GitHub Open Source Activity</p>
+                <p className="text-xs text-muted-foreground">
+                  <DecryptedText
+                    text="GitHub Open Source Activity"
+                    animateOn="inViewHover"
+                    speed={20}
+                    maxIterations={6}
+                    className="text-xs text-muted-foreground"
+                  />
+                </p>
               </div>
             </div>
 
@@ -308,42 +326,61 @@ export function GitHubCalendarSection() {
                     key={year}
                     onClick={() => setSelectedYear(year)}
                     className={cn(
-                      "relative rounded-full px-2.5 sm:px-3.5 py-1 text-xs font-medium transition-all duration-200",
+                      "relative rounded-full px-2.5 sm:px-3.5 py-1 text-xs font-medium transition-all duration-200 cursor-pointer",
                       selectedYear === year
                         ? "bg-background text-foreground shadow-sm shadow-black/10 font-semibold border border-border/60"
                         : "text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    {year === "last" ? "Past Year" : year}
+                    <DecryptedText
+                      text={year === "last" ? "Past Year" : year}
+                      animateOn="hover"
+                      speed={20}
+                      maxIterations={5}
+                      className={selectedYear === year ? "text-foreground font-semibold" : "text-muted-foreground"}
+                    />
                   </button>
                 ))}
               </div>
 
-              {/* 🐍 Snake Mode Toggle (replaces old Art Mode) */}
+              {/* 🐍 Snake Mode Toggle */}
               <button
                 type="button"
                 onClick={() => setSnakeMode(!snakeMode)}
                 className={cn(
                   "relative inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 border cursor-pointer select-none shrink-0",
                   snakeMode
-                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/40 shadow-[0_0_14px_rgba(16,185,129,0.3)] font-semibold"
+                    ? "bg-zinc-500/20 text-foreground border-zinc-500/40 shadow-xs font-semibold"
                     : "bg-background/50 hover:bg-background/80 text-muted-foreground hover:text-foreground border-border/60 shadow-xs"
                 )}
-                title="Toggle GitHub Contribution Snake mode (watch or play as snake eats commits)"
+                title="Toggle GitHub Contribution Snake mode"
               >
                 <span className={cn("text-xs transition-transform duration-300", snakeMode ? "scale-125" : "")}>🐍</span>
-                <span>{snakeMode ? "Exit Snake" : "Snake Mode"}</span>
+                <span>
+                  <DecryptedText
+                    text={snakeMode ? "Exit Snake" : "Snake Mode"}
+                    animateOn="hover"
+                    speed={20}
+                    maxIterations={5}
+                  />
+                </span>
               </button>
             </div>
           </div>
 
-          {/* ─── Stats Grid (4 Focused Cards with Theme-Colored Icons) ─── */}
+          {/* ─── Stats Grid ─── */}
           <div className="relative z-10 grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4 mb-5 sm:mb-7">
-            {/* 1. Contributions (GitHub Emerald Theme) */}
-            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-card/90 dark:bg-zinc-900/85 md:bg-background/50 p-3 sm:p-4 md:backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(16,185,129,0.12)]">
+            {/* 1. Contributions (Refined Sleek Gray Theme) */}
+            <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-card/90 dark:bg-zinc-900/85 md:bg-background/50 p-3 sm:p-4 md:backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-500/35 hover:bg-background/80 hover:shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Contributions</span>
-                <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.12)] transition-all group-hover/stat:bg-emerald-500/20 group-hover/stat:border-emerald-500/40 group-hover/stat:text-emerald-500">
+                <DecryptedText
+                  text="Contributions"
+                  animateOn="inViewHover"
+                  speed={20}
+                  maxIterations={6}
+                  className="text-[11px] sm:text-xs font-medium text-muted-foreground"
+                />
+                <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-muted/80 dark:bg-zinc-800/80 border border-border/70 text-foreground shadow-xs transition-all group-hover/stat:border-zinc-500/40">
                   <GitCommitHorizontal className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
               </div>
@@ -353,15 +390,27 @@ export function GitHubCalendarSection() {
                 </span>
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground/80">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                <span>{selectedYear === "last" ? "Past 365 days" : `Year ${selectedYear}`}</span>
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500" />
+                <DecryptedText
+                  text={selectedYear === "last" ? "Past 365 days" : `Year ${selectedYear}`}
+                  animateOn="hover"
+                  speed={20}
+                  maxIterations={5}
+                  className="text-muted-foreground/80"
+                />
               </div>
             </div>
 
-            {/* 2. Current Streak (Flame Orange Theme) */}
+            {/* 2. Current Streak */}
             <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-card/90 dark:bg-zinc-900/85 md:bg-background/50 p-3 sm:p-4 md:backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-orange-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(249,115,22,0.12)]">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Current streak</span>
+                <DecryptedText
+                  text="Current streak"
+                  animateOn="inViewHover"
+                  speed={20}
+                  maxIterations={6}
+                  className="text-[11px] sm:text-xs font-medium text-muted-foreground"
+                />
                 <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/25 text-orange-600 dark:text-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.12)] transition-all group-hover/stat:bg-orange-500/20 group-hover/stat:border-orange-500/40 group-hover/stat:text-orange-500">
                   <Flame className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
@@ -374,14 +423,26 @@ export function GitHubCalendarSection() {
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground/80">
                 <span className={cn("inline-block h-1.5 w-1.5 rounded-full", currentStreak > 0 ? "bg-orange-500 animate-pulse" : "bg-muted-foreground/50")} />
-                <span>{currentStreak > 0 ? "Active streak" : "Ready"}</span>
+                <DecryptedText
+                  text={currentStreak > 0 ? "Active streak" : "Ready"}
+                  animateOn="hover"
+                  speed={20}
+                  maxIterations={5}
+                  className="text-muted-foreground/80"
+                />
               </div>
             </div>
 
-            {/* 3. Longest Streak (Lightning Amber Theme) */}
+            {/* 3. Longest Streak */}
             <div className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-card/90 dark:bg-zinc-900/85 md:bg-background/50 p-3 sm:p-4 md:backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(245,158,11,0.12)]">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Longest streak</span>
+                <DecryptedText
+                  text="Longest streak"
+                  animateOn="inViewHover"
+                  speed={20}
+                  maxIterations={6}
+                  className="text-[11px] sm:text-xs font-medium text-muted-foreground"
+                />
                 <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-amber-600 dark:text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.12)] transition-all group-hover/stat:bg-amber-500/20 group-hover/stat:border-amber-500/40 group-hover/stat:text-amber-500">
                   <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
@@ -394,11 +455,17 @@ export function GitHubCalendarSection() {
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground/80">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500" />
-                <span>Personal record</span>
+                <DecryptedText
+                  text="Personal record"
+                  animateOn="hover"
+                  speed={20}
+                  maxIterations={5}
+                  className="text-muted-foreground/80"
+                />
               </div>
             </div>
 
-            {/* 4. Repositories (Codebase Sky Cyan Theme) */}
+            {/* 4. Repositories */}
             <a
               href={`${DATA.contact.social.GitHub.url}?tab=repositories`}
               target="_blank"
@@ -406,7 +473,13 @@ export function GitHubCalendarSection() {
               className="group/stat relative overflow-hidden rounded-xl border border-border/50 bg-card/90 dark:bg-zinc-900/85 md:bg-background/50 p-3 sm:p-4 md:backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-500/35 hover:bg-background/80 hover:shadow-[0_8px_20px_-6px_rgba(14,165,233,0.12)] cursor-pointer block"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[11px] sm:text-xs font-medium text-muted-foreground">Repositories</span>
+                <DecryptedText
+                  text="Repositories"
+                  animateOn="inViewHover"
+                  speed={20}
+                  maxIterations={6}
+                  className="text-[11px] sm:text-xs font-medium text-muted-foreground"
+                />
                 <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-sky-500/10 dark:bg-sky-500/15 border border-sky-500/25 text-sky-600 dark:text-sky-400 shadow-[0_0_10px_rgba(14,165,233,0.12)] transition-all group-hover/stat:bg-sky-500/20 group-hover/stat:border-sky-500/40 group-hover/stat:text-sky-500">
                   <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
@@ -419,7 +492,13 @@ export function GitHubCalendarSection() {
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground/80">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-sky-500" />
-                <span>Public codebases</span>
+                <DecryptedText
+                  text="Public codebases"
+                  animateOn="hover"
+                  speed={20}
+                  maxIterations={5}
+                  className="text-muted-foreground/80"
+                />
               </div>
             </a>
           </div>
@@ -448,12 +527,19 @@ export function GitHubCalendarSection() {
                 {/* Matrix Telemetry Top Bar */}
                 <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 mb-4 text-xs">
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <Activity className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
+                    <Activity className="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500 animate-pulse" />
                     <span className="font-semibold text-foreground">{totalContributions.toLocaleString()}</span>
-                    <span>contributions in {selectedYear === "last" ? "the past year" : selectedYear}</span>
+                    <span>
+                      <DecryptedText
+                        text={`contributions in ${selectedYear === "last" ? "the past year" : selectedYear}`}
+                        animateOn="hover"
+                        speed={20}
+                        maxIterations={5}
+                      />
+                    </span>
                     {peakDate && (
                       <span className="hidden sm:inline-flex items-center gap-1.5 rounded-md bg-muted/60 dark:bg-zinc-900/80 px-2 py-0.5 text-[11px] text-muted-foreground border border-border/40">
-                        <span className="text-emerald-500">★</span> Peak: {maxContributions} on {formattedPeakDate}
+                        <span className="text-zinc-400">★</span> Peak: {maxContributions} on {formattedPeakDate}
                       </span>
                     )}
                   </div>
@@ -461,11 +547,18 @@ export function GitHubCalendarSection() {
                     <button
                       type="button"
                       onClick={scrollToLatest}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 transition-all border border-emerald-500/20 cursor-pointer text-[10px] font-semibold tracking-tight"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 hover:bg-muted text-foreground px-2.5 py-1 transition-all border border-border/70 cursor-pointer text-[10px] font-semibold tracking-tight"
                       title="Jump to Today's contributions"
                     >
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span>Today ({todayContributions !== null ? `${todayContributions} commits` : "10/09"})</span>
+                      <span className="h-1.5 w-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
+                      <span>
+                        <DecryptedText
+                          text={`Today (${todayContributions !== null ? `${todayContributions} commits` : "10/09"})`}
+                          animateOn="hover"
+                          speed={20}
+                          maxIterations={5}
+                        />
+                      </span>
                     </button>
                     <span className="text-muted-foreground/60 hidden sm:inline">INTERACTIVE MATRIX</span>
                     <span className="text-muted-foreground/60 text-[10px] inline sm:hidden">Swipe ➔</span>
@@ -534,20 +627,29 @@ export function GitHubCalendarSection() {
                 <div className="mt-3 pt-3 border-t border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-muted-foreground">
                   <div className="flex items-center gap-3">
                     <span>
-                      Active Days: <strong className="text-foreground">{activeDays}</strong>
+                      <DecryptedText text="Active Days:" animateOn="hover" speed={20} maxIterations={5} />{" "}
+                      <strong className="text-foreground">{activeDays}</strong>
                     </span>
                     <span>•</span>
                     <span>
-                      Consistency: <strong className="text-foreground">{((activeDays / 365) * 100).toFixed(0)}%</strong>
+                      <DecryptedText text="Consistency:" animateOn="hover" speed={20} maxIterations={5} />{" "}
+                      <strong className="text-foreground">{((activeDays / 365) * 100).toFixed(0)}%</strong>
                     </span>
                   </div>
                   <a
                     href={DATA.contact.social.GitHub.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-emerald-500 transition-colors flex items-center gap-1 w-fit group/btn font-medium"
+                    className="hover:text-foreground transition-colors flex items-center gap-1 w-fit group/btn font-medium"
                   >
-                    <span>Inspect full graph on GitHub</span>
+                    <span>
+                      <DecryptedText
+                        text="Inspect full graph on GitHub"
+                        animateOn="hover"
+                        speed={20}
+                        maxIterations={5}
+                      />
+                    </span>
                     <ArrowUpRight className="h-3 w-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                   </a>
                 </div>
@@ -580,10 +682,10 @@ export function GitHubCalendarSection() {
 
                   const levelColors = [
                     "bg-muted-foreground/30",
-                    "bg-emerald-700",
-                    "bg-emerald-600",
-                    "bg-emerald-500",
-                    "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]",
+                    "bg-zinc-700",
+                    "bg-zinc-600",
+                    "bg-zinc-500",
+                    "bg-zinc-400 shadow-[0_0_8px_rgba(161,161,170,0.8)]",
                   ];
 
                   const levelColor = levelColors[data.level] || levelColors[0];
@@ -594,7 +696,7 @@ export function GitHubCalendarSection() {
                         <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
                           {formattedDate}
                           {isToday && (
-                            <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-zinc-500/20 text-foreground border border-zinc-500/30">
                               Today
                             </span>
                           )}
@@ -609,7 +711,7 @@ export function GitHubCalendarSection() {
                           {data.count === 1 ? "contribution" : "contributions"}
                         </span>
                       </div>
-                      <div className="text-[10px] font-medium tracking-wide text-emerald-500">
+                      <div className="text-[10px] font-medium tracking-wide text-zinc-400 dark:text-zinc-500">
                         {data.count === 0
                           ? "No commits recorded"
                           : data.count >= 15

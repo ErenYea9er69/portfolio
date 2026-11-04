@@ -89,7 +89,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
           id: newId,
           command: trimmed,
           type: 'text',
-          content: <span className="text-emerald-400 font-semibold">⚡ Returning to web portfolio...</span>,
+          content: <span className="text-zinc-300 font-semibold">⚡ Returning to web portfolio...</span>,
         },
       ]);
       setTimeout(() => {
@@ -185,7 +185,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
           type: 'text',
           content: (
             <div className="space-y-1.5 text-xs text-zinc-300 py-1">
-              <p className="text-emerald-400 font-semibold mb-1">🔗 Socials & Links:</p>
+              <p className="text-zinc-400 font-semibold mb-1">🔗 Socials & Links:</p>
               {Object.entries(DATA.contact.social)
                 .filter(([_, social]) => social.navbar !== false)
                 .map(([name, social]) => (
@@ -219,7 +219,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
           content: (
             <div className="flex flex-wrap gap-4 text-xs font-mono py-1">
               <span className="text-sky-400">📄 about.txt</span>
-              <span className="text-emerald-400">📁 projects/</span>
+              <span className="text-zinc-400">📁 projects/</span>
               <span className="text-amber-400">📄 skills.json</span>
               <span className="text-purple-400">⚙️ neofetch</span>
               <span className="text-zinc-300">🚀 return_web</span>
@@ -323,7 +323,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
       <div className="flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 py-2 text-xs font-mono">
         {/* Desktop: Clean Developer Monogram ASCII */}
         <div className="hidden md:flex md:col-span-5 flex-col items-center justify-center p-3 rounded-lg bg-zinc-950/80 border border-zinc-800/80 select-none">
-          <pre className="text-emerald-400 leading-tight text-[11px] font-bold tracking-widest text-center">
+          <pre className="text-zinc-300 leading-tight text-[11px] font-bold tracking-widest text-center">
 {`
   ██████╗ ██████╗ 
   ██╔══██╗██╔══██╗
@@ -344,7 +344,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
         {/* Mobile: Sleek, compact identity card that does not crowd the small screen */}
         <div className="flex md:hidden items-center justify-between p-3 rounded-xl bg-zinc-950/90 border border-zinc-800/90 shadow-sm select-none">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold font-mono text-xs">
+            <div className="size-9 rounded-lg bg-zinc-500/15 border border-zinc-500/30 flex items-center justify-center text-zinc-300 font-bold font-mono text-xs">
               RP
             </div>
             <div>
@@ -357,16 +357,16 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[9px] text-emerald-400 font-mono font-medium">ONLINE</span>
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-zinc-500/10 border border-zinc-500/20">
+            <span className="size-1.5 rounded-full bg-zinc-400 animate-pulse" />
+            <span className="text-[9px] text-zinc-400 font-mono font-medium">ONLINE</span>
           </div>
         </div>
 
         {/* Right: Spec Info matching clean terminal */}
         <div className="md:col-span-7 space-y-1.5 flex flex-col justify-center">
           <div className="hidden md:flex items-center gap-2 pb-1 border-b border-zinc-800">
-            <span className="text-emerald-400 font-bold">rayen</span>
+            <span className="text-zinc-300 font-bold">rayen</span>
             <span className="text-zinc-500">@</span>
             <span className="text-sky-400 font-bold">portfolio</span>
           </div>
@@ -380,7 +380,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
           <div className="flex items-center gap-2 text-[11px]">
             <span className="text-zinc-400 w-20 sm:w-24 shrink-0 font-medium">Role</span>
             <span className="text-zinc-600">:</span>
-            <span className="text-emerald-400 font-medium">Full Stack Software Engineer</span>
+            <span className="text-zinc-300 font-medium">Full Stack Software Engineer</span>
           </div>
 
           <div className="flex items-center gap-2 text-[11px]">
@@ -426,7 +426,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
   const renderProjects = () => {
     return (
       <div className="space-y-2 py-1">
-        <p className="text-emerald-400 font-bold text-xs">📂 Featured Projects ({DATA.projects.length}):</p>
+        <p className="text-zinc-300 font-bold text-xs">📂 Featured Projects ({DATA.projects.length}):</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           {DATA.projects.map((proj) => (
             <div
@@ -485,7 +485,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
       <div className="space-y-1.5 py-1 text-xs text-zinc-300">
         <p className="text-amber-400 font-bold">Available Commands:</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 font-mono text-[11px]">
-          <div><span className="text-emerald-400 font-bold">neofetch</span> - System specs & developer card</div>
+          <div><span className="text-zinc-300 font-bold">neofetch</span> - System specs & developer card</div>
           <div><span className="text-sky-400 font-bold">projects</span> - View shipped portfolio projects</div>
           <div><span className="text-amber-400 font-bold">skills</span> - List technologies & tools</div>
           <div><span className="text-purple-400 font-bold">about</span> - Developer bio & background</div>
@@ -504,7 +504,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
       <header className="shrink-0 relative z-20 flex items-center justify-between px-3 sm:px-4 py-2.5 border-b border-zinc-800/80 bg-zinc-950/95 backdrop-blur-md">
         <div className="flex items-center gap-2.5">
           <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="size-2 rounded-full bg-zinc-400 animate-pulse" />
             <span className="text-xs font-semibold tracking-wide text-zinc-200">
               rayen@portfolio: ~
             </span>
@@ -533,10 +533,10 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
               if (onGuiCommand) onGuiCommand();
               else if (typeof window !== 'undefined') window.location.href = '/';
             }}
-            className="group flex items-center gap-1.5 px-3 py-1 rounded-md bg-zinc-900 border border-zinc-700 hover:border-emerald-500 hover:bg-zinc-800 text-zinc-200 hover:text-white transition-all text-xs cursor-pointer"
+            className="group flex items-center gap-1.5 px-3 py-1 rounded-md bg-zinc-900 border border-zinc-700 hover:border-zinc-500 hover:bg-zinc-800 text-zinc-200 hover:text-white transition-all text-xs cursor-pointer"
             title="Return to standard web portfolio"
           >
-            <ArrowLeft className="size-3.5 group-hover:-translate-x-0.5 transition-transform text-emerald-400" />
+            <ArrowLeft className="size-3.5 group-hover:-translate-x-0.5 transition-transform text-zinc-400" />
             <span className="font-medium">Web View</span>
             <span className="hidden md:inline text-[9px] text-zinc-400 bg-zinc-800 px-1 rounded">
               gui
@@ -555,7 +555,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
               <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/90 overflow-hidden shadow-xl flex flex-col">
                 <div className="flex items-center justify-between px-3 py-2 bg-zinc-900/90 border-b border-zinc-800 text-[11px] text-zinc-400 select-none">
                   <span className="font-mono text-[10px]">ascii_matrix.gif</span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-500/20 text-zinc-300 font-semibold">
                     LIVE
                   </span>
                 </div>
@@ -569,7 +569,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
                 </div>
                 <div className="p-3 bg-zinc-950 border-t border-zinc-900 text-xs flex justify-between items-center">
                   <span className="text-zinc-300 font-semibold">{DATA.name}</span>
-                  <span className="text-[10px] text-emerald-400 font-mono">Tunisia</span>
+                  <span className="text-[10px] text-zinc-400 font-mono">Tunisia</span>
                 </div>
               </div>
             </div>
@@ -598,7 +598,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
                   <span className="size-3 rounded-full bg-[#27c93f]" />
                 </div>
                 <div className="text-xs text-zinc-300 font-mono font-medium flex items-center gap-1.5">
-                  <TerminalIcon className="size-3 text-emerald-400" />
+                  <TerminalIcon className="size-3 text-zinc-400" />
                   <span>rayen@portfolio: ~ (zsh)</span>
                 </div>
                 <div className="text-[10px] text-zinc-500 font-mono">
@@ -616,9 +616,9 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
                   <div key={item.id} className="space-y-1">
                     {/* Prompt replay */}
                     <div className="flex items-center gap-2 text-zinc-400">
-                      <span className="text-emerald-400 font-bold shrink-0">
+                      <span className="text-zinc-300 font-bold shrink-0">
                         <span className="hidden sm:inline">rayen@portfolio:~$</span>
-                        <span className="sm:hidden text-emerald-400 font-bold font-mono">❯</span>
+                        <span className="sm:hidden text-zinc-300 font-bold font-mono">❯</span>
                       </span>
                       <span className="text-zinc-100">{item.command}</span>
                     </div>
@@ -636,9 +636,9 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
 
                 {/* Active input line */}
                 <div className="flex items-center gap-2 text-xs pt-1">
-                  <span className="text-emerald-400 font-bold shrink-0">
+                  <span className="text-zinc-300 font-bold shrink-0">
                     <span className="hidden sm:inline">rayen@portfolio:~$</span>
-                    <span className="sm:hidden text-emerald-400 font-bold font-mono text-sm leading-none">❯</span>
+                    <span className="sm:hidden text-zinc-300 font-bold font-mono text-sm leading-none">❯</span>
                   </span>
                   <input
                     ref={inputRef}
@@ -646,7 +646,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="flex-1 min-w-0 bg-transparent border-none outline-none text-zinc-100 font-mono caret-emerald-400 placeholder-zinc-700 text-xs sm:text-xs"
+                    className="flex-1 min-w-0 bg-transparent border-none outline-none text-zinc-100 font-mono caret-zinc-400 placeholder-zinc-700 text-xs sm:text-xs"
                     placeholder="Type command (help, projects, gui)..."
                     autoFocus
                     spellCheck={false}
@@ -664,7 +664,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
                 </span>
                 <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap sm:flex-wrap">
                   {[
-                    { label: 'neofetch', cmd: 'neofetch', color: 'hover:text-emerald-400 hover:border-emerald-500/50' },
+                    { label: 'neofetch', cmd: 'neofetch', color: 'hover:text-zinc-300 hover:border-zinc-500/50' },
                     { label: 'projects', cmd: 'projects', color: 'hover:text-sky-400 hover:border-sky-500/50' },
                     { label: 'skills', cmd: 'skills', color: 'hover:text-cyan-400 hover:border-cyan-500/50' },
                     { label: 'about', cmd: 'about', color: 'hover:text-amber-400 hover:border-amber-500/50' },

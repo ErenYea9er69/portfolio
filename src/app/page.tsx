@@ -87,7 +87,7 @@ export default function Page() {
                       speed={45}
                       maxIterations={12}
                       className="text-foreground"
-                      encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+                      encryptedClassName="text-zinc-500/80 dark:text-zinc-400/80 font-mono"
                     />
                   </h1>
                 </BlurFade>
@@ -104,7 +104,7 @@ export default function Page() {
                       speed={35}
                       maxIterations={10}
                       className="text-muted-foreground"
-                      encryptedClassName="text-emerald-500/70 dark:text-emerald-400/70 font-mono"
+                      encryptedClassName="text-zinc-500/70 dark:text-zinc-400/70 font-mono"
                     />
                   </p>
                 </BlurFade>
@@ -122,27 +122,41 @@ export default function Page() {
               </BlurFade>
             </div>
 
-            {/* Bio / About with clean typographic hierarchy (no AI icon slop in prose) */}
+            {/* Bio / About with clean typographic hierarchy */}
             <BlurFade priority delay={BLUR_FADE_DELAY * 3}>
               <div className="space-y-3 text-sm sm:text-[15px] leading-relaxed text-muted-foreground">
                 <p>
-                  I’m <strong className="font-semibold text-foreground">Rayen</strong>, a{" "}
-                  <strong className="font-semibold text-foreground">Full Stack Engineer</strong> with{" "}
-                  <strong className="font-semibold text-foreground">2+ years of experience</strong> based in Tunisia.
+                  <DecryptedText
+                    text="I’m Rayen, a Full Stack Engineer with 2+ years of experience based in Tunisia."
+                    animateOn="inViewHover"
+                    speed={25}
+                    maxIterations={8}
+                    sequential={false}
+                    className="text-muted-foreground"
+                    encryptedClassName="text-zinc-500/70 dark:text-zinc-400/70 font-mono"
+                  />
                 </p>
                 <p>
-                  I build end-to-end web applications with{" "}
-                  <span className="font-medium text-foreground">React</span>,{" "}
-                  <span className="font-medium text-foreground">Next.js</span>,{" "}
-                  <span className="font-medium text-foreground">TypeScript</span>, and{" "}
-                  <span className="font-medium text-foreground">Node.js</span> — from database schemas and API architecture through to polished, fluid user interfaces.
+                  <DecryptedText
+                    text="I build end-to-end web applications with React, Next.js, TypeScript, and Node.js — from database schemas and API architecture through to polished, fluid user interfaces."
+                    animateOn="inViewHover"
+                    speed={20}
+                    maxIterations={8}
+                    sequential={false}
+                    className="text-muted-foreground"
+                    encryptedClassName="text-zinc-500/70 dark:text-zinc-400/70 font-mono"
+                  />
                 </p>
                 <p>
-                  On the backend I build with{" "}
-                  <span className="font-medium text-foreground">Express</span>,{" "}
-                  <span className="font-medium text-foreground">PostgreSQL</span>,{" "}
-                  <span className="font-medium text-foreground">MongoDB</span>, and{" "}
-                  <span className="font-medium text-foreground">Supabase</span>, focusing on type safety, deterministic failure handling, and real-time responsiveness.
+                  <DecryptedText
+                    text="On the backend I build with Express, PostgreSQL, MongoDB, and Supabase, focusing on type safety, deterministic failure handling, and real-time responsiveness."
+                    animateOn="inViewHover"
+                    speed={20}
+                    maxIterations={8}
+                    sequential={false}
+                    className="text-muted-foreground"
+                    encryptedClassName="text-zinc-500/70 dark:text-zinc-400/70 font-mono"
+                  />
                 </p>
               </div>
             </BlurFade>
@@ -219,7 +233,7 @@ export default function Page() {
                     speed={40}
                     maxIterations={10}
                     className="text-foreground"
-                    encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+                    encryptedClassName="text-zinc-500/80 dark:text-zinc-400/80 font-mono"
                   />
                 </h2>
               </BlurFade>
@@ -259,7 +273,7 @@ export default function Page() {
                     speed={40}
                     maxIterations={10}
                     className="text-foreground"
-                    encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+                    encryptedClassName="text-zinc-500/80 dark:text-zinc-400/80 font-mono"
                   />
                 </h2>
               </BlurFade>
@@ -301,11 +315,19 @@ export default function Page() {
                     speed={40}
                     maxIterations={10}
                     className="text-foreground"
-                    encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+                    encryptedClassName="text-zinc-500/80 dark:text-zinc-400/80 font-mono"
                   />
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground max-w-md">
-                  Have a project in mind, an opportunity, or just want to chat tech? Let's connect.
+                  <DecryptedText
+                    text="Have a project in mind, an opportunity, or just want to chat tech? Let's connect."
+                    animateOn="inViewHover"
+                    speed={20}
+                    maxIterations={8}
+                    sequential={false}
+                    className="text-muted-foreground"
+                    encryptedClassName="text-zinc-500/70 dark:text-zinc-400/70 font-mono"
+                  />
                 </p>
                 <div className="pt-2">
                   <a
@@ -323,7 +345,15 @@ export default function Page() {
                         className="size-full object-cover"
                       />
                     </div>
-                    <span>Let's talk</span>
+                    <span>
+                      <DecryptedText
+                        text="Let's talk"
+                        animateOn="hover"
+                        speed={30}
+                        maxIterations={6}
+                        className="text-foreground"
+                      />
+                    </span>
                     <span className="transition-transform duration-200 group-hover/cta:translate-x-0.5">→</span>
                   </a>
                 </div>
@@ -337,15 +367,47 @@ export default function Page() {
           <BlurFade delay={BLUR_FADE_DELAY * 15}>
             <div className="grid gap-6 sm:grid-cols-3">
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-foreground">{DATA.name}</p>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Full Stack Developer from Tunisia.
-                  <br />Building modern, high-performance web software.
+                <p className="text-sm font-semibold text-foreground">
+                  <DecryptedText
+                    text={DATA.name}
+                    animateOn="inViewHover"
+                    speed={30}
+                    maxIterations={8}
+                    className="text-sm font-semibold text-foreground"
+                  />
                 </p>
+                <div className="text-xs text-muted-foreground leading-relaxed flex flex-col gap-0.5">
+                  <p>
+                    <DecryptedText
+                      text="Full Stack Developer from Tunisia."
+                      animateOn="inViewHover"
+                      speed={20}
+                      maxIterations={6}
+                      className="text-xs text-muted-foreground"
+                    />
+                  </p>
+                  <p>
+                    <DecryptedText
+                      text="Building modern, high-performance web software."
+                      animateOn="inViewHover"
+                      speed={20}
+                      maxIterations={6}
+                      className="text-xs text-muted-foreground"
+                    />
+                  </p>
+                </div>
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Navigation</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <DecryptedText
+                    text="Navigation"
+                    animateOn="inViewHover"
+                    speed={30}
+                    maxIterations={6}
+                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                  />
+                </p>
                 <div className="flex flex-col gap-1">
                   {DATA.navbar.slice(1).map((item) => (
                     <Link
@@ -353,26 +415,58 @@ export default function Page() {
                       href={item.href}
                       className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center"
                     >
-                      {item.label}
+                      <DecryptedText
+                        text={item.label}
+                        animateOn="hover"
+                        speed={25}
+                        maxIterations={6}
+                        className="text-muted-foreground hover:text-foreground"
+                      />
                     </Link>
                   ))}
                   <Link
                     href="/cli"
                     className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center"
                   >
-                    CLI Mode
+                    <DecryptedText
+                      text="CLI Mode"
+                      animateOn="hover"
+                      speed={25}
+                      maxIterations={6}
+                      className="text-muted-foreground hover:text-foreground"
+                    />
                   </Link>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Meta</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <DecryptedText
+                    text="Meta"
+                    animateOn="inViewHover"
+                    speed={30}
+                    maxIterations={6}
+                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                  />
+                </p>
                 <div className="flex flex-col gap-1">
                   <Link href="/sitemap.xml" className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center">
-                    Sitemap
+                    <DecryptedText
+                      text="Sitemap"
+                      animateOn="hover"
+                      speed={25}
+                      maxIterations={6}
+                      className="text-muted-foreground hover:text-foreground"
+                    />
                   </Link>
                   <Link href="/robots.txt" className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center">
-                    Robots.txt
+                    <DecryptedText
+                      text="Robots.txt"
+                      animateOn="hover"
+                      speed={25}
+                      maxIterations={6}
+                      className="text-muted-foreground hover:text-foreground"
+                    />
                   </Link>
                   <a
                     href={DATA.url}
@@ -380,22 +474,39 @@ export default function Page() {
                     rel="noopener noreferrer"
                     className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center"
                   >
-                    Portfolio Source
+                    <DecryptedText
+                      text="Portfolio Source"
+                      animateOn="hover"
+                      speed={25}
+                      maxIterations={6}
+                      className="text-muted-foreground hover:text-foreground"
+                    />
                   </a>
                 </div>
               </div>
             </div>
 
             <div className="mt-8 flex flex-col gap-3 border-t border-border/30 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-muted-foreground">
-                © {new Date().getFullYear()} {DATA.name}. Open source under{' '}
+              <p className="text-xs text-muted-foreground inline-flex flex-wrap items-center gap-1">
+                <DecryptedText
+                  text={`© ${new Date().getFullYear()} ${DATA.name}. Open source under `}
+                  animateOn="inViewHover"
+                  speed={25}
+                  maxIterations={6}
+                  className="text-xs text-muted-foreground"
+                />
                 <a
                   href="https://opensource.org/licenses/MIT"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline hover:text-foreground transition-colors font-medium"
+                  className="underline hover:text-foreground transition-colors font-medium inline-block"
                 >
-                  MIT
+                  <DecryptedText
+                    text="MIT"
+                    animateOn="hover"
+                    speed={20}
+                    maxIterations={5}
+                  />
                 </a>
               </p>
               <VisitorCounter />

@@ -8,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export interface DecryptedTextProps extends HTMLMotionProps<"span"> {
   text: string;
@@ -33,6 +34,7 @@ const styles: Record<string, React.CSSProperties> = {
   wrapper: {
     display: "inline-block",
     whiteSpace: "pre-wrap",
+    verticalAlign: "baseline",
   },
   srOnly: {
     position: "absolute",
@@ -140,7 +142,7 @@ export function DecryptedText({
   characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+",
   className = "",
   parentClassName = "",
-  encryptedClassName = "",
+  encryptedClassName = "text-zinc-500/80 dark:text-zinc-400/80 font-mono",
   animateOn = "hover",
   clickMode = "once",
   effect = "scramble",
@@ -714,7 +716,7 @@ export function DecryptedText({
     <motion.span
       className={parentClassName}
       ref={containerRef}
-      style={styles.wrapper}
+      style={{ ...styles.wrapper, ...(props.style as React.CSSProperties) }}
       {...animateProps}
       {...props}
     >
@@ -735,7 +737,7 @@ export function DecryptedText({
                     ref={(node) => {
                       cellsRef.current[index] = node;
                     }}
-                    className={revealed ? className : encryptedClassName}
+                    className={revealed ? className : cn(encryptedClassName || "text-zinc-500/80 dark:text-zinc-400/80 font-mono")}
                     style={cellStyle(index, revealed)}
                   >
                     {revealed ? (

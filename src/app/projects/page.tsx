@@ -59,10 +59,12 @@ export default function ProjectsPage() {
             className="inline-flex items-center gap-1 hover:text-foreground transition-colors group/back"
           >
             <ChevronLeft className="size-3.5 transition-transform group-hover/back:-translate-x-0.5" />
-            <span>Home</span>
+            <DecryptedText text="Home" animateOn="hover" speed={20} maxIterations={5} />
           </Link>
           <span>/</span>
-          <span className="text-foreground font-medium">Projects</span>
+          <span className="text-foreground font-medium">
+            <DecryptedText text="Projects" animateOn="hover" speed={20} maxIterations={5} className="text-foreground font-medium" />
+          </span>
         </div>
       </BlurFade>
 
@@ -78,12 +80,18 @@ export default function ProjectsPage() {
                 speed={45}
                 maxIterations={12}
                 className="text-foreground"
-                encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+                encryptedClassName="text-zinc-500/80 dark:text-zinc-400/80 font-mono"
               />
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              {DATA.projects.length} Repositories
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 dark:bg-muted/40 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/70">
+              <span className="size-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
+              <DecryptedText
+                text={`${DATA.projects.length} Repositories`}
+                animateOn="hover"
+                speed={25}
+                maxIterations={6}
+                className="text-muted-foreground"
+              />
             </span>
           </div>
         </BlurFade>
@@ -93,15 +101,24 @@ export default function ProjectsPage() {
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-1 sm:pt-2">
             <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs text-muted-foreground backdrop-blur-sm">
               <FolderGit2 className="size-3.5 text-foreground" />
-              <span><strong>{DATA.projects.length}</strong> Projects</span>
+              <span>
+                <strong>{DATA.projects.length}</strong>{" "}
+                <DecryptedText text="Projects" animateOn="hover" speed={20} maxIterations={5} />
+              </span>
             </div>
             <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs text-muted-foreground backdrop-blur-sm">
-              <Globe className="size-3.5 text-emerald-500" />
-              <span><strong>{liveDemosCount}</strong> Live Demos</span>
+              <Globe className="size-3.5 text-zinc-400 dark:text-zinc-500" />
+              <span>
+                <strong>{liveDemosCount}</strong>{" "}
+                <DecryptedText text="Live Demos" animateOn="hover" speed={20} maxIterations={5} />
+              </span>
             </div>
             <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs text-muted-foreground backdrop-blur-sm">
               <Terminal className="size-3.5 text-sky-500" />
-              <span><strong>100%</strong> Open Source</span>
+              <span>
+                <strong>100%</strong>{" "}
+                <DecryptedText text="Open Source" animateOn="hover" speed={20} maxIterations={5} />
+              </span>
             </div>
           </div>
         </BlurFade>
@@ -125,7 +142,7 @@ export default function ProjectsPage() {
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground p-1 cursor-pointer"
                 >
                   ✕
                 </button>
@@ -134,7 +151,13 @@ export default function ProjectsPage() {
 
             {/* Results count indicator */}
             <div className="text-xs text-muted-foreground/80 self-center sm:self-auto font-mono">
-              Showing {filteredProjects.length} of {DATA.projects.length}
+              <DecryptedText
+                text={`Showing ${filteredProjects.length} of ${DATA.projects.length}`}
+                animateOn="hover"
+                speed={20}
+                maxIterations={5}
+                className="text-xs text-muted-foreground/80 font-mono"
+              />
             </div>
           </div>
         </BlurFade>
@@ -174,7 +197,15 @@ export default function ProjectsPage() {
                       className="absolute inset-0 rounded-xl bg-background/95 dark:bg-card/95 border border-border/70 shadow-sm backdrop-blur-lg"
                     />
                   )}
-                  <span className="relative z-10">{category}</span>
+                  <span className="relative z-10">
+                    <DecryptedText
+                      text={category}
+                      animateOn="hover"
+                      speed={25}
+                      maxIterations={6}
+                      className={isActive ? "text-foreground font-semibold" : "text-muted-foreground"}
+                    />
+                  </span>
                   <span
                     className={cn(
                       "relative z-10 text-[10px] px-1.5 py-0.2 rounded-full tabular-nums",

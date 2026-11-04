@@ -63,12 +63,18 @@ export function TechStackSection() {
                 speed={40}
                 maxIterations={10}
                 className="text-foreground"
-                encryptedClassName="text-emerald-500/80 dark:text-emerald-400/80 font-mono"
+                encryptedClassName="text-zinc-500/80 dark:text-zinc-400/80 font-mono"
               />
             </h2>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              {DATA.skills.length} Technologies
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 dark:bg-muted/40 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/70">
+              <span className="size-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
+              <DecryptedText
+                text={`${DATA.skills.length} Technologies`}
+                animateOn="hover"
+                speed={25}
+                maxIterations={6}
+                className="text-muted-foreground"
+              />
             </span>
           </div>
         </BlurFade>
@@ -104,7 +110,15 @@ export function TechStackSection() {
                     className="absolute inset-0 rounded-xl bg-background/95 dark:bg-card/95 border border-border/70 shadow-sm md:backdrop-blur-lg"
                   />
                 )}
-                <span className="relative z-10">{cat.label}</span>
+                <span className="relative z-10">
+                  <DecryptedText
+                    text={cat.label}
+                    animateOn="hover"
+                    speed={25}
+                    maxIterations={6}
+                    className={isActive ? "text-foreground font-semibold" : "text-muted-foreground"}
+                  />
+                </span>
                 <span
                   className={cn(
                     "relative z-10 text-[10px] px-1.5 py-0.2 rounded-full tabular-nums transition-colors",
@@ -186,7 +200,15 @@ function SkillPill({
             : "opacity-0 translate-y-1 scale-95 pointer-events-none"
         )}
       >
-        <span>{skill.role}</span>
+        <span>
+          <DecryptedText
+            text={skill.role}
+            animateOn="hover"
+            speed={20}
+            maxIterations={5}
+            className="text-popover-foreground"
+          />
+        </span>
         {skill.level && (
           <span className="ml-1 opacity-60">· {skill.level}</span>
         )}
@@ -198,9 +220,14 @@ function SkillPill({
       </div>
 
       {/* Skill Name */}
-      <span className="text-xs sm:text-[13px] font-medium tracking-tight text-foreground transition-colors">
-        {skill.name}
-      </span>
+      <DecryptedText
+        text={skill.name}
+        animateOn="hover"
+        speed={25}
+        maxIterations={6}
+        sequential={false}
+        className="text-xs sm:text-[13px] font-medium tracking-tight text-foreground transition-colors"
+      />
     </div>
   );
 }
