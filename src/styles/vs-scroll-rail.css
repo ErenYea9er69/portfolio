@@ -1,0 +1,330 @@
+/* ═══════════════════════════════════════════════════
+   vs-scroll-rail — VividSites chapter rail
+   Customise through variables, not the rules below.
+   ═══════════════════════════════════════════════════ */
+
+.vs-scroll-rail {
+  --vs-scroll-rail-accent: hsl(var(--foreground));
+  --vs-scroll-rail-ink: hsl(var(--muted-foreground));
+  --vs-scroll-rail-size: 0.8rem;
+  --vs-scroll-rail-height: min(68vh, 34em);
+  --vs-scroll-rail-edge: 1.6em;
+  --vs-scroll-rail-font: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo,
+    Consolas, monospace;
+
+  position: fixed;
+  z-index: 20;
+  top: 50%;
+  right: var(--vs-scroll-rail-edge);
+  box-sizing: border-box;
+  width: 18em;
+  height: var(--vs-scroll-rail-height);
+  transform: translateY(-50%);
+  font-size: var(--vs-scroll-rail-size);
+  font-family: var(--vs-scroll-rail-font);
+  color: var(--vs-scroll-rail-ink);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hidden on narrow viewports — not enough room beside content */
+@media (max-width: 1279px) {
+  .vs-scroll-rail {
+    display: none !important;
+  }
+}
+
+.vs-scroll-rail[data-side="left"] {
+  right: auto;
+  left: var(--vs-scroll-rail-edge);
+}
+
+.vs-scroll-rail *,
+.vs-scroll-rail *::before {
+  box-sizing: border-box;
+}
+
+/* ── Chapter counter above the scale ── */
+.vs-scroll-rail-count {
+  position: absolute;
+  right: 3em;
+  bottom: calc(100% + 1.4em);
+  display: flex;
+  align-items: baseline;
+  gap: 0.35em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+}
+.vs-scroll-rail-count b {
+  display: inline-block;
+  font-weight: 400;
+  font-size: 3em;
+  letter-spacing: -0.04em;
+  color: var(--vs-scroll-rail-ink);
+}
+.vs-scroll-rail-count span {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.06em 0;
+}
+.vs-scroll-rail-count small {
+  font-size: 0.78em;
+  letter-spacing: 0.14em;
+  opacity: 0.42;
+}
+
+/* ── Track & spine ── */
+.vs-scroll-rail-track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 3em;
+  left: 0;
+}
+
+.vs-scroll-rail-grip {
+  position: absolute;
+  top: -0.6em;
+  bottom: -0.6em;
+  right: -1.6em;
+  width: 3.4em;
+  touch-action: none;
+  cursor: ns-resize;
+}
+
+@media (hover: none) {
+  .vs-scroll-rail {
+    pointer-events: none;
+  }
+  .vs-scroll-rail-grip,
+  .vs-scroll-rail-ch {
+    pointer-events: auto;
+  }
+}
+
+.vs-scroll-rail-spine,
+.vs-scroll-rail-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 1px;
+}
+
+.vs-scroll-rail-spine {
+  background: currentColor;
+  opacity: 0.16;
+}
+
+.vs-scroll-rail-fill {
+  width: 2px;
+  margin-right: -0.5px;
+  background: var(--vs-scroll-rail-accent);
+  transform-origin: 50% 0;
+  transform: scaleY(0);
+  will-change: transform;
+  box-shadow: 0 0 0.6em
+    color-mix(in srgb, var(--vs-scroll-rail-accent) 55%, transparent);
+}
+
+/* ── Ticks ── */
+.vs-scroll-rail-ticks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.vs-scroll-rail-ticks i {
+  position: absolute;
+  right: 0;
+  width: 1em;
+  height: 1px;
+  margin-top: -0.5px;
+  background: currentColor;
+  opacity: 0.26;
+  transform-origin: 100% 50%;
+  will-change: transform;
+}
+.vs-scroll-rail-ticks i.is-past {
+  background: var(--vs-scroll-rail-accent);
+  opacity: 0.7;
+}
+
+/* ── Chapter list ── */
+.vs-scroll-rail-list {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+.vs-scroll-rail-list li {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 0;
+}
+
+.vs-scroll-rail-ch {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  height: 2.2em;
+  margin-top: -1.1em;
+  padding-left: 0.6em;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  outline: none;
+  pointer-events: auto;
+}
+
+.vs-scroll-rail-lab {
+  font-size: 0.8em;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform-origin: 100% 50%;
+  will-change: transform, opacity;
+}
+
+.vs-scroll-rail-num {
+  font-size: 0.72em;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.5;
+  transition: opacity 0.25s cubic-bezier(0.2, 0, 0, 1),
+    color 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.vs-scroll-rail-tk {
+  width: 2.6em;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.62;
+  transform-origin: 100% 50%;
+  will-change: transform;
+}
+
+/* ── Active / past / hover states ── */
+.vs-scroll-rail-ch.is-active .vs-scroll-rail-num {
+  opacity: 1;
+  color: var(--vs-scroll-rail-accent);
+}
+.vs-scroll-rail-ch.is-active .vs-scroll-rail-tk {
+  background: var(--vs-scroll-rail-accent);
+  opacity: 1;
+}
+.vs-scroll-rail-ch.is-past .vs-scroll-rail-tk {
+  opacity: 0.9;
+}
+.vs-scroll-rail-ch:hover .vs-scroll-rail-num {
+  opacity: 1;
+}
+.vs-scroll-rail-ch:focus-visible .vs-scroll-rail-lab {
+  outline: 1px solid var(--vs-scroll-rail-accent);
+  outline-offset: 0.45em;
+  border-radius: 2px;
+}
+
+/* ── Needle / head ── */
+.vs-scroll-rail-head {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+.vs-scroll-rail-head i {
+  position: absolute;
+  right: -0.7em;
+  top: -1px;
+  width: 1.4em;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--vs-scroll-rail-accent);
+  box-shadow: 0 0 0.8em var(--vs-scroll-rail-accent);
+}
+.vs-scroll-rail-head em {
+  position: absolute;
+  left: 1.05em;
+  top: -0.55em;
+  font-style: normal;
+  font-size: 0.66em;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  color: var(--vs-scroll-rail-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Left-side mirror ── */
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-count {
+  right: auto;
+  left: 3em;
+}
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-track {
+  right: 0;
+  left: 3em;
+}
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-spine,
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-fill,
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-ticks i,
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-list li,
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-ch,
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-head {
+  right: auto;
+  left: 0;
+}
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-fill {
+  margin: 0 0 0 -0.5px;
+}
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-ticks i,
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-tk,
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-lab {
+  transform-origin: 0 50%;
+}
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-ch {
+  flex-direction: row-reverse;
+  padding: 0 0.6em 0 0;
+}
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-head i {
+  right: auto;
+  left: -0.7em;
+}
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-grip {
+  right: auto;
+  left: -1.6em;
+}
+.vs-scroll-rail[data-side="left"] .vs-scroll-rail-head em {
+  left: auto;
+  right: 1.05em;
+}
+
+/* ── Accessibility: forced-colors ── */
+@media (forced-colors: active) {
+  .vs-scroll-rail-fill,
+  .vs-scroll-rail-head i {
+    background: Highlight;
+  }
+}
+
+/* ── Reduced motion: kill springs ── */
+@media (prefers-reduced-motion: reduce) {
+  .vs-scroll-rail-fill,
+  .vs-scroll-rail-head,
+  .vs-scroll-rail-ticks i,
+  .vs-scroll-rail-lab,
+  .vs-scroll-rail-tk {
+    transition: none !important;
+    will-change: auto;
+  }
+}
+

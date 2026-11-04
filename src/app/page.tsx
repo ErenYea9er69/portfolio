@@ -11,7 +11,7 @@ import { Metadata } from 'next';
 import { AgeCounter } from "@/components/age-counter";
 import { FlipAvatar } from "@/components/flip-avatar";
 import { BirthdayHat } from "@/components/birthday-hat";
-import { VisitorCounter, BirthdayFireworks, GitHubCalendarSection, XHoverCard } from "@/components/lazy-client";
+import { VisitorCounter, BirthdayFireworks, GitHubCalendarSection, XHoverCard, ScrollRail } from "@/components/lazy-client";
 import { SocialGlowLink } from "@/components/social-glow-link";
 import { TechStackSection } from "@/components/tech-stack-section";
 import { ProjectsSection } from "@/components/projects-section";
@@ -58,6 +58,16 @@ export default function Page() {
   return (
     <>
       <BirthdayFireworks />
+      <ScrollRail
+        chapters={[
+          { label: "About", selector: "#hero" },
+          { label: "Activity", selector: "#github-activity" },
+          { label: "Stack", selector: "#skills" },
+          { label: "Projects", selector: "#projects" },
+          { label: "Career", selector: "#experience-education" },
+          { label: "Contact", selector: "#contact" },
+        ]}
+      />
       <main className="flex min-h-[100dvh] flex-col space-y-12 sm:space-y-14">
         <PersonSchema />
 

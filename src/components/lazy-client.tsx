@@ -80,6 +80,11 @@ export const ScrollProgress = dynamic(
   { ssr: false }
 );
 
+export const ScrollRail = dynamic(
+  () => import("@/components/scroll-rail").then((mod) => mod.ScrollRail),
+  { ssr: false }
+);
+
 export const XHoverCard = dynamic(
   () => import("@/components/x-hover-card").then((mod) => mod.XHoverCard),
   { ssr: false }
