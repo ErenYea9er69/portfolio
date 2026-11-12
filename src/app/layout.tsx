@@ -140,7 +140,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
               <TooltipProvider delayDuration={0}>
-                <SwarmCursor global count={600} size={2.5} spread={85} swirl={0.6} clickEffect="burst" />
+                <SwarmCursor global count={180} size={2.5} spread={85} swirl={0.6} clickEffect="burst" />
                 {children}
                 <Navbar />
                 <CommandPalette />

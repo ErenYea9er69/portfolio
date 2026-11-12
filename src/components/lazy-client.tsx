@@ -65,6 +65,28 @@ export function GitHubCalendarSection() {
   );
 }
 
+export const TechStackSection = dynamic(
+  () => import("@/components/tech-stack-section").then((mod) => mod.TechStackSection),
+  {
+    loading: () => (
+      <div className="w-full h-48 rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+        Loading tech stack...
+      </div>
+    ),
+  }
+);
+
+export const ProjectsSection = dynamic(
+  () => import("@/components/projects-section").then((mod) => mod.ProjectsSection),
+  {
+    loading: () => (
+      <div className="w-full h-72 rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+        Loading projects...
+      </div>
+    ),
+  }
+);
+
 export const CommandPalette = dynamic(
   () => import("@/components/command-palette").then((mod) => mod.CommandPalette),
   { ssr: false }

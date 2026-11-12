@@ -251,6 +251,11 @@ export const SwarmCursor: React.FC<SwarmCursorProps> = ({
   settingsRef.current = settings;
 
   useEffect(() => {
+    // Only run on devices with fine pointer (mouse / desktop) and not reduced motion
+    if (typeof window === 'undefined') return undefined;
+    if (!window.matchMedia('(pointer: fine)').matches) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
     const container = containerRef.current;
     const canvas = canvasRef.current;
     const gl = canvas?.getContext('webgl2', {

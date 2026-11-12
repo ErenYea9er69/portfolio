@@ -11,10 +11,8 @@ import { Metadata } from 'next';
 import { AgeCounter } from "@/components/age-counter";
 import { FlipAvatar } from "@/components/flip-avatar";
 import { BirthdayHat } from "@/components/birthday-hat";
-import { VisitorCounter, BirthdayFireworks, GitHubCalendarSection, XHoverCard, ScrollRail } from "@/components/lazy-client";
+import { VisitorCounter, BirthdayFireworks, GitHubCalendarSection, XHoverCard, ScrollRail, TechStackSection, ProjectsSection } from "@/components/lazy-client";
 import { SocialGlowLink } from "@/components/social-glow-link";
-import { TechStackSection } from "@/components/tech-stack-section";
-import { ProjectsSection } from "@/components/projects-section";
 import { DecryptedText } from "@/components/decrypted-text";
 import { StarBorder } from "@/components/ui/star-border";
 

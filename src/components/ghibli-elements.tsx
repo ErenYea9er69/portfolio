@@ -362,9 +362,10 @@ function CloudPool({ index }: { index: number }) {
  * ───────────────────────────────────────────── */
 export function GhibliSkyBackground() {
   const [isVisible, setIsVisible] = useState(true);
-  const CLOUD_COUNT = 4;
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
+    setIsDesktop(window.innerWidth >= 1024);
     const handleVisibilityChange = () => {
       setIsVisible(document.visibilityState === "visible");
     };
@@ -386,13 +387,12 @@ export function GhibliSkyBackground() {
       {/* Layer 2: Atmospheric haze */}
       <AtmosphericHaze />
 
-      {/* Layer 3: Drifting clouds */}
+      {/* Layer 3: Drifting clouds (Desktop only to prevent compositor lag on load) */}
       <AnimatePresence>
-        {isVisible && (
+        {isVisible && isDesktop && (
           <>
-            {Array.from({ length: CLOUD_COUNT }).map((_, index) => (
-              <CloudPool key={index} index={index} />
-            ))}
+            <CloudPool index={0} />
+            <CloudPool index={1} />
           </>
         )}
       </AnimatePresence>
