@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { DATA } from '@/data/resume';
-import { ArrowLeft, Terminal as TerminalIcon, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Terminal as TerminalIcon, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CliInterfaceProps {
@@ -32,7 +32,6 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [outputList, setOutputList] = useState<CommandOutput[]>([]);
-  const [showDemoArt, setShowDemoArt] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -321,19 +320,17 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
 
     return (
       <div className="flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 py-2 text-xs font-mono">
-        {/* Desktop: Clean Developer Monogram ASCII */}
-        <div className="hidden md:flex md:col-span-5 flex-col items-center justify-center p-3 rounded-lg bg-zinc-950/80 border border-zinc-800/80 select-none">
-          <pre className="text-zinc-300 leading-tight text-[11px] font-bold tracking-widest text-center">
-{`
-  ██████╗ ██████╗ 
-  ██╔══██╗██╔══██╗
-  ██████╔╝██████╔╝
-  ██╔══██╗██╔══██╗
-  ██║  ██║██████╔╝
-  ╚═╝  ╚═╝╚═════╝ 
-`}
-          </pre>
-          <div className="text-[11px] text-zinc-400 font-mono mt-1">
+        {/* Desktop: Auto-appearing GIF artwork */}
+        <div className="hidden md:flex md:col-span-5 flex-col items-center justify-center p-3 rounded-lg bg-zinc-950/80 border border-zinc-800/80 select-none overflow-hidden">
+          <div className="w-full flex items-center justify-center bg-black/60 rounded-md p-1.5 mb-2 border border-zinc-900">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/demo.gif"
+              alt="Terminal GIF Art"
+              className="w-full max-h-48 object-contain rounded filter contrast-125 brightness-95"
+            />
+          </div>
+          <div className="text-[11px] text-zinc-300 font-mono font-semibold">
             rayen@portfolio.local
           </div>
           <div className="text-[10px] text-zinc-500 font-mono">
@@ -515,17 +512,6 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Toggle ASCII art visibility button */}
-          <button
-            type="button"
-            onClick={() => setShowDemoArt(!showDemoArt)}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-300 text-xs transition-colors cursor-pointer"
-            title="Toggle ASCII art side panel"
-          >
-            <ImageIcon className="size-3 text-zinc-400" />
-            <span className="hidden sm:inline">{showDemoArt ? "Hide Art" : "Art Panel"}</span>
-          </button>
-
           {/* Return to Web / GUI button */}
           <button
             type="button"
@@ -545,37 +531,10 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
         </div>
       </header>
 
-      {/* ─── MAIN WORKSPACE (Full height flex on mobile, split on desktop when art enabled) ─── */}
+      {/* ─── MAIN WORKSPACE ─── */}
       <main className="flex-1 min-h-0 relative z-10 p-2 sm:p-4 md:p-6 flex flex-col max-w-7xl mx-auto w-full">
         <div className="flex-1 min-h-0 flex gap-4 items-stretch">
-          
-          {/* ─── OPTIONAL LEFT COLUMN: DEMO.GIF (Only on desktop or when toggled) ─── */}
-          {showDemoArt && (
-            <div className="w-80 shrink-0 hidden lg:flex flex-col justify-center animate-in fade-in duration-200">
-              <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/90 overflow-hidden shadow-xl flex flex-col">
-                <div className="flex items-center justify-between px-3 py-2 bg-zinc-900/90 border-b border-zinc-800 text-[11px] text-zinc-400 select-none">
-                  <span className="font-mono text-[10px]">ascii_matrix.gif</span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-500/20 text-zinc-300 font-semibold">
-                    LIVE
-                  </span>
-                </div>
-                <div className="relative bg-black flex items-center justify-center p-2">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/demo.gif"
-                    alt="ASCII art decoration"
-                    className="w-full h-auto object-contain rounded filter contrast-125 brightness-95"
-                  />
-                </div>
-                <div className="p-3 bg-zinc-950 border-t border-zinc-900 text-xs flex justify-between items-center">
-                  <span className="text-zinc-300 font-semibold">{DATA.name}</span>
-                  <span className="text-[10px] text-zinc-400 font-mono">Tunisia</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ─── TERMINAL WINDOW (Takes 100% space on phones) ─── */}
+          {/* ─── TERMINAL WINDOW ─── */}
           <div className="flex-1 min-w-0 min-h-0 flex flex-col">
             <div
               ref={terminalBoxRef}
