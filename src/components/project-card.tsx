@@ -227,22 +227,29 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
           )}
         </div>
 
-        {/* Action Buttons: Uniform dimensions, GitHub in white, Live Demo in matching dark form */}
-        <div className="flex items-center gap-2 pt-3 border-t border-border/50 dark:border-white/[0.06] mt-auto">
+        {/* Action Buttons: Exact matching dimensions via CSS Grid, variable for Dark & Light modes */}
+        <div
+          className={cn(
+            "pt-3 border-t border-border/50 dark:border-white/[0.06] mt-auto w-full",
+            websiteLink && sourceLink ? "grid grid-cols-2 gap-2" : "flex w-full"
+          )}
+        >
           {websiteLink && (
             <a
               href={websiteLink}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                "inline-flex items-center justify-center gap-1.5 flex-1 h-9 px-3.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer shadow-xs select-none",
-                "bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800 active:scale-[0.98]",
-                "dark:bg-zinc-950 dark:hover:bg-zinc-900 dark:text-zinc-100 dark:border-white/15"
+                "group/btn relative inline-flex items-center justify-center gap-1.5 w-full h-9 px-3 rounded-xl text-xs font-semibold select-none cursor-pointer transition-all duration-200 active:scale-[0.98]",
+                // Light mode: solid obsidian primary pill
+                "bg-zinc-900 hover:bg-zinc-800 text-zinc-50 border border-zinc-900 shadow-xs hover:shadow-sm",
+                // Dark mode: elevated specular charcoal pill
+                "dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-100 dark:border-white/15 dark:hover:border-white/25 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_2px_6px_rgba(0,0,0,0.4)]"
               )}
             >
-              <Globe className="size-3.5 shrink-0" />
+              <Globe className="size-3.5 shrink-0 text-emerald-500 dark:text-emerald-400" />
               <span>Live Demo</span>
-              <ArrowUpRight className="size-3.5 opacity-70 shrink-0" />
+              <ArrowUpRight className="size-3.5 opacity-50 group-hover/btn:opacity-100 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-all duration-200 shrink-0" />
             </a>
           )}
 
@@ -252,14 +259,16 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                "inline-flex items-center justify-center gap-1.5 flex-1 h-9 px-3.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer shadow-xs select-none",
-                "bg-white hover:bg-zinc-100 text-zinc-900 border border-zinc-200/90 active:scale-[0.98]",
-                "dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-200"
+                "group/btn relative inline-flex items-center justify-center gap-1.5 w-full h-9 px-3 rounded-xl text-xs font-semibold select-none cursor-pointer transition-all duration-200 active:scale-[0.98]",
+                // Light mode: crisp elevated light neutral pill
+                "bg-zinc-100/90 hover:bg-zinc-200/90 text-zinc-800 hover:text-zinc-950 border border-zinc-200/90 shadow-2xs hover:border-zinc-300",
+                // Dark mode: refined frosted translucent glass pill
+                "dark:bg-white/[0.06] dark:hover:bg-white/[0.12] dark:text-zinc-200 dark:hover:text-white dark:border-white/10 dark:hover:border-white/20 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
               )}
             >
-              <Icons.github className="size-3.5 shrink-0" />
+              <Icons.github className="size-3.5 shrink-0 text-zinc-700 dark:text-zinc-300 group-hover/btn:text-zinc-900 dark:group-hover/btn:text-white transition-colors" />
               <span>Source</span>
-              <ArrowUpRight className="size-3.5 opacity-60 shrink-0" />
+              <ArrowUpRight className="size-3.5 opacity-40 group-hover/btn:opacity-100 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-all duration-200 shrink-0" />
             </a>
           )}
         </div>
