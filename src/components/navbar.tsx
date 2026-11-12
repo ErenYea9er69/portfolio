@@ -30,20 +30,23 @@ export default function Navbar() {
 
   useEffect(() => {
     setIsMounted(true);
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile, { passive: true });
-    return () => window.removeEventListener("resize", checkMobile);
+    setIsMobile(window.innerWidth < 768);
   }, []);
 
   useEffect(() => {
+    let rafId: number | null = null;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 80);
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > 80);
+        rafId = null;
+      });
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   useEffect(() => {

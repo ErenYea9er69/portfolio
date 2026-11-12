@@ -237,6 +237,7 @@ export function StarBorder<T extends React.ElementType = 'button'>({
     if (!root || !canvas || !ctx) return undefined;
 
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const point: Point = { x: 0, y: 0, nx: 0, ny: -1 };
     const state = {
       width: 0,
@@ -315,7 +316,8 @@ export function StarBorder<T extends React.ElementType = 'button'>({
       tip = true
     ) => {
       if (length < 0.5 || intensity <= 0) return;
-      const steps = clamp(Math.ceil(length / 2), 2, 90);
+      const maxSteps = isMobile ? 18 : 90;
+      const steps = clamp(Math.ceil(length / 2), 2, maxSteps);
       pointAt(shape, head, point);
       let px = point.x;
       let py = point.y;
@@ -467,9 +469,25 @@ export function StarBorder<T extends React.ElementType = 'button'>({
       });
     };
 
+    let scrollTimer: any = null;
+    let scrolling = false;
+    const onScroll = () => {
+      if (!isMobile) return;
+      scrolling = true;
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        scrolling = false;
+        wake();
+      }, 100);
+    };
+    if (isMobile) {
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
     const frame = (now: number) => {
       raf = 0;
       if (!alive) return;
+      if (scrolling && isMobile) return;
       const s = settingsRef.current;
       const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
       last = now;
@@ -506,7 +524,7 @@ export function StarBorder<T extends React.ElementType = 'button'>({
       state.phase = wrap(state.phase + state.velocity * dt + extra, total);
 
       const pace = Math.abs(state.motion) / Math.max(1, Math.abs(total / s.duration));
-      if (s.sparkle && !reduce && state.reveal > 0.05) {
+      if (s.sparkle && !reduce && !isMobile && state.reveal > 0.05) {
         state.emit += dt * (2 + 6 * Math.min(2, pace)) * s.stars;
         while (state.emit > 1) {
           state.emit -= 1;
@@ -610,6 +628,10 @@ export function StarBorder<T extends React.ElementType = 'button'>({
       cancelAnimationFrame(raf);
       resizeObserver.disconnect();
       visibility.disconnect();
+      if (isMobile) {
+        window.removeEventListener('scroll', onScroll);
+        clearTimeout(scrollTimer);
+      }
       root.removeEventListener('pointerenter', onEnter as any);
       root.removeEventListener('pointerleave', onLeave as any);
       root.removeEventListener('pointerdown', onDown as any);

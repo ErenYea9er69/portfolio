@@ -15,6 +15,7 @@ const nextConfig = {
   transpilePackages: ['shiki'],
   
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',

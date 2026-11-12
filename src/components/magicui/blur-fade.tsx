@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useInView, Variants } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface BlurFadeProps {
   children: React.ReactNode;
@@ -33,6 +33,39 @@ const BlurFade = ({
   const ref = useRef<HTMLDivElement | null>(null);
   const inViewResult = useInView(ref, { once: true, margin: inViewMargin as any });
   const isInView = !inView || inViewResult;
+
+  // SSR-safe mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
+  // Priority items render instantly on both mobile and desktop
+  if (priority) {
+    return (
+      <div ref={ref} className={className}>
+        {children}
+      </div>
+    );
+  }
+
+  // Mobile: plain div with CSS opacity transition (no framer-motion overhead)
+  if (isMobile) {
+    return (
+      <div
+        ref={ref}
+        className={className}
+        style={{
+          opacity: isInView ? 1 : 0,
+          transition: "opacity 0.3s ease-out",
+        }}
+      >
+        {children}
+      </div>
+    );
+  }
+
+  // Desktop: full framer-motion animation
   const defaultVariants: Variants = {
     hidden: { y: yOffset, opacity: 0 },
     visible: { y: 0, opacity: 1 },
@@ -42,19 +75,15 @@ const BlurFade = ({
     <AnimatePresence>
       <motion.div
         ref={ref}
-        initial={priority ? false : "hidden"}
+        initial="hidden"
         animate={isInView ? "visible" : "hidden"}
         exit="hidden"
         variants={combinedVariants}
-        transition={
-          priority
-            ? { duration: 0, delay: 0 }
-            : {
-                delay: 0.04 + delay,
-                duration,
-                ease: "easeOut",
-              }
-        }
+        transition={{
+          delay: 0.04 + delay,
+          duration,
+          ease: "easeOut",
+        }}
         className={className}
       >
         {children}

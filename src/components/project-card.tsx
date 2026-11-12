@@ -31,17 +31,14 @@ export interface ProjectItem {
 
 export function ProjectCard({ project, index = 0 }: { project: ProjectItem; index?: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
-    if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) return;
+    if (typeof window !== "undefined" && (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches)) return;
     const rect = cardRef.current.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
+    cardRef.current.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+    cardRef.current.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
   };
 
   const websiteLink = project.links.find((l) => l.type.toLowerCase() === "website")?.href;
@@ -67,12 +64,12 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
         "hover:-translate-y-1 hover:border-foreground/20"
       )}
     >
-      {/* Gentle Subtle Cursor Spotlight (Neutral, Non-glaring) */}
+      {/* Gentle Subtle Cursor Spotlight (Desktop only, 0-rerender via CSS variable) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover/card:opacity-100"
+        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 hidden md:block"
         style={{
-          background: `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, hsl(var(--foreground) / 0.035), transparent 75%)`,
+          background: "radial-gradient(350px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), hsl(var(--foreground) / 0.035), transparent 75%)",
         }}
       />
 

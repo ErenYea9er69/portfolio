@@ -162,7 +162,7 @@ export function GhibliSpirit({
  *  CSS box-shadow on a single 1px element.
  *  Much more performant than individual elements.
  * ───────────────────────────────────────────── */
-function useStarField(count: number, seed: number = 42, colorMode: "dark" | "light" = "dark") {
+function useStarField(count: number, seed: number = 42, colorMode: "dark" | "light" = "dark", isMobile: boolean = false) {
   return useMemo(() => {
     // Deterministic pseudo-random for SSR consistency
     let s = seed;
@@ -171,10 +171,13 @@ function useStarField(count: number, seed: number = 42, colorMode: "dark" | "lig
       return (s - 1) / 2147483646;
     };
 
+    const spanX = isMobile ? 600 : 2560;
+    const spanY = isMobile ? 1000 : 1440;
+
     const shadows: string[] = [];
     for (let i = 0; i < count; i++) {
-      const x = Math.round(rand() * 2560);
-      const y = Math.round(rand() * 1440);
+      const x = Math.round(rand() * spanX);
+      const y = Math.round(rand() * spanY);
       const alpha = (rand() * 0.6 + 0.1).toFixed(2);
       const size = rand() > 0.92 ? 1.5 : rand() > 0.7 ? 1 : 0.5;
 
@@ -191,7 +194,7 @@ function useStarField(count: number, seed: number = 42, colorMode: "dark" | "lig
       }
     }
     return shadows.join(", ");
-  }, [count, seed, colorMode]);
+  }, [count, seed, colorMode, isMobile]);
 }
 
 function StarField() {
@@ -201,13 +204,13 @@ function StarField() {
     setIsMobile(window.innerWidth < 768);
   }, []);
 
-  const count = isMobile ? 50 : 160;
-  const darkShadows = useStarField(count, 42, "dark");
-  const lightShadows = useStarField(count, 42, "light");
+  const count = isMobile ? 12 : 160;
+  const darkShadows = useStarField(count, 42, "dark", isMobile);
+  const lightShadows = useStarField(count, 42, "light", isMobile);
 
   return (
     <div
-      className="absolute inset-0 pointer-events-none overflow-hidden"
+      className="absolute inset-0 pointer-events-none overflow-hidden [transform:translateZ(0)]"
     >
       {/* Dark mode stars */}
       <div
@@ -247,15 +250,10 @@ function TwinklingStars({ count = 14 }: { count?: number }) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile, { passive: true });
-    return () => window.removeEventListener("resize", checkMobile);
+    setIsMobile(window.innerWidth < 768);
   }, []);
 
-  const effectiveCount = isMobile ? 6 : count;
+  const effectiveCount = isMobile ? 0 : count;
 
   const stars = useMemo(() => {
     const items: Array<{
@@ -276,6 +274,9 @@ function TwinklingStars({ count = 14 }: { count?: number }) {
     }
     return items;
   }, [effectiveCount]);
+
+  // Skip rendering on mobile — CSS animations on fixed layers cause jank
+  if (isMobile) return null;
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -320,15 +321,23 @@ function TwinklingStars({ count = 14 }: { count?: number }) {
  *  Very faint color washes for depth
  * ───────────────────────────────────────────── */
 function AtmosphericHaze() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
+  if (isMobile) return null;
+
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden [transform:translateZ(0)]">
       {/* Top-right wash: subtle sapphire/slate in light, cool navy in dark */}
       <div
-        className="absolute -top-[10%] -right-[5%] w-[50%] h-[50%] rounded-full blur-[35px] sm:blur-[70px] transition-colors duration-500 bg-sky-200/35 dark:bg-[hsla(220,40%,30%,0.08)]"
+        className="absolute -top-[10%] -right-[5%] w-[50%] h-[50%] rounded-full blur-[18px] sm:blur-[70px] transition-colors duration-500 bg-sky-200/35 dark:bg-[hsla(220,40%,30%,0.08)] [will-change:transform]"
       />
       {/* Bottom-left wash: soft warm slate in light, subtle purple-gray in dark */}
       <div
-        className="absolute -bottom-[15%] -left-[10%] w-[45%] h-[45%] rounded-full blur-[40px] sm:blur-[80px] transition-colors duration-500 bg-slate-200/30 dark:bg-[hsla(260,30%,25%,0.06)]"
+        className="absolute -bottom-[15%] -left-[10%] w-[45%] h-[45%] rounded-full blur-[22px] sm:blur-[80px] transition-colors duration-500 bg-slate-200/30 dark:bg-[hsla(260,30%,25%,0.06)] [will-change:transform]"
       />
     </div>
   );

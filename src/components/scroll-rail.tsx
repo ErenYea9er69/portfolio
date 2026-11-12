@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { usePathname } from "next/navigation";
 
 /**
@@ -42,6 +42,15 @@ export function ScrollRail({
 }: ScrollRailProps) {
   const navRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   const mountRail = useCallback(() => {
     const navRaw = navRef.current;
@@ -669,6 +678,8 @@ export function ScrollRail({
   }, [chapters]);
 
   useEffect(() => {
+    if (!isDesktop) return;
+
     // Delay mount so lazy-loaded content (GitHub calendar, images) has
     // time to render before we measure chapter positions.
     let cleanup: (() => void) | undefined;
@@ -680,7 +691,9 @@ export function ScrollRail({
       clearTimeout(timer);
       cleanup?.();
     };
-  }, [mountRail, pathname]);
+  }, [mountRail, pathname, isDesktop]);
+
+  if (!isDesktop) return null;
 
   return (
     <nav

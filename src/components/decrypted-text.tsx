@@ -154,6 +154,16 @@ export function DecryptedText({
   once = true,
   ...props
 }: DecryptedTextProps) {
+  // Mobile fast path: skip ALL animation machinery (setInterval, ResizeObserver,
+  // IntersectionObserver, canvas text measurement) — just render plain text.
+  // This eliminates 5 scramble engines on the homepage.
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setIsMobileDevice(true);
+    }
+  }, []);
+
   const chars = useMemo(() => Array.from(String(text ?? "")), [text]);
 
   const pool = useMemo(() => {
@@ -243,6 +253,8 @@ export function DecryptedText({
   };
 
   const fit = (index: number, glyph: string) => {
+    // On mobile viewports or reduced motion: bypass expensive offscreen canvas text-measurement
+    if (typeof window !== "undefined" && window.innerWidth < 768) return 1;
     const node = containerRef.current;
     if (!fontRef.current && node) fontRef.current = readFont(node);
     const metrics = fontRef.current;
@@ -615,6 +627,7 @@ export function DecryptedText({
 
   const trackPointer = (event: React.MouseEvent) => {
     if (prefersReducedMotion()) return;
+    if (typeof window !== "undefined" && (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches)) return;
     if (!pointerRef.current) measure();
     pointerRef.current = { x: event.clientX, y: event.clientY };
     ensureTicker();
@@ -723,6 +736,15 @@ export function DecryptedText({
     : animateOn === "click"
     ? { onClick: handleClick }
     : {};
+
+  // Mobile fast path: after all hooks, render plain text to skip animation overhead
+  if (isMobileDevice) {
+    return (
+      <span className={parentClassName} style={props.style as React.CSSProperties}>
+        <span className={className}>{text}</span>
+      </span>
+    );
+  }
 
   return (
     <motion.span

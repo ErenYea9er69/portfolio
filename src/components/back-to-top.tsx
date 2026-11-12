@@ -12,12 +12,20 @@ export function BackToTop() {
   const pathLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   useEffect(() => {
+    let rafId: number | null = null;
     const handleScroll = () => {
-      setIsVisible(window.scrollY > 400);
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        setIsVisible(window.scrollY > 400);
+        rafId = null;
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const scrollToTop = () => {

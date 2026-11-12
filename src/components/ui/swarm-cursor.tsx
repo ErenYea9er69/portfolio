@@ -215,6 +215,21 @@ export const SwarmCursor: React.FC<SwarmCursorProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wakeRef = useRef<(() => void) | null>(null);
 
+  const [mounted, setMounted] = React.useState(false);
+  const [isSupported, setIsSupported] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+    const checkSupported = () => {
+      const fine = window.matchMedia('(pointer: fine)').matches;
+      const notCoarse = !window.matchMedia('(pointer: coarse)').matches;
+      const desktop = window.innerWidth >= 768;
+      const motion = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      setIsSupported(fine && notCoarse && desktop && motion);
+    };
+    checkSupported();
+  }, []);
+
   const { resolvedTheme } = useTheme();
   const isLight = lightMode ?? (resolvedTheme === 'light');
 
@@ -251,10 +266,8 @@ export const SwarmCursor: React.FC<SwarmCursorProps> = ({
   settingsRef.current = settings;
 
   useEffect(() => {
-    // Only run on devices with fine pointer (mouse / desktop) and not reduced motion
-    if (typeof window === 'undefined') return undefined;
-    if (!window.matchMedia('(pointer: fine)').matches) return undefined;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    // Only run on desktop devices with fine pointer (mouse) and not reduced motion
+    if (!isSupported || typeof window === 'undefined') return undefined;
 
     const container = containerRef.current;
     const canvas = canvasRef.current;
@@ -1001,11 +1014,15 @@ export const SwarmCursor: React.FC<SwarmCursorProps> = ({
       gl.deleteProgram(shader.program);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
-  }, []);
+  }, [isSupported]);
 
   useEffect(() => {
     wakeRef.current?.();
   });
+
+  if (!mounted || !isSupported) {
+    return children ? <div className={className} style={style}>{children}</div> : null;
+  }
 
   const rootClass = `swarm-cursor${global ? ' swarm-cursor--global' : ''}${className ? ` ${className}` : ''}`;
 

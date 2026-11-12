@@ -23,13 +23,23 @@ export function ModeToggle() {
 
     const nextTheme = isDark ? "light" : "dark";
 
-    // Immediate zero-overhead fallback for reduced motion or browsers without View Transitions
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+    // Immediate zero-overhead instant switch on mobile or when reduced motion / view transitions are unavailable.
+    // document.startViewTransition on mobile forces full-screen GPU texture capture, causing massive frame drops.
     if (
+      isMobile ||
       !buttonRef.current ||
       !document.startViewTransition ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
+      document.documentElement.classList.add("theme-transitioning");
       setTheme(nextTheme);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.documentElement.classList.remove("theme-transitioning");
+        });
+      });
       return;
     }
 
@@ -44,44 +54,27 @@ export function ModeToggle() {
       const bottom = window.innerHeight - rect.top;
       const maxRadius = Math.hypot(Math.max(rect.left, right), Math.max(rect.top, bottom));
 
-      const isMobile = window.innerWidth < 768;
-
       const transition = document.startViewTransition(() => {
         setTheme(nextTheme);
       });
 
       await transition.ready;
 
-      if (isMobile) {
-        // Ultra-fluid 200ms compositor crossfade on mobile (zero mask rasterization, locked 120fps)
-        const anim = document.documentElement.animate(
-          {
-            opacity: [0, 1],
-          },
-          {
-            duration: 200,
-            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-            pseudoElement: "::view-transition-new(root)",
-          }
-        );
-        await anim.finished;
-      } else {
-        // Crisp, high-performance circular reveal on desktop (320ms snappy cubic-bezier)
-        const anim = document.documentElement.animate(
-          {
-            clipPath: [
-              `circle(0px at ${x}px ${y}px)`,
-              `circle(${maxRadius}px at ${x}px ${y}px)`,
-            ],
-          },
-          {
-            duration: 320,
-            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
-            pseudoElement: "::view-transition-new(root)",
-          }
-        );
-        await anim.finished;
-      }
+      // Crisp, high-performance circular reveal on desktop (320ms snappy cubic-bezier)
+      const anim = document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${maxRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 320,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          pseudoElement: "::view-transition-new(root)",
+        }
+      );
+      await anim.finished;
     } catch {
       // In case transition was aborted or interrupted
       setTheme(nextTheme);

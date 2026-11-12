@@ -3,6 +3,9 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+config.autoAddCss = false;
 import { DATA } from "@/data/resume";
 import BlurFade from "@/components/magicui/blur-fade";
 import { Sparkles } from "lucide-react";
@@ -141,7 +144,10 @@ export function TechStackSection() {
                 skill={skill}
                 index={index}
                 isHovered={hoveredSkill?.name === skill.name}
-                onMouseEnter={() => setHoveredSkill(skill)}
+                onMouseEnter={() => {
+                  if (typeof window !== "undefined" && (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches)) return;
+                  setHoveredSkill(skill);
+                }}
                 onMouseLeave={() => setHoveredSkill(null)}
               />
             ))}

@@ -26,11 +26,12 @@
   z-index: 9999;
 }
 
-/* Prevent layout/color recalculation fighting during theme transition */
-.theme-transitioning,
-.theme-transitioning *,
-.theme-transitioning *::before,
-.theme-transitioning *::after {
+/* Prevent layout/color recalculation fighting during theme transition.
+   Scoped tightly to avoid expensive universal selector matching on mobile. */
+.theme-transitioning {
+  transition: none !important;
+}
+.theme-transitioning * {
   transition: none !important;
 }
 
@@ -291,6 +292,7 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   animation: rotate 8s linear infinite;
+  will-change: transform;
 }
 
 @keyframes rotate {
@@ -347,10 +349,20 @@
 
 /* ─── Mobile Performance & Low Overhead Layer Compositing ─── */
 @media (max-width: 767px) {
-  /* Alleviate heavy backdrop-filter processing on mobile GPUs */
-  .backdrop-blur-xl,
-  .backdrop-blur-2xl,
-  .backdrop-blur-lg {
+  /* Bypass heavy real-time GPU backdrop blurring on mobile cards with nearly opaque backgrounds */
+  :not(nav):not([role="dialog"]) > .backdrop-blur-xl,
+  :not(nav):not([role="dialog"]) > .backdrop-blur-2xl,
+  :not(nav):not([role="dialog"]) > .backdrop-blur-lg,
+  :not(nav):not([role="dialog"]) > .backdrop-blur-md,
+  .group\/card,
+  .group\/section {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Keep crisp subtle blur strictly for floating Navigation and Dialogs where translucency is needed */
+  nav,
+  [role="dialog"] {
     -webkit-backdrop-filter: blur(8px) !important;
     backdrop-filter: blur(8px) !important;
   }
@@ -358,8 +370,17 @@
   /* Prevent mobile scroll jitter and layer thrashing */
   html,
   body {
-    overflow-x: hidden;
-    touch-action: pan-y;
+    overflow-x: clip;
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* Below-fold content rendering optimization — skip layout/paint for sections not yet scrolled to */
+  #github-activity,
+  #skills,
+  #projects,
+  #experience-education,
+  #contact {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
   }
 }

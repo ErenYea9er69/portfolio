@@ -26,7 +26,6 @@ export function GitHubCalendarSection() {
 
   // Interactive mouse spotlight position
   const containerRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
   // States for GitHub API data
@@ -104,27 +103,51 @@ export function GitHubCalendarSection() {
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
-    if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) return;
+    if (typeof window !== "undefined" && (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches)) return;
     const rect = containerRef.current.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
+    containerRef.current.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+    containerRef.current.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
   };
 
-  // Fetch GitHub User data
+  // Fetch GitHub User data with localStorage caching
   useEffect(() => {
     async function fetchGitHubData() {
       try {
         const username = DATA.contact.social.GitHub.url.split("/").pop();
         if (!username) return;
+
+        const cacheKey = `gh_repos_${username}`;
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          try {
+            const { repos, timestamp } = JSON.parse(cached);
+            // 2 hours TTL
+            if (Date.now() - timestamp < 2 * 60 * 60 * 1000 && typeof repos === "number") {
+              setReposCount(repos);
+              return;
+            }
+          } catch {}
+        }
+
         const res = await fetch(`https://api.github.com/users/${username}`);
+        if (!res.ok) {
+          if (cached) {
+            setReposCount(JSON.parse(cached).repos);
+          } else {
+            setReposCount(DATA.projects.length);
+          }
+          return;
+        }
         const data = await res.json();
         if (data.public_repos !== undefined) {
           setReposCount(data.public_repos);
+          localStorage.setItem(cacheKey, JSON.stringify({
+            repos: data.public_repos,
+            timestamp: Date.now()
+          }));
         }
       } catch (err) {
-        console.error("Failed to fetch GitHub data:", err);
+        setReposCount(DATA.projects.length);
       }
     }
     fetchGitHubData();
@@ -266,12 +289,12 @@ export function GitHubCalendarSection() {
             className="hidden md:block pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-zinc-600/[0.04] dark:bg-zinc-500/[0.05] blur-3xl transition-opacity duration-700"
           />
 
-          {/* Dynamic Interactive Cursor Spotlight (Monochrome Frosted Glass, Desktop Only) */}
+          {/* Dynamic Interactive Cursor Spotlight (Monochrome Frosted Glass, Desktop Only, 0-rerender via CSS var) */}
           <div
             aria-hidden
             className="hidden md:block pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover/section:opacity-100"
             style={{
-              background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, hsl(var(--foreground) / 0.04), transparent 45%)`,
+              background: "radial-gradient(600px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), hsl(var(--foreground) / 0.04), transparent 45%)",
             }}
           />
 
