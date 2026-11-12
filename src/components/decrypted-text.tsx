@@ -135,8 +135,8 @@ interface FrameState {
 
 export function DecryptedText({
   text,
-  speed = 40,
-  maxIterations = 10,
+  speed = 80,
+  maxIterations = 16,
   sequential = true,
   revealDirection = "start",
   useOriginalCharsOnly = false,

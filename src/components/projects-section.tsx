@@ -27,8 +27,8 @@ export function ProjectsSection() {
                 animateOn="view"
                 once={true}
                 sequential={true}
-                speed={40}
-                maxIterations={10}
+                speed={75}
+                maxIterations={16}
                 className="text-foreground"
                 encryptedClassName="text-zinc-500/80 dark:text-zinc-400/80 font-mono"
               />

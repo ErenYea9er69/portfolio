@@ -76,8 +76,8 @@ export default function ProjectsPage() {
                 animateOn="view"
                 once={true}
                 sequential={true}
-                speed={45}
-                maxIterations={12}
+                speed={85}
+                maxIterations={16}
                 className="text-foreground"
                 encryptedClassName="text-zinc-500/80 dark:text-zinc-400/80 font-mono"
               />
