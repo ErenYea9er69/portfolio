@@ -11,6 +11,7 @@ import { Menu, X, Terminal, Home, Code2, Briefcase, GraduationCap, Mail, FolderK
 import { Dock, DockIcon } from "@/components/magicui/dock";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { buttonVariants } from "@/components/ui/button";
+import { guardCliAccess } from "@/lib/device";
 
 const DESKTOP_NAV_LINKS = [
   { href: "/projects", label: "Projects" },
@@ -164,6 +165,7 @@ export default function Navbar() {
                       <TooltipTrigger asChild>
                         <Link
                           href="/cli"
+                          onClick={(e) => guardCliAccess(e)}
                           className="rounded-lg p-2 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/60"
                           aria-label="CLI Mode"
                         >
@@ -267,7 +269,10 @@ export default function Navbar() {
 
                       <Link
                         href="/cli"
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        onClick={(e) => {
+                          setIsMobileMenuOpen(false);
+                          guardCliAccess(e);
+                        }}
                         className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
                       >
                         <Terminal className="size-4" />
@@ -327,6 +332,7 @@ export default function Navbar() {
                   <TooltipTrigger asChild>
                     <Link
                       href="/cli"
+                      onClick={(e) => guardCliAccess(e)}
                       className={cn(
                         buttonVariants({ variant: "ghost", size: "icon" }),
                         "size-10 rounded-full"

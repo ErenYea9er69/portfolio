@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Terminal } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { guardCliAccess } from "@/lib/device";
 
 /**
  * Minimal floating controls — theme toggle + CLI link.
@@ -23,6 +24,7 @@ export function FloatingControls() {
         <TooltipTrigger asChild>
           <Link
             href="/cli"
+            onClick={(e) => guardCliAccess(e)}
             className="rounded-full p-2 text-muted-foreground transition-colors duration-200 hover:text-foreground hover:bg-muted/60"
             aria-label="CLI Mode"
           >

@@ -15,6 +15,7 @@ import { VisitorCounter, BirthdayFireworks, GitHubCalendarSection, XHoverCard, S
 import { SocialGlowLink } from "@/components/social-glow-link";
 import { DecryptedText } from "@/components/decrypted-text";
 import { StarBorder } from "@/components/ui/star-border";
+import { CliLink } from "@/components/cli-link";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -351,12 +352,11 @@ export default function Page() {
                       {item.label}
                     </Link>
                   ))}
-                  <Link
-                    href="/cli"
+                  <CliLink
                     className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center"
                   >
                     CLI Mode
-                  </Link>
+                  </CliLink>
                 </div>
               </div>
 

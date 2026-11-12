@@ -14,6 +14,7 @@ import { JsonLd } from "@/components/json-ld";
 import { PageBackground } from "@/components/page-background";
 import { DomainGuardedAnalytics } from "@/components/domain-guarded-analytics";
 import { CommandPalette, BackToTop, ScrollProgress, SwarmCursor } from "@/components/lazy-client";
+import { Toaster } from "@/components/ui/toast";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -145,6 +146,7 @@ export default function RootLayout({
                 <Navbar />
                 <CommandPalette />
                 <BackToTop />
+                <Toaster />
               </TooltipProvider>
           </ThemeProvider>
         </div>
