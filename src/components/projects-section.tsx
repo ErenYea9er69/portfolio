@@ -24,7 +24,8 @@ export function ProjectsSection() {
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               <DecryptedText
                 text="Featured Projects"
-                animateOn="inViewHover"
+                animateOn="view"
+                once={true}
                 sequential={true}
                 speed={40}
                 maxIterations={10}
@@ -34,13 +35,7 @@ export function ProjectsSection() {
             </h2>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 dark:bg-muted/40 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/70">
               <span className="size-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
-              <DecryptedText
-                text={`${DATA.projects.length} Shipped`}
-                animateOn="hover"
-                speed={25}
-                maxIterations={6}
-                className="text-muted-foreground"
-              />
+              {DATA.projects.length} Shipped
             </span>
           </div>
         </BlurFade>
@@ -50,15 +45,7 @@ export function ProjectsSection() {
             href="/projects"
             className="group/link inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors w-fit pb-1"
           >
-            <span>
-              <DecryptedText
-                text={`More projects (${DATA.projects.length})`}
-                animateOn="hover"
-                speed={25}
-                maxIterations={6}
-                className="text-muted-foreground group-hover/link:text-foreground"
-              />
-            </span>
+            <span>More projects ({DATA.projects.length})</span>
             <ArrowRight className="size-3.5 transition-transform duration-200 group-hover/link:translate-x-1" />
           </Link>
         </BlurFade>
@@ -86,15 +73,7 @@ export function ProjectsSection() {
             className="group/btn inline-flex items-center gap-2.5 px-6 py-3 text-xs font-medium shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg cursor-pointer"
           >
             <FolderGit2 className="size-4 text-muted-foreground group-hover/btn:text-foreground transition-colors" />
-            <span>
-              <DecryptedText
-                text={`More Projects (${DATA.projects.length})`}
-                animateOn="hover"
-                speed={25}
-                maxIterations={6}
-                className="text-inherit"
-              />
-            </span>
+            <span>More Projects ({DATA.projects.length})</span>
             <ArrowRight className="size-3.5 opacity-60 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all" />
           </StarBorder>
         </div>

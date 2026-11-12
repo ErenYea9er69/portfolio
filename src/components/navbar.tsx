@@ -11,7 +11,6 @@ import { Menu, X, Terminal, Home, Code2, Briefcase, GraduationCap, Mail, FolderK
 import { Dock, DockIcon } from "@/components/magicui/dock";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { buttonVariants } from "@/components/ui/button";
-import { DecryptedText } from "@/components/decrypted-text";
 
 const DESKTOP_NAV_LINKS = [
   { href: "/projects", label: "Projects" },
@@ -149,13 +148,9 @@ export default function Navbar() {
                               transition={{ duration: 0.15 }}
                             />
                           )}
-                          <DecryptedText
-                            text={item.label}
-                            animateOn="hover"
-                            speed={20}
-                            maxIterations={5}
-                            className={isActive ? "text-foreground font-semibold" : isHovered ? "text-foreground" : "text-muted-foreground"}
-                          />
+                          <span className={isActive ? "text-foreground font-semibold" : isHovered ? "text-foreground" : "text-muted-foreground"}>
+                            {item.label}
+                          </span>
                         </Link>
                       );
                     })}
@@ -251,7 +246,7 @@ export default function Navbar() {
                         )}
                       >
                         <Home className="size-4" />
-                        <DecryptedText text="Home" animateOn="hover" speed={20} maxIterations={5} />
+                        <span>Home</span>
                       </Link>
 
                       <Link
@@ -265,7 +260,7 @@ export default function Navbar() {
                         )}
                       >
                         <FolderKanban className="size-4" />
-                        <DecryptedText text="Projects" animateOn="hover" speed={20} maxIterations={5} />
+                        <span>Projects</span>
                       </Link>
 
                       <div className="my-1 h-px bg-border/40" />
@@ -276,7 +271,7 @@ export default function Navbar() {
                         className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/40"
                       >
                         <Terminal className="size-4" />
-                        <DecryptedText text="CLI Mode" animateOn="hover" speed={20} maxIterations={5} />
+                        <span>CLI Mode</span>
                       </Link>
                     </div>
                   </motion.div>

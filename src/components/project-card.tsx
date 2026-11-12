@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, Globe, Sparkles, Tv, Monitor, BookOpen, Layers, ShieldCheck, FileText, Terminal, Search, Code, Radio, Volume2 } from "lucide-react";
-import { DecryptedText } from "@/components/decrypted-text";
 import { StarBorder } from "@/components/ui/star-border";
 
 export interface ProjectItem {
@@ -103,18 +102,18 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
         <div className="absolute top-2.5 sm:top-3 inset-x-2.5 sm:inset-x-3.5 flex items-center justify-between pointer-events-none z-10">
           <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium tracking-wider uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
             <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
-            <DecryptedText text={project.category || "Project"} animateOn="hover" speed={25} maxIterations={5} />
+            {project.category || "Project"}
           </span>
 
           {websiteLink ? (
             <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-foreground shadow-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500" />
-              <DecryptedText text="Live Demo" animateOn="hover" speed={25} maxIterations={5} />
+              Live Demo
             </span>
           ) : (
             <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
-              <DecryptedText text="Source Only" animateOn="hover" speed={25} maxIterations={5} />
+              Source Only
             </span>
           )}
         </div>
@@ -130,19 +129,12 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
             rel="noopener noreferrer"
             className="group/title inline-flex items-center gap-1.5 text-base sm:text-xl font-bold tracking-tight text-foreground hover:text-foreground/80 transition-colors"
           >
-            <DecryptedText
-              text={project.title}
-              animateOn="inViewHover"
-              speed={30}
-              maxIterations={8}
-              sequential={true}
-              className="text-base sm:text-xl font-bold tracking-tight text-foreground"
-            />
+            <span>{project.title}</span>
             <ArrowUpRight className="size-4 opacity-40 transition-all duration-200 group-hover/title:opacity-100 group-hover/title:translate-x-0.5 group-hover/title:-translate-y-0.5" />
           </a>
           {project.dates && (
             <span className="text-[10px] sm:text-[11px] font-mono text-muted-foreground/70 bg-muted/40 px-2 py-0.5 rounded-md shrink-0">
-              <DecryptedText text={project.dates} animateOn="hover" speed={25} maxIterations={5} />
+              {project.dates}
             </span>
           )}
         </div>
@@ -150,27 +142,13 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
         {/* Tagline */}
         {project.tagline && (
           <p className="text-xs font-medium text-foreground/80 dark:text-zinc-300 mb-2 leading-relaxed">
-            <DecryptedText
-              text={project.tagline}
-              animateOn="inViewHover"
-              speed={20}
-              maxIterations={6}
-              sequential={false}
-              className="text-xs font-medium text-foreground/80 dark:text-zinc-300"
-            />
+            {project.tagline}
           </p>
         )}
 
         {/* Description */}
         <p className="text-xs text-muted-foreground line-clamp-2 sm:line-clamp-3 leading-relaxed mb-4 flex-1">
-          <DecryptedText
-            text={project.description}
-            animateOn="inViewHover"
-            speed={20}
-            maxIterations={6}
-            sequential={false}
-            className="text-xs text-muted-foreground"
-          />
+          {project.description}
         </p>
 
         {/* Technology Badges (Curated on Mobile, Full on Desktop) */}
@@ -204,7 +182,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
                 >
                   {meta.icon}
                 </span>
-                <DecryptedText text={tech} animateOn="hover" speed={20} maxIterations={5} className="text-foreground" />
+                <span className="text-foreground">{tech}</span>
               </span>
             );
           })}
@@ -242,7 +220,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
                     >
                       {meta.icon}
                     </span>
-                    <DecryptedText text={tech} animateOn="hover" speed={20} maxIterations={5} className="text-foreground" />
+                    <span className="text-foreground">{tech}</span>
                   </span>
                 );
               })}
@@ -266,9 +244,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
               className="inline-flex items-center justify-center gap-1.5 flex-1 px-3.5 py-2.5 sm:py-2 text-xs font-semibold shadow-xs hover:shadow-sm active:scale-[0.98] min-h-[42px] sm:min-h-0 cursor-pointer"
             >
               <Globe className="size-3.5" />
-              <span>
-                <DecryptedText text="Live Demo" animateOn="hover" speed={25} maxIterations={5} />
-              </span>
+              <span>Live Demo</span>
               <ArrowUpRight className="size-3.5 opacity-80" />
             </StarBorder>
           )}
@@ -287,9 +263,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
                 )}
               >
                 <Icons.github className="size-3.5" />
-                <span>
-                  <DecryptedText text="Source" animateOn="hover" speed={25} maxIterations={5} />
-                </span>
+                <span>Source</span>
               </a>
             ) : (
               /* Only 1 button exists: gets StarBorder */
@@ -306,9 +280,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
                 className="inline-flex items-center justify-center gap-1.5 flex-1 px-3.5 py-2.5 sm:py-2 text-xs font-semibold transition-all duration-200 min-h-[42px] sm:min-h-0 cursor-pointer"
               >
                 <Icons.github className="size-3.5" />
-                <span>
-                  <DecryptedText text="Source" animateOn="hover" speed={25} maxIterations={5} />
-                </span>
+                <span>Source</span>
               </StarBorder>
             )
           )}

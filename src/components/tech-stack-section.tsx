@@ -58,7 +58,8 @@ export function TechStackSection() {
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               <DecryptedText
                 text="Tech Stack"
-                animateOn="inViewHover"
+                animateOn="view"
+                once={true}
                 sequential={true}
                 speed={40}
                 maxIterations={10}
@@ -68,13 +69,7 @@ export function TechStackSection() {
             </h2>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 dark:bg-muted/40 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/70">
               <span className="size-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
-              <DecryptedText
-                text={`${DATA.skills.length} Technologies`}
-                animateOn="hover"
-                speed={25}
-                maxIterations={6}
-                className="text-muted-foreground"
-              />
+              {DATA.skills.length} Technologies
             </span>
           </div>
         </BlurFade>
@@ -111,13 +106,7 @@ export function TechStackSection() {
                   />
                 )}
                 <span className="relative z-10">
-                  <DecryptedText
-                    text={cat.label}
-                    animateOn="hover"
-                    speed={25}
-                    maxIterations={6}
-                    className={isActive ? "text-foreground font-semibold" : "text-muted-foreground"}
-                  />
+                  {cat.label}
                 </span>
                 <span
                   className={cn(
@@ -200,15 +189,7 @@ function SkillPill({
             : "opacity-0 translate-y-1 scale-95 pointer-events-none"
         )}
       >
-        <span>
-          <DecryptedText
-            text={skill.role}
-            animateOn="hover"
-            speed={20}
-            maxIterations={5}
-            className="text-popover-foreground"
-          />
-        </span>
+        <span>{skill.role}</span>
         {skill.level && (
           <span className="ml-1 opacity-60">· {skill.level}</span>
         )}
@@ -220,14 +201,9 @@ function SkillPill({
       </div>
 
       {/* Skill Name */}
-      <DecryptedText
-        text={skill.name}
-        animateOn="hover"
-        speed={25}
-        maxIterations={6}
-        sequential={false}
-        className="text-xs sm:text-[13px] font-medium tracking-tight text-foreground transition-colors"
-      />
+      <span className="text-xs sm:text-[13px] font-medium tracking-tight text-foreground transition-colors">
+        {skill.name}
+      </span>
     </div>
   );
 }

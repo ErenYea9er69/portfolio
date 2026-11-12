@@ -60,12 +60,10 @@ export default function ProjectsPage() {
             className="inline-flex items-center gap-1 hover:text-foreground transition-colors group/back"
           >
             <ChevronLeft className="size-3.5 transition-transform group-hover/back:-translate-x-0.5" />
-            <DecryptedText text="Home" animateOn="hover" speed={20} maxIterations={5} />
+            Home
           </Link>
           <span>/</span>
-          <span className="text-foreground font-medium">
-            <DecryptedText text="Projects" animateOn="hover" speed={20} maxIterations={5} className="text-foreground font-medium" />
-          </span>
+          <span className="text-foreground font-medium">Projects</span>
         </div>
       </BlurFade>
 
@@ -76,7 +74,8 @@ export default function ProjectsPage() {
             <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               <DecryptedText
                 text="Projects"
-                animateOn="inViewHover"
+                animateOn="view"
+                once={true}
                 sequential={true}
                 speed={45}
                 maxIterations={12}
@@ -86,13 +85,7 @@ export default function ProjectsPage() {
             </h1>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 dark:bg-muted/40 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/70">
               <span className="size-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
-              <DecryptedText
-                text={`${DATA.projects.length} Repositories`}
-                animateOn="hover"
-                speed={25}
-                maxIterations={6}
-                className="text-muted-foreground"
-              />
+              {DATA.projects.length} Repositories
             </span>
           </div>
         </BlurFade>
@@ -103,22 +96,19 @@ export default function ProjectsPage() {
             <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs text-muted-foreground backdrop-blur-sm">
               <FolderGit2 className="size-3.5 text-foreground" />
               <span>
-                <strong>{DATA.projects.length}</strong>{" "}
-                <DecryptedText text="Projects" animateOn="hover" speed={20} maxIterations={5} />
+                <strong>{DATA.projects.length}</strong> Projects
               </span>
             </div>
             <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs text-muted-foreground backdrop-blur-sm">
               <Globe className="size-3.5 text-zinc-400 dark:text-zinc-500" />
               <span>
-                <strong>{liveDemosCount}</strong>{" "}
-                <DecryptedText text="Live Demos" animateOn="hover" speed={20} maxIterations={5} />
+                <strong>{liveDemosCount}</strong> Live Demos
               </span>
             </div>
             <div className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs text-muted-foreground backdrop-blur-sm">
               <Terminal className="size-3.5 text-sky-500" />
               <span>
-                <strong>100%</strong>{" "}
-                <DecryptedText text="Open Source" animateOn="hover" speed={20} maxIterations={5} />
+                <strong>100%</strong> Open Source
               </span>
             </div>
           </div>
@@ -152,13 +142,7 @@ export default function ProjectsPage() {
 
             {/* Results count indicator */}
             <div className="text-xs text-muted-foreground/80 self-center sm:self-auto font-mono">
-              <DecryptedText
-                text={`Showing ${filteredProjects.length} of ${DATA.projects.length}`}
-                animateOn="hover"
-                speed={20}
-                maxIterations={5}
-                className="text-xs text-muted-foreground/80 font-mono"
-              />
+              Showing {filteredProjects.length} of {DATA.projects.length}
             </div>
           </div>
         </BlurFade>
@@ -199,13 +183,7 @@ export default function ProjectsPage() {
                     />
                   )}
                   <span className="relative z-10">
-                    <DecryptedText
-                      text={category}
-                      animateOn="hover"
-                      speed={25}
-                      maxIterations={6}
-                      className={isActive ? "text-foreground font-semibold" : "text-muted-foreground"}
-                    />
+                    {category}
                   </span>
                   <span
                     className={cn(
@@ -252,7 +230,7 @@ export default function ProjectsPage() {
                 clickPulse
                 className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold cursor-pointer shadow-xs"
               >
-                <DecryptedText text="Reset all filters" animateOn="hover" speed={20} maxIterations={5} />
+                Reset all filters
               </StarBorder>
             </div>
           </BlurFade>

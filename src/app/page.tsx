@@ -82,7 +82,8 @@ export default function Page() {
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
                     <DecryptedText
                       text="Hey, Welcome here"
-                      animateOn="inViewHover"
+                      animateOn="view"
+                      once={true}
                       revealDirection="start"
                       sequential={true}
                       speed={45}
@@ -97,16 +98,7 @@ export default function Page() {
                 </BlurFade>
                 <BlurFade priority delay={BLUR_FADE_DELAY * 2}>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl font-medium">
-                    <DecryptedText
-                      text={DATA.description}
-                      animateOn="inViewHover"
-                      revealDirection="start"
-                      sequential={true}
-                      speed={35}
-                      maxIterations={10}
-                      className="text-muted-foreground"
-                      encryptedClassName="text-zinc-500/70 dark:text-zinc-400/70 font-mono"
-                    />
+                    {DATA.description}
                   </p>
                 </BlurFade>
               </div>
@@ -127,37 +119,13 @@ export default function Page() {
             <BlurFade priority delay={BLUR_FADE_DELAY * 3}>
               <div className="space-y-3 text-sm sm:text-[15px] leading-relaxed text-muted-foreground">
                 <p>
-                  <DecryptedText
-                    text="I’m Rayen, a Full Stack Engineer with 2+ years of experience based in Tunisia."
-                    animateOn="inViewHover"
-                    speed={25}
-                    maxIterations={8}
-                    sequential={false}
-                    className="text-muted-foreground"
-                    encryptedClassName="text-zinc-500/70 dark:text-zinc-400/70 font-mono"
-                  />
+                  I’m Rayen, a Full Stack Engineer with 2+ years of experience based in Tunisia.
                 </p>
                 <p>
-                  <DecryptedText
-                    text="I build end-to-end web applications with React, Next.js, TypeScript, and Node.js — from database schemas and API architecture through to polished, fluid user interfaces."
-                    animateOn="inViewHover"
-                    speed={20}
-                    maxIterations={8}
-                    sequential={false}
-                    className="text-muted-foreground"
-                    encryptedClassName="text-zinc-500/70 dark:text-zinc-400/70 font-mono"
-                  />
+                  I build end-to-end web applications with React, Next.js, TypeScript, and Node.js — from database schemas and API architecture through to polished, fluid user interfaces.
                 </p>
                 <p>
-                  <DecryptedText
-                    text="On the backend I build with Express, PostgreSQL, MongoDB, and Supabase, focusing on type safety, deterministic failure handling, and real-time responsiveness."
-                    animateOn="inViewHover"
-                    speed={20}
-                    maxIterations={8}
-                    sequential={false}
-                    className="text-muted-foreground"
-                    encryptedClassName="text-zinc-500/70 dark:text-zinc-400/70 font-mono"
-                  />
+                  On the backend I build with Express, PostgreSQL, MongoDB, and Supabase, focusing on type safety, deterministic failure handling, and real-time responsiveness.
                 </p>
               </div>
             </BlurFade>
@@ -229,7 +197,8 @@ export default function Page() {
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                   <DecryptedText
                     text="Work Experience"
-                    animateOn="inViewHover"
+                    animateOn="view"
+                    once={true}
                     sequential={true}
                     speed={40}
                     maxIterations={10}
@@ -269,7 +238,8 @@ export default function Page() {
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                   <DecryptedText
                     text="Education"
-                    animateOn="inViewHover"
+                    animateOn="view"
+                    once={true}
                     sequential={true}
                     speed={40}
                     maxIterations={10}
@@ -311,7 +281,8 @@ export default function Page() {
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                   <DecryptedText
                     text="Get in touch"
-                    animateOn="inViewHover"
+                    animateOn="view"
+                    once={true}
                     sequential={true}
                     speed={40}
                     maxIterations={10}
@@ -320,15 +291,7 @@ export default function Page() {
                   />
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground max-w-md">
-                  <DecryptedText
-                    text="Have a project in mind, an opportunity, or just want to chat tech? Let's connect."
-                    animateOn="inViewHover"
-                    speed={20}
-                    maxIterations={8}
-                    sequential={false}
-                    className="text-muted-foreground"
-                    encryptedClassName="text-zinc-500/70 dark:text-zinc-400/70 font-mono"
-                  />
+                  Have a project in mind, an opportunity, or just want to chat tech? Let's connect.
                 </p>
                 <div className="pt-2">
                   <StarBorder
@@ -353,15 +316,7 @@ export default function Page() {
                         className="size-full object-cover"
                       />
                     </div>
-                    <span>
-                      <DecryptedText
-                        text="Let's talk"
-                        animateOn="hover"
-                        speed={30}
-                        maxIterations={6}
-                        className="text-inherit"
-                      />
-                    </span>
+                    <span>Let's talk</span>
                     <span className="transition-transform duration-200 group-hover/cta:translate-x-0.5">→</span>
                   </StarBorder>
                 </div>
@@ -376,45 +331,17 @@ export default function Page() {
             <div className="grid gap-6 sm:grid-cols-3">
               <div className="space-y-2">
                 <p className="text-sm font-semibold text-foreground">
-                  <DecryptedText
-                    text={DATA.name}
-                    animateOn="inViewHover"
-                    speed={30}
-                    maxIterations={8}
-                    className="text-sm font-semibold text-foreground"
-                  />
+                  {DATA.name}
                 </p>
                 <div className="text-xs text-muted-foreground leading-relaxed flex flex-col gap-0.5">
-                  <p>
-                    <DecryptedText
-                      text="Full Stack Developer from Tunisia."
-                      animateOn="inViewHover"
-                      speed={20}
-                      maxIterations={6}
-                      className="text-xs text-muted-foreground"
-                    />
-                  </p>
-                  <p>
-                    <DecryptedText
-                      text="Building modern, high-performance web software."
-                      animateOn="inViewHover"
-                      speed={20}
-                      maxIterations={6}
-                      className="text-xs text-muted-foreground"
-                    />
-                  </p>
+                  <p>Full Stack Developer from Tunisia.</p>
+                  <p>Building modern, high-performance web software.</p>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  <DecryptedText
-                    text="Navigation"
-                    animateOn="inViewHover"
-                    speed={30}
-                    maxIterations={6}
-                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-                  />
+                  Navigation
                 </p>
                 <div className="flex flex-col gap-1">
                   {DATA.navbar.slice(1).map((item) => (
@@ -423,58 +350,28 @@ export default function Page() {
                       href={item.href}
                       className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center"
                     >
-                      <DecryptedText
-                        text={item.label}
-                        animateOn="hover"
-                        speed={25}
-                        maxIterations={6}
-                        className="text-muted-foreground hover:text-foreground"
-                      />
+                      {item.label}
                     </Link>
                   ))}
                   <Link
                     href="/cli"
                     className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center"
                   >
-                    <DecryptedText
-                      text="CLI Mode"
-                      animateOn="hover"
-                      speed={25}
-                      maxIterations={6}
-                      className="text-muted-foreground hover:text-foreground"
-                    />
+                    CLI Mode
                   </Link>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  <DecryptedText
-                    text="Meta"
-                    animateOn="inViewHover"
-                    speed={30}
-                    maxIterations={6}
-                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-                  />
+                  Meta
                 </p>
                 <div className="flex flex-col gap-1">
                   <Link href="/sitemap.xml" className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center">
-                    <DecryptedText
-                      text="Sitemap"
-                      animateOn="hover"
-                      speed={25}
-                      maxIterations={6}
-                      className="text-muted-foreground hover:text-foreground"
-                    />
+                    Sitemap
                   </Link>
                   <Link href="/robots.txt" className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center">
-                    <DecryptedText
-                      text="Robots.txt"
-                      animateOn="hover"
-                      speed={25}
-                      maxIterations={6}
-                      className="text-muted-foreground hover:text-foreground"
-                    />
+                    Robots.txt
                   </Link>
                   <a
                     href={DATA.url}
@@ -482,13 +379,7 @@ export default function Page() {
                     rel="noopener noreferrer"
                     className="text-xs text-muted-foreground hover:text-foreground transition-all duration-200 w-fit hover:translate-x-1 py-1 min-h-[28px] inline-flex items-center"
                   >
-                    <DecryptedText
-                      text="Portfolio Source"
-                      animateOn="hover"
-                      speed={25}
-                      maxIterations={6}
-                      className="text-muted-foreground hover:text-foreground"
-                    />
+                    Portfolio Source
                   </a>
                 </div>
               </div>
@@ -496,25 +387,14 @@ export default function Page() {
 
             <div className="mt-8 flex flex-col gap-3 border-t border-border/30 pt-6 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-muted-foreground inline-flex flex-wrap items-center gap-1">
-                <DecryptedText
-                  text={`© ${new Date().getFullYear()} ${DATA.name}. Open source under `}
-                  animateOn="inViewHover"
-                  speed={25}
-                  maxIterations={6}
-                  className="text-xs text-muted-foreground"
-                />
+                <span>© {new Date().getFullYear()} {DATA.name}. Open source under</span>
                 <a
                   href="https://opensource.org/licenses/MIT"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline hover:text-foreground transition-colors font-medium inline-block"
                 >
-                  <DecryptedText
-                    text="MIT"
-                    animateOn="hover"
-                    speed={20}
-                    maxIterations={5}
-                  />
+                  MIT
                 </a>
               </p>
               <VisitorCounter />

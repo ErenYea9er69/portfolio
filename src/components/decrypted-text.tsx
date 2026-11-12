@@ -28,6 +28,7 @@ export interface DecryptedTextProps extends HTMLMotionProps<"span"> {
   loop?: boolean;
   loopDelay?: number;
   hoverRadius?: number;
+  once?: boolean;
 }
 
 const styles: Record<string, React.CSSProperties> = {
@@ -134,22 +135,23 @@ interface FrameState {
 
 export function DecryptedText({
   text,
-  speed = 50,
+  speed = 40,
   maxIterations = 10,
-  sequential = false,
+  sequential = true,
   revealDirection = "start",
   useOriginalCharsOnly = false,
   characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+",
   className = "",
   parentClassName = "",
   encryptedClassName = "text-zinc-500/80 dark:text-zinc-400/80 font-mono",
-  animateOn = "hover",
+  animateOn = "view",
   clickMode = "once",
   effect = "scramble",
   scrambleColor = "",
   loop = false,
   loopDelay = 2000,
   hoverRadius = 0,
+  once = true,
   ...props
 }: DecryptedTextProps) {
   const chars = useMemo(() => Array.from(String(text ?? "")), [text]);
@@ -166,7 +168,7 @@ export function DecryptedText({
     animateOn === "click" ||
     animateOn === "view" ||
     animateOn === "inViewHover";
-  const hoverable = animateOn === "hover" || animateOn === "inViewHover";
+  const hoverable = !once && (animateOn === "hover" || animateOn === "inViewHover");
   const local = hoverable && hoverRadius > 0;
   const step = Math.max(16, speed);
 
@@ -204,6 +206,7 @@ export function DecryptedText({
   const visibleRef = useRef(true);
   const targetRef = useRef(!startsHidden);
   const playedRef = useRef(false);
+  const hasFinishedRef = useRef(false);
   const previousRef = useRef<FrameState>(frame);
   const engineRef = useRef<{
     tick: () => void;
@@ -352,12 +355,14 @@ export function DecryptedText({
       lead = 0,
     }: { from?: boolean[]; cycle?: boolean; lead?: number } = {}
   ) => {
+    if (once && hasFinishedRef.current) return;
     stopRun();
     targetRef.current = forward;
     if (from) maskRef.current = from;
 
     if (prefersReducedMotion()) {
       maskRef.current = chars.map((char) => forward || isSpace(char));
+      hasFinishedRef.current = true;
       paint();
       return;
     }
@@ -379,7 +384,7 @@ export function DecryptedText({
   };
 
   const finishRun = (run: { forward: boolean; cycle: boolean }) => {
-    if (!loop) return;
+    if (once || !loop) return;
     if (run.forward) {
       schedule(
         () => engineRef.current?.startRun(false, { cycle: true }),
@@ -467,6 +472,9 @@ export function DecryptedText({
       maskRef.current = mask;
       if (done) {
         runRef.current = null;
+        if (run.forward) {
+          hasFinishedRef.current = true;
+        }
         finishRun(run);
       }
     }
@@ -567,7 +575,7 @@ export function DecryptedText({
         const resume = pendingRef.current;
         pendingRef.current = null;
         resume?.();
-        if (!loop) observer.disconnect();
+        if (once || !loop) observer.disconnect();
       },
       { threshold: 0.1 }
     );
@@ -576,7 +584,7 @@ export function DecryptedText({
       observer.disconnect();
       visibleRef.current = true;
     };
-  }, [animateOn, loop, chars]);
+  }, [animateOn, loop, chars, once]);
 
   useIsomorphicLayoutEffect(() => {
     const previous = previousRef.current;
@@ -613,6 +621,7 @@ export function DecryptedText({
   };
 
   const handleMouseEnter = (event: React.MouseEvent) => {
+    if (once && (hasFinishedRef.current || playedRef.current)) return;
     if (local) {
       trackPointer(event);
       return;
@@ -622,10 +631,12 @@ export function DecryptedText({
   };
 
   const handleMouseMove = (event: React.MouseEvent) => {
+    if (once && (hasFinishedRef.current || playedRef.current)) return;
     if (local) trackPointer(event);
   };
 
   const handleMouseLeave = () => {
+    if (once && (hasFinishedRef.current || playedRef.current)) return;
     if (local) {
       pointerRef.current = null;
       return;
@@ -643,6 +654,7 @@ export function DecryptedText({
   };
 
   const handleClick = () => {
+    if (once && (hasFinishedRef.current || playedRef.current)) return;
     if (clickMode === "toggle") {
       startRun(!targetRef.current);
       return;

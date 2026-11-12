@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DecryptedText } from "@/components/decrypted-text";
 
 const BIRTH_DATE = new Date("2004-09-16T16:00:00").getTime();
 const MS_PER_YEAR = 1000 * 60 * 60 * 24 * 365.2425;
@@ -66,15 +65,7 @@ export function AgeCounter() {
       <span className="tabular-nums text-foreground font-semibold">
         {years}
       </span>
-      <span>
-        <DecryptedText
-          text="years old"
-          animateOn="hover"
-          speed={25}
-          maxIterations={6}
-          className="text-muted-foreground"
-        />
-      </span>
+      <span>years old</span>
     </div>
   );
 }

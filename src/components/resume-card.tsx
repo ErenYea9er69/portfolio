@@ -6,7 +6,6 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, Briefcase, GraduationCap } from "lucide-react";
 import React from "react";
-import { DecryptedText } from "@/components/decrypted-text";
 
 interface ResumeCardProps {
   className?: string;
@@ -79,14 +78,7 @@ export const ResumeCard = ({
           <div className="flex items-baseline justify-between gap-2">
             <h3 className="text-sm font-semibold tracking-tight text-foreground truncate inline-flex items-center gap-1.5">
               <span className={cn(redacted && "blur-[3px] select-none")}>
-                <DecryptedText
-                  text={title}
-                  animateOn="inViewHover"
-                  speed={30}
-                  maxIterations={8}
-                  sequential={true}
-                  className="text-sm font-semibold tracking-tight text-foreground"
-                />
+                {title}
               </span>
               {isRealLink && (
                 <ArrowUpRight className="size-3.5 opacity-50 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -94,27 +86,14 @@ export const ResumeCard = ({
             </h3>
             {cleanPeriod && (
               <span className="text-[11px] font-mono text-muted-foreground tabular-nums shrink-0">
-                <DecryptedText
-                  text={cleanPeriod}
-                  animateOn="hover"
-                  speed={20}
-                  maxIterations={5}
-                  className="text-[11px] font-mono text-muted-foreground"
-                />
+                {cleanPeriod}
               </span>
             )}
           </div>
 
           {subtitle && (
             <p className="text-xs text-muted-foreground mt-0.5 font-medium">
-              <DecryptedText
-                text={subtitle}
-                animateOn="inViewHover"
-                speed={20}
-                maxIterations={6}
-                sequential={false}
-                className="text-xs text-muted-foreground font-medium"
-              />
+              {subtitle}
             </p>
           )}
 
@@ -126,12 +105,7 @@ export const ResumeCard = ({
                   className="text-[10px] px-1.5 py-0 font-normal"
                   key={index}
                 >
-                  <DecryptedText
-                    text={badge}
-                    animateOn="hover"
-                    speed={20}
-                    maxIterations={5}
-                  />
+                  {badge}
                 </Badge>
               ))}
             </div>
@@ -139,14 +113,7 @@ export const ResumeCard = ({
 
           {description && (
             <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-              <DecryptedText
-                text={description}
-                animateOn="inViewHover"
-                speed={20}
-                maxIterations={6}
-                sequential={false}
-                className="text-xs text-muted-foreground leading-relaxed"
-              />
+              {description}
             </p>
           )}
         </div>
