@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, Globe, Sparkles, Tv, Monitor, BookOpen, Layers, ShieldCheck, FileText, Terminal, Search, Code, Radio, Volume2 } from "lucide-react";
-import { StarBorder } from "@/components/ui/star-border";
 
 export interface ProjectItem {
   title: string;
@@ -228,61 +227,40 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
           )}
         </div>
 
-        {/* Action Buttons (When there are 2 buttons, only the primary button has StarBorder) */}
+        {/* Action Buttons: Uniform dimensions, GitHub in white, Live Demo in matching dark form */}
         <div className="flex items-center gap-2 pt-3 border-t border-border/50 dark:border-white/[0.06] mt-auto">
           {websiteLink && (
-            <StarBorder
-              as="a"
+            <a
               href={websiteLink}
               target="_blank"
               rel="noopener noreferrer"
-              radius={12}
-              duration={3.5}
-              glow={0.5}
-              sparkle
-              hover="lap"
-              className="inline-flex items-center justify-center gap-1.5 flex-1 px-3.5 py-2.5 sm:py-2 text-xs font-semibold shadow-xs hover:shadow-sm active:scale-[0.98] min-h-[42px] sm:min-h-0 cursor-pointer"
+              className={cn(
+                "inline-flex items-center justify-center gap-1.5 flex-1 h-9 px-3.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer shadow-xs select-none",
+                "bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800 active:scale-[0.98]",
+                "dark:bg-zinc-950 dark:hover:bg-zinc-900 dark:text-zinc-100 dark:border-white/15"
+              )}
             >
-              <Globe className="size-3.5" />
+              <Globe className="size-3.5 shrink-0" />
               <span>Live Demo</span>
-              <ArrowUpRight className="size-3.5 opacity-80" />
-            </StarBorder>
+              <ArrowUpRight className="size-3.5 opacity-70 shrink-0" />
+            </a>
           )}
 
           {sourceLink && (
-            websiteLink ? (
-              /* Secondary button when 2 buttons exist: clean calm style without competing StarBorder */
-              <a
-                href={sourceLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  "inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 sm:py-2 text-xs font-semibold transition-all duration-200 min-h-[42px] sm:min-h-0",
-                  "bg-muted/60 hover:bg-muted text-foreground border border-border/60 hover:border-border",
-                  "dark:bg-zinc-900/80 dark:hover:bg-zinc-800 dark:border-white/10 flex-none"
-                )}
-              >
-                <Icons.github className="size-3.5" />
-                <span>Source</span>
-              </a>
-            ) : (
-              /* Only 1 button exists: gets StarBorder */
-              <StarBorder
-                as="a"
-                href={sourceLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                radius={12}
-                duration={3.5}
-                glow={0.5}
-                sparkle
-                hover="lap"
-                className="inline-flex items-center justify-center gap-1.5 flex-1 px-3.5 py-2.5 sm:py-2 text-xs font-semibold transition-all duration-200 min-h-[42px] sm:min-h-0 cursor-pointer"
-              >
-                <Icons.github className="size-3.5" />
-                <span>Source</span>
-              </StarBorder>
-            )
+            <a
+              href={sourceLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                "inline-flex items-center justify-center gap-1.5 flex-1 h-9 px-3.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer shadow-xs select-none",
+                "bg-white hover:bg-zinc-100 text-zinc-900 border border-zinc-200/90 active:scale-[0.98]",
+                "dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-200"
+              )}
+            >
+              <Icons.github className="size-3.5 shrink-0" />
+              <span>Source</span>
+              <ArrowUpRight className="size-3.5 opacity-60 shrink-0" />
+            </a>
           )}
         </div>
       </div>

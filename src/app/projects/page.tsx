@@ -9,7 +9,6 @@ import Link from "next/link";
 import { Search, FolderGit2, Sparkles, Filter, ChevronLeft, ArrowUpRight, Terminal, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DecryptedText } from "@/components/decrypted-text";
-import { StarBorder } from "@/components/ui/star-border";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -216,22 +215,16 @@ export default function ProjectsPage() {
               <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1 mb-4">
                 We couldn't find any projects matching "{searchQuery}" in this category.
               </p>
-              <StarBorder
-                as="button"
+              <button
+                type="button"
                 onClick={() => {
                   setSearchQuery("");
                   setSelectedCategory("All");
                 }}
-                radius={12}
-                duration={3.5}
-                glow={0.5}
-                sparkle
-                hover="lap"
-                clickPulse
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer shadow-xs bg-muted/80 hover:bg-muted text-foreground border border-border/70 transition-all hover:-translate-y-0.5"
               >
                 Reset all filters
-              </StarBorder>
+              </button>
             </div>
           </BlurFade>
         )}
