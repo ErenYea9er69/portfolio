@@ -117,13 +117,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Deployed performance hints: resolve external domains early */}
+        <link rel="dns-prefetch" href="https://api.github.com" />
+        <link rel="dns-prefetch" href="https://github-contributions-api.jogruber.de" />
+        <link rel="preconnect" href="https://github-contributions-api.jogruber.de" crossOrigin="anonymous" />
+      </head>
       <body className={cn(fontSans.variable, "font-sans antialiased")}>
-        {/* Background container */}
-        <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-          <PageBackground />
-        </div>
-
-
         {/* Main content */}
         <ThemeProvider
           attribute={["class", "data-theme"]}
@@ -132,6 +132,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <InitialLoader>
+            {/* Background container */}
+            <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+              <PageBackground />
+            </div>
+
             <div className="relative z-10 max-w-4xl mx-auto pt-20 sm:pt-24 pb-24 px-4 sm:px-6">
               <DomainGuardedAnalytics gaId="G-XVF0SFD4GW" />
               <JsonLd />

@@ -11,7 +11,6 @@ import { motion } from "framer-motion";
 import { DATA } from "@/data/resume";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useTheme } from "next-themes";
-import { GitHubSnake } from "@/components/github-snake";
 
 const YEARS = ["last", "2026", "2025"];
 
@@ -19,8 +18,6 @@ export function GitHubCalendarSection() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [selectedYear, setSelectedYear] = useState<string>("last");
-  const [snakeMode, setSnakeMode] = useState(false);
-  const [rawContributions, setRawContributions] = useState<any[]>([]);
   const [isPointerFine, setIsPointerFine] = useState(false);
   const lastDataKeyRef = useRef<string>("");
 
@@ -44,23 +41,6 @@ export function GitHubCalendarSection() {
   const calendarScrollRef = useRef<HTMLDivElement>(null);
 
   const username = DATA.contact.social.GitHub.url.split("/").pop() || "ErenYea9er69";
-
-  // Pre-fetch raw contributions for Snake Mode so it's always ready
-  useEffect(() => {
-    if (!snakeMode) return;
-    async function loadContr() {
-      try {
-        const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=${selectedYear}`);
-        const data = await res.json();
-        if (data && data.contributions && Array.isArray(data.contributions)) {
-          setRawContributions(data.contributions);
-        }
-      } catch (err) {
-        console.error("Failed to load contributions for snake:", err);
-      }
-    }
-    loadContr();
-  }, [username, selectedYear, snakeMode]);
 
   // Today's date string in YYYY-MM-DD
   const todayStr = useMemo(() => {
@@ -111,6 +91,9 @@ export function GitHubCalendarSection() {
 
   // Fetch GitHub User data with localStorage caching
   useEffect(() => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+
     async function fetchGitHubData() {
       try {
         const username = DATA.contact.social.GitHub.url.split("/").pop();
@@ -121,36 +104,55 @@ export function GitHubCalendarSection() {
         if (cached) {
           try {
             const { repos, timestamp } = JSON.parse(cached);
-            // 2 hours TTL
-            if (Date.now() - timestamp < 2 * 60 * 60 * 1000 && typeof repos === "number") {
+            if (typeof repos === "number") {
               setReposCount(repos);
-              return;
+              // Fresh TTL (2 hours)
+              if (Date.now() - timestamp < 2 * 60 * 60 * 1000) {
+                return;
+              }
             }
           } catch {}
         }
 
-        const res = await fetch(`https://api.github.com/users/${username}`);
+        const res = await fetch(`https://api.github.com/users/${username}`, {
+          signal: controller.signal,
+          headers: {
+            "Accept": "application/vnd.github.v3+json",
+          },
+        });
+
         if (!res.ok) {
           if (cached) {
-            setReposCount(JSON.parse(cached).repos);
-          } else {
-            setReposCount(DATA.projects.length);
+            try {
+              setReposCount(JSON.parse(cached).repos);
+            } catch {}
           }
           return;
         }
+
         const data = await res.json();
-        if (data.public_repos !== undefined) {
+        if (data.public_repos !== undefined && typeof data.public_repos === "number") {
           setReposCount(data.public_repos);
-          localStorage.setItem(cacheKey, JSON.stringify({
-            repos: data.public_repos,
-            timestamp: Date.now()
-          }));
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify({
+              repos: data.public_repos,
+              timestamp: Date.now()
+            }));
+          } catch {}
         }
-      } catch (err) {
-        setReposCount(DATA.projects.length);
+      } catch (err: any) {
+        // Silently preserve cached data on timeout or rate limit
+      } finally {
+        clearTimeout(timeoutId);
       }
     }
+
     fetchGitHubData();
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, []);
 
   const selectData = (contributions: any[]) => {
@@ -219,7 +221,6 @@ export function GitHubCalendarSection() {
       setPeakDate(pDate);
       setActiveDays(activeDaysCount);
       setTodayContributions(todayCount);
-      setRawContributions(contributions);
     }, 0);
 
     return contributions;
@@ -326,7 +327,7 @@ export function GitHubCalendarSection() {
               </div>
             </div>
 
-            {/* Controls: Year Switcher & Snake Mode */}
+            {/* Controls: Year Switcher */}
             <div className="flex flex-wrap items-center gap-2">
               <div className="inline-flex items-center rounded-full border border-border/60 bg-background/50 p-1 backdrop-blur-md shadow-sm">
                 {YEARS.map((year) => (
@@ -344,22 +345,6 @@ export function GitHubCalendarSection() {
                   </button>
                 ))}
               </div>
-
-              {/* 🐍 Snake Mode Toggle */}
-              <button
-                type="button"
-                onClick={() => setSnakeMode(!snakeMode)}
-                className={cn(
-                  "relative inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 border cursor-pointer select-none shrink-0",
-                  snakeMode
-                    ? "bg-zinc-500/20 text-foreground border-zinc-500/40 shadow-xs font-semibold"
-                    : "bg-background/50 hover:bg-background/80 text-muted-foreground hover:text-foreground border-border/60 shadow-xs"
-                )}
-                title="Toggle GitHub Contribution Snake mode"
-              >
-                <span className={cn("text-xs transition-transform duration-300", snakeMode ? "scale-125" : "")}>🐍</span>
-                <span>{snakeMode ? "Exit Snake" : "Snake Mode"}</span>
-              </button>
             </div>
           </div>
 
@@ -468,24 +453,15 @@ export function GitHubCalendarSection() {
 
           {/* ─── The Contribution Matrix Card ─── */}
           <div className="relative z-10 rounded-xl border border-border/50 bg-background/50 dark:bg-zinc-950/60 p-3.5 sm:p-5 md:backdrop-blur-md overflow-hidden shadow-inner">
-            {snakeMode ? (
-              <GitHubSnake
-                contributions={rawContributions}
-                theme={mounted && resolvedTheme === "light" ? "light" : "dark"}
-                onClose={() => setSnakeMode(false)}
-                username={username}
-              />
-            ) : (
-              <>
-                {/* Micro grid watermark pattern */}
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
-                  style={{
-                    backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)",
-                    backgroundSize: "18px 18px",
-                  }}
-                />
+            {/* Micro grid watermark pattern */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
+              style={{
+                backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)",
+                backgroundSize: "18px 18px",
+              }}
+            />
 
                 {/* Matrix Telemetry Top Bar */}
                 <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 mb-4 text-xs">
@@ -599,8 +575,6 @@ export function GitHubCalendarSection() {
                     <ArrowUpRight className="h-3 w-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                   </a>
                 </div>
-              </>
-            )}
           </div>
 
           {/* ─── Ultra-Modern Frosted Glass Tooltip (Desktop with fine pointer only) ─── */}

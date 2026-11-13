@@ -47,32 +47,23 @@ export function BirthdayHat() {
   return <DynamicBirthdayHat />;
 }
 
-const DynamicGitHubCalendarSection = dynamic(
-  () => import("@/components/github-calendar-section").then((mod) => mod.GitHubCalendarSection),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="w-full h-44 rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
-        Loading GitHub activity...
-      </div>
-    ),
-  }
-);
-
-export function GitHubCalendarSection() {
+function useLazySection(ref: React.RefObject<HTMLDivElement | null>, anchorKeyword?: string) {
+  const { isLoaded } = useInitialLoader();
   const [shouldLoad, setShouldLoad] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
+    if (shouldLoad) return;
     const el = ref.current;
     if (!el) return;
 
-    if ("requestIdleCallback" in window) {
-      const idleId = (window as any).requestIdleCallback(
-        () => setShouldLoad(true),
-        { timeout: 3500 }
-      );
-      return () => (window as any).cancelIdleCallback(idleId);
+    // If anchor hash directly targets this section, load immediately
+    if (
+      anchorKeyword &&
+      typeof window !== "undefined" &&
+      window.location.hash.toLowerCase().includes(anchorKeyword.toLowerCase())
+    ) {
+      setShouldLoad(true);
+      return;
     }
 
     if (!("IntersectionObserver" in window)) {
@@ -87,12 +78,51 @@ export function GitHubCalendarSection() {
           observer.disconnect();
         }
       },
-      { rootMargin: "50px" }
+      { rootMargin: "350px" }
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+
+    // Safety fallback: once homepage is visible, gentle idle prefetch ensures section is never stuck
+    let idleTimer: any;
+    if (isLoaded) {
+      if ("requestIdleCallback" in window) {
+        idleTimer = (window as any).requestIdleCallback(() => setShouldLoad(true), { timeout: 6000 });
+      } else {
+        idleTimer = setTimeout(() => setShouldLoad(true), 6000);
+      }
+    }
+
+    return () => {
+      observer.disconnect();
+      if (idleTimer) {
+        if ("cancelIdleCallback" in window) {
+          (window as any).cancelIdleCallback(idleTimer);
+        } else {
+          clearTimeout(idleTimer);
+        }
+      }
+    };
+  }, [isLoaded, anchorKeyword, shouldLoad, ref]);
+
+  return shouldLoad;
+}
+
+const DynamicGitHubCalendarSection = dynamic(
+  () => import("@/components/github-calendar-section").then((mod) => mod.GitHubCalendarSection),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-44 rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+        Loading GitHub activity...
+      </div>
+    ),
+  }
+);
+
+export function GitHubCalendarSection() {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const shouldLoad = useLazySection(ref, "github");
 
   return (
     <div ref={ref}>
@@ -107,7 +137,7 @@ export function GitHubCalendarSection() {
   );
 }
 
-export const TechStackSection = dynamic(
+const DynamicTechStackSection = dynamic(
   () => import("@/components/tech-stack-section").then((mod) => mod.TechStackSection),
   {
     loading: () => (
@@ -118,7 +148,24 @@ export const TechStackSection = dynamic(
   }
 );
 
-export const ProjectsSection = dynamic(
+export function TechStackSection() {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const shouldLoad = useLazySection(ref, "skill");
+
+  return (
+    <div ref={ref}>
+      {shouldLoad ? (
+        <DynamicTechStackSection />
+      ) : (
+        <div className="w-full h-48 rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+          Loading tech stack...
+        </div>
+      )}
+    </div>
+  );
+}
+
+const DynamicProjectsSection = dynamic(
   () => import("@/components/projects-section").then((mod) => mod.ProjectsSection),
   {
     loading: () => (
@@ -129,16 +176,34 @@ export const ProjectsSection = dynamic(
   }
 );
 
+export function ProjectsSection() {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const shouldLoad = useLazySection(ref, "project");
+
+  return (
+    <div ref={ref}>
+      {shouldLoad ? (
+        <DynamicProjectsSection />
+      ) : (
+        <div className="w-full h-72 rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+          Loading projects...
+        </div>
+      )}
+    </div>
+  );
+}
+
 const DynamicCommandPalette = dynamic(
   () => import("@/components/command-palette").then((mod) => mod.CommandPalette),
   { ssr: false }
 );
 
 export function CommandPalette() {
+  const { isLoaded } = useInitialLoader();
   const [shouldLoad, setShouldLoad] = React.useState(false);
 
   React.useEffect(() => {
-    if (window.innerWidth < 768) return;
+    if (typeof window === "undefined" || window.innerWidth < 768) return;
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -147,13 +212,26 @@ export function CommandPalette() {
     };
     window.addEventListener("keydown", onKey);
 
-    if ("requestIdleCallback" in window) {
-      (window as any).requestIdleCallback(() => setShouldLoad(true), { timeout: 3500 });
-    } else {
-      setTimeout(() => setShouldLoad(true), 2000);
+    let idleTimer: any;
+    if (isLoaded) {
+      if ("requestIdleCallback" in window) {
+        idleTimer = (window as any).requestIdleCallback(() => setShouldLoad(true), { timeout: 4000 });
+      } else {
+        idleTimer = setTimeout(() => setShouldLoad(true), 3000);
+      }
     }
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      if (idleTimer) {
+        if ("cancelIdleCallback" in window) {
+          (window as any).cancelIdleCallback(idleTimer);
+        } else {
+          clearTimeout(idleTimer);
+        }
+      }
+    };
+  }, [isLoaded]);
 
   if (!shouldLoad) return null;
   return <DynamicCommandPalette />;

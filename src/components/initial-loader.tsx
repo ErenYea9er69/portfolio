@@ -9,6 +9,8 @@ import React, {
   useContext,
 } from "react";
 import { DATA } from "@/data/resume";
+import { AnimatedCircularProgressBar } from "@/components/ui/animated-circular-progress-bar";
+import { InfinityTrack } from "@/components/ui/infinity-track";
 
 // ─── Initial Loader Context ───
 interface InitialLoaderContextValue {
@@ -28,15 +30,10 @@ export function useInitialLoader() {
 // ─── Critical resources to preload ───
 const CRITICAL_IMAGES = [
   DATA.avatarUrl,
-  "/github-avatar.png",
 ];
 
-const PROJECT_IMAGES = DATA.projects
-  .map((p) => p.image)
-  .filter((img) => img.length > 0) as string[];
-
-const MIN_DISPLAY_MS = 2800; // ~3s professional duration on first visit
-const MAX_WAIT_MS = 6000;    // Sensible safety fallback to prevent infinite hanging
+const MIN_DISPLAY_MS = 2900; // ~3 seconds on first visit
+const MAX_WAIT_MS = 7000;    // Safety fallback
 const SESSION_KEY = "portfolio_session_initialized";
 
 function preloadImage(src: string): Promise<void> {
@@ -47,13 +44,13 @@ function preloadImage(src: string): Promise<void> {
     }
     const img = new Image();
     img.onload = () => resolve();
-    img.onerror = () => resolve(); // Non-blocking on network failure
+    img.onerror = () => resolve(); // Non-blocking
     img.src = src;
   });
 }
 
 export function InitialLoader({ children }: { children: React.ReactNode }) {
-  // Always initialize synchronously to determine state
+  // Synchronous initial state check to prevent flash
   const [phase, setPhase] = useState<"loading" | "revealing" | "done">(() => {
     if (typeof window !== "undefined") {
       try {
@@ -79,18 +76,18 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
       setProgress(100);
       setStepLabel("SYSTEM READY");
 
-      // Brief hold at 100% before smooth reveal
+      // Brief hold at 100% for visual completion
       setTimeout(() => {
         setPhase("revealing");
         setIsLoaded(true);
         try {
           sessionStorage.setItem(SESSION_KEY, "true");
         } catch {}
-      }, 220);
+      }, 250);
     }
   }, []);
 
-  // 1. Initial mount & preloading flow
+  // Mount effect: handle preloading, timing, and progress interpolation
   useEffect(() => {
     if (phase === "done") {
       setIsLoaded(true);
@@ -110,43 +107,41 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // Preload critical assets
+    // 1. Preload hero avatar assets
     const imgPromises = Promise.all(CRITICAL_IMAGES.map(preloadImage));
+
+    // 2. Preload webfonts
     const fontPromise =
       typeof document !== "undefined" && document.fonts?.ready
         ? document.fonts.ready
         : Promise.resolve();
 
-    // Secondary asset preloading in background
-    PROJECT_IMAGES.forEach((src) => {
-      const img = new Image();
-      img.src = src;
-    });
-
-    // Mark critical ready when hero images and webfonts resolve
+    // Mark critical resources ready
     Promise.all([imgPromises, fontPromise]).then(() => {
       criticalReady.current = true;
       tryReveal();
     });
 
-    // Natural progress tick (0% -> 98% smoothly over MIN_DISPLAY_MS)
+    // 4. Smooth progress easing across MIN_DISPLAY_MS
     const startTime = Date.now();
     let animFrame: number;
 
     const tick = () => {
       const elapsed = Date.now() - startTime;
       const t = Math.min(elapsed / MIN_DISPLAY_MS, 1);
-      // Ease out cubic
+      // Cubic ease-out
       const eased = 1 - Math.pow(1 - t, 3);
       const currentPct = Math.min(Math.round(eased * 98), 98);
       setProgress(currentPct);
 
-      if (currentPct < 30) {
+      if (currentPct < 25) {
         setStepLabel("INITIALIZING CORE");
-      } else if (currentPct < 65) {
+      } else if (currentPct < 60) {
         setStepLabel("PRELOADING ASSETS");
+      } else if (currentPct < 90) {
+        setStepLabel("COMPOSING DOM");
       } else {
-        setStepLabel("HYDRATING INTERFACE");
+        setStepLabel("PREPARING INTERFACE");
       }
 
       if (t < 1) {
@@ -177,7 +172,7 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
     };
   }, [phase, tryReveal]);
 
-  // Handle transition from revealing to completely done
+  // Transition from revealing to done
   useEffect(() => {
     if (phase !== "revealing") return;
     document.body.style.overflow = "";
@@ -197,18 +192,18 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
       }}
     >
       {/* 
-        Children are rendered directly in the natural DOM tree without any transform wrapper.
-        This preserves all position:fixed elements (Navbar, CommandPalette, Toaster) perfectly.
+        Children are rendered directly in the natural DOM without any transform wrapper,
+        preserving fixed positioning on Navbar, Dock, CommandPalette, and Toaster.
       */}
       {children}
 
-      {/* Loading Overlay Curtain */}
+      {/* Loading Screen Overlay Curtain */}
       {phase !== "done" && (
         <div
-          className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-background select-none"
+          className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-background select-none px-4"
           style={{
             opacity: phase === "revealing" ? 0 : 1,
-            transform: phase === "revealing" ? "translateY(-12px)" : "translateY(0)",
+            transform: phase === "revealing" ? "translateY(-14px)" : "translateY(0)",
             transition:
               "opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)",
             pointerEvents: phase === "revealing" ? "none" : "auto",
@@ -217,81 +212,60 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
           aria-label="Loading portfolio"
           role="status"
         >
-          {/* Subtle ambient background glow */}
+          {/* Subtle atmospheric vignette */}
           <div
-            className="absolute pointer-events-none rounded-full blur-[90px] opacity-25 dark:opacity-35"
+            className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-20"
             style={{
-              width: 280,
-              height: 280,
               background:
-                "radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)",
+                "radial-gradient(circle at center, transparent 40%, hsl(var(--background)) 100%)",
             }}
           />
 
-          <div className="relative z-10 flex flex-col items-center gap-7 px-4">
-            {/* Precision Monogram with SVG Circular Progress Ring */}
-            <div className="relative flex items-center justify-center">
-              <svg
-                className="size-24 sm:size-28 -rotate-90 transform"
-                viewBox="0 0 100 100"
-              >
-                {/* Background Ring */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="42"
-                  className="stroke-muted/40 dark:stroke-white/[0.08]"
-                  strokeWidth="2.5"
-                  fill="none"
+          <div className="relative z-10 flex flex-col items-center gap-6">
+            {/* 
+              ─── The Synthesis: Magic UI Circular Progress Bar + Loading UI Infinity Track ───
+              The animated circular gauge smoothly tracks 0% -> 100% progress around the perimeter,
+              while the monospace Unicode Infinity Track animates in the center.
+            */}
+            <AnimatedCircularProgressBar
+              max={100}
+              min={0}
+              value={progress}
+              gaugePrimaryColor="hsl(var(--foreground))"
+              gaugeSecondaryColor="hsl(var(--muted) / 0.45)"
+              className="size-48 sm:size-52"
+            >
+              <div className="flex flex-col items-center justify-center gap-1.5 pt-1">
+                {/* Monospace Infinity Track glyph runner */}
+                <InfinityTrack
+                  className="text-xs sm:text-sm tracking-normal"
+                  duration="2.4s"
                 />
-                {/* Active Progress Ring */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="42"
-                  className="stroke-foreground transition-[stroke-dashoffset] duration-150 ease-out"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  fill="none"
-                  strokeDasharray={263.89}
-                  strokeDashoffset={263.89 - (progress / 100) * 263.89}
-                />
-              </svg>
 
-              {/* Centered Monogram */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="font-mono text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-                  {DATA.initials}
+                {/* Numerical percentage readout */}
+                <span className="font-mono text-base sm:text-lg font-bold tracking-tight text-foreground tabular-nums">
+                  {progress}%
                 </span>
               </div>
-            </div>
+            </AnimatedCircularProgressBar>
 
-            {/* Progress Telemetry */}
-            <div className="flex flex-col items-center gap-2.5 text-center">
-              {/* Minimalist Progress Track */}
-              <div className="h-[2px] w-36 sm:w-44 overflow-hidden rounded-full bg-muted/60 dark:bg-white/[0.08]">
-                <div
-                  className="h-full rounded-full bg-foreground transition-[width] duration-150 ease-out"
-                  style={{ width: `${progress}%` }}
+            {/* Technical Status Telemetry */}
+            <div className="flex flex-col items-center gap-1.5 text-center">
+              <div className="flex items-center gap-2 font-mono text-[11px] sm:text-xs text-muted-foreground tracking-widest uppercase">
+                <span
+                  className={`inline-block size-1.5 rounded-full ${
+                    progress === 100
+                      ? "bg-emerald-500 animate-none"
+                      : "bg-foreground/80 animate-pulse"
+                  }`}
                 />
+                <span>{stepLabel}</span>
               </div>
 
-              {/* Status and Percentage Readout */}
-              <div className="flex items-center gap-3 font-mono text-[11px] sm:text-xs text-muted-foreground tracking-wider uppercase">
-                <span className="flex items-center gap-1.5">
-                  <span
-                    className={`inline-block size-1.5 rounded-full ${
-                      progress === 100
-                        ? "bg-emerald-500 animate-none"
-                        : "bg-foreground/80 animate-pulse"
-                    }`}
-                  />
-                  <span>{stepLabel}</span>
-                </span>
-                <span className="text-foreground/90 font-semibold tabular-nums">
-                  {String(progress).padStart(3, "0")}%
-                </span>
-              </div>
+              {/* Developer Monogram Subtitle */}
+              <span className="font-mono text-[10px] tracking-wider text-muted-foreground/60 uppercase">
+                {DATA.name} &bull; {DATA.initials}
+              </span>
             </div>
           </div>
         </div>

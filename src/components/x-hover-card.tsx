@@ -12,7 +12,7 @@ import { UserCheck, Users } from "lucide-react";
 const X_PROFILE = {
   name: "Rayen Ben Aissa",
   handle: "ErenYea9er",
-  avatar: "https://unavatar.io/x/ErenYea9er",
+  avatar: "/avatar.jpg",
   description: "Full Stack Developer",
   following: 0,
   followers: 0,
