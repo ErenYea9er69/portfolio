@@ -1,21 +1,11 @@
-import { fileURLToPath } from 'url';
-import path from 'path';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
 
-  // Bundle shiki through webpack (it is in Next's default server-external
-  // list) so the alias below applies and only the fine-grained langs used in
-  // src/data/blog.ts end up in the server bundle. Without this, the full
-  // ~9 MB grammar set gets pulled into the Cloudflare Worker and exceeds the
-  // Workers size limit.
-  transpilePackages: ['shiki'],
-  
   images: {
     formats: ['image/avif', 'image/webp'],
+    deviceSizes: [360, 480, 640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
       {
         protocol: 'https',
@@ -50,7 +40,7 @@ const nextConfig = {
         hostname: 'img.youtube.com',
       }
     ],
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 86400,
   },
 
   headers: async () => [
@@ -78,58 +68,39 @@ const nextConfig = {
           value: 'index, follow'
         },
       ]
-    }
+    },
+    {
+      source: '/projects/:path*',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=31536000, immutable',
+        },
+      ],
+    },
   ],
 
   // Compress outputs
   compress: true,
 
-  // Enable experimental features
+  // Enable package optimizations
   experimental: {
-    optimizeCss: true,
     scrollRestoration: true,
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
   },
 
-  // Next only traces index.node.js for next/og; the OpenNext Cloudflare
-  // adapter also needs the wasm + font files from @vercel/og at build time.
-  // Harmless on Vercel (files already ship there).
-  // (Top-level since Next 15; was experimental.outputFileTracingIncludes.)
   outputFileTracingIncludes: {
     '/api/og': ['./node_modules/next/dist/compiled/@vercel/og/**/*'],
-    // Blog/sitemap/rss read ./content/*.mdx via fs at render time; bundle
-    // the files so request-time rendering works on Cloudflare Workers.
-    '/blog/**': ['./content/**/*'],
-    '/rss.xml': ['./content/**/*'],
-    '/sitemap.xml': ['./content/**/*'],
   },
 
-  // Configure webpack if needed
-  webpack: (config) => {
-    config.optimization.minimize = true;
-    // Exact-match alias: only the bare `shiki` full-bundle import (used by
-    // rehype-pretty-code) is shimmed; `shiki/core`, `shiki/langs/*` etc.
-    // still resolve normally for the fine-grained highlighter in blog.ts.
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'shiki$': path.join(__dirname, 'src/lib/shiki-shim.ts'),
-    };
-    return config;
-  },
-
-  // Add redirect handling
   async redirects() {
     return [
-      // Add any specific redirects here if needed
       {
         source: '/home',
         destination: '/',
         permanent: true,
       }
     ];
-  },
-
-  async rewrites() {
-    return [];
   },
 };
 

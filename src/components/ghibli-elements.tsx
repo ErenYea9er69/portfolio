@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/lib/device";
 
 /* ─────────────────────────────────────────────
  *  Atmospheric Cloud
@@ -198,12 +199,7 @@ function useStarField(count: number, seed: number = 42, colorMode: "dark" | "lig
 }
 
 function StarField() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
-
+  const isMobile = useIsMobile();
   const count = isMobile ? 12 : 160;
   const darkShadows = useStarField(count, 42, "dark", isMobile);
   const lightShadows = useStarField(count, 42, "light", isMobile);
@@ -247,12 +243,7 @@ function StarField() {
  *  A few stars that subtly pulse in brightness
  * ───────────────────────────────────────────── */
 function TwinklingStars({ count = 14 }: { count?: number }) {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
-
+  const isMobile = useIsMobile();
   const effectiveCount = isMobile ? 0 : count;
 
   const stars = useMemo(() => {
@@ -321,12 +312,7 @@ function TwinklingStars({ count = 14 }: { count?: number }) {
  *  Very faint color washes for depth
  * ───────────────────────────────────────────── */
 function AtmosphericHaze() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
-
+  const isMobile = useIsMobile();
   if (isMobile) return null;
 
   return (
@@ -371,10 +357,10 @@ function CloudPool({ index }: { index: number }) {
  * ───────────────────────────────────────────── */
 export function GhibliSkyBackground() {
   const [isVisible, setIsVisible] = useState(true);
-  const [isDesktop, setIsDesktop] = useState(false);
+  const isMobile = useIsMobile();
+  const isDesktop = !isMobile;
 
   useEffect(() => {
-    setIsDesktop(window.innerWidth >= 1024);
     const handleVisibilityChange = () => {
       setIsVisible(document.visibilityState === "visible");
     };
@@ -407,16 +393,20 @@ export function GhibliSkyBackground() {
       </AnimatePresence>
 
       {/* Layer 4: Ethereal spirits positioned on opposite sides (Desktop only to prevent mobile GPU blur thrashing) */}
-      <GhibliSpirit
-        className="hidden md:block absolute top-[18%] sm:top-[22%] left-4 sm:left-8 md:left-12 lg:left-16 xl:left-24"
-        duration={5.2}
-        delay={0}
-      />
-      <GhibliSpirit
-        className="hidden md:block absolute top-[50%] sm:top-[54%] right-4 sm:right-8 md:right-12 lg:right-16 xl:right-24 scale-90"
-        duration={6.2}
-        delay={1.8}
-      />
+      {isDesktop && (
+        <>
+          <GhibliSpirit
+            className="absolute top-[18%] sm:top-[22%] left-4 sm:left-8 md:left-12 lg:left-16 xl:left-24"
+            duration={5.2}
+            delay={0}
+          />
+          <GhibliSpirit
+            className="absolute top-[50%] sm:top-[54%] right-4 sm:right-8 md:right-12 lg:right-16 xl:right-24 scale-90"
+            duration={6.2}
+            delay={1.8}
+          />
+        </>
+      )}
     </div>
   );
 }

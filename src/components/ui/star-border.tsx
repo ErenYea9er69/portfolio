@@ -256,7 +256,7 @@ export function StarBorder<T extends React.ElementType = 'button'>({
       focused: false,
       pointerX: 0,
       pointerY: 0,
-      visible: true
+      visible: false
     };
     const pulses: { origin: number; age: number }[] = [];
     const dust: {
@@ -280,7 +280,7 @@ export function StarBorder<T extends React.ElementType = 'button'>({
       state.dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.max(1, Math.round((state.width + BLEED * 2) * state.dpr));
       canvas.height = Math.max(1, Math.round((state.height + BLEED * 2) * state.dpr));
-      wake();
+      if (state.visible) wake();
     };
 
     const local = (event: MouseEvent | PointerEvent): [number, number] => {

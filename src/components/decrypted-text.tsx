@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/lib/device";
 
 export interface DecryptedTextProps extends HTMLMotionProps<"span"> {
   text: string;
@@ -133,7 +134,21 @@ interface FrameState {
   squeeze: number[];
 }
 
-export function DecryptedText({
+export function DecryptedText(props: DecryptedTextProps) {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <span className={props.parentClassName} style={props.style as React.CSSProperties}>
+        <span className={props.className}>{props.text}</span>
+      </span>
+    );
+  }
+
+  return <DesktopDecryptedText {...props} />;
+}
+
+function DesktopDecryptedText({
   text,
   speed = 80,
   maxIterations = 16,
@@ -154,16 +169,6 @@ export function DecryptedText({
   once = true,
   ...props
 }: DecryptedTextProps) {
-  // Mobile fast path: skip ALL animation machinery (setInterval, ResizeObserver,
-  // IntersectionObserver, canvas text measurement) — just render plain text.
-  // This eliminates 5 scramble engines on the homepage.
-  const [isMobileDevice, setIsMobileDevice] = useState(false);
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
-      setIsMobileDevice(true);
-    }
-  }, []);
-
   const chars = useMemo(() => Array.from(String(text ?? "")), [text]);
 
   const pool = useMemo(() => {
@@ -736,15 +741,6 @@ export function DecryptedText({
     : animateOn === "click"
     ? { onClick: handleClick }
     : {};
-
-  // Mobile fast path: after all hooks, render plain text to skip animation overhead
-  if (isMobileDevice) {
-    return (
-      <span className={parentClassName} style={props.style as React.CSSProperties}>
-        <span className={className}>{text}</span>
-      </span>
-    );
-  }
 
   return (
     <motion.span

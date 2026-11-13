@@ -11,7 +11,7 @@ import { Menu, X, Terminal, Home, Code2, Briefcase, GraduationCap, Mail, FolderK
 import { Dock, DockIcon } from "@/components/magicui/dock";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { buttonVariants } from "@/components/ui/button";
-import { guardCliAccess } from "@/lib/device";
+import { guardCliAccess, useIsMobile } from "@/lib/device";
 
 const DESKTOP_NAV_LINKS = [
   { href: "/projects", label: "Projects" },
@@ -22,7 +22,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [activeRect, setActiveRect] = useState<{ left: number; width: number } | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
@@ -30,7 +30,6 @@ export default function Navbar() {
 
   useEffect(() => {
     setIsMounted(true);
-    setIsMobile(window.innerWidth < 768);
   }, []);
 
   useEffect(() => {
@@ -54,7 +53,7 @@ export default function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
-    if (isScrolled) return;
+    if (isScrolled || isMobile) return;
     const raf = requestAnimationFrame(() => {
       const activeIndex = DESKTOP_NAV_LINKS.findIndex((item) => item.href === pathname);
       if (activeIndex !== -1 && itemRefs.current[activeIndex] && navRef.current) {
@@ -71,22 +70,29 @@ export default function Navbar() {
       }
     });
     return () => cancelAnimationFrame(raf);
-  }, [pathname, isMounted, isScrolled]);
+  }, [pathname, isMounted, isScrolled, isMobile]);
 
   if (pathname === "/cli") {
     return null;
   }
+
+  const NavTag = isMobile ? "nav" : motion.nav;
+  const navMotionProps = isMobile
+    ? {}
+    : {
+        initial: isMounted ? { y: 0, opacity: 1 } : { y: -20, opacity: 0 },
+        animate: { y: 0, opacity: 1 },
+        exit: { y: -20, opacity: 0 },
+        transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
+      };
 
   return (
     <>
       {/* ─── Expanded navbar (top of page / always on mobile) ─── */}
       <AnimatePresence>
         {(!isScrolled || isMobile) && (
-          <motion.nav
-            initial={isMounted ? { y: 0, opacity: 1 } : { y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -20, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+          <NavTag
+            {...(navMotionProps as any)}
             className="fixed top-0 left-0 right-0 z-50"
           >
             {/* Generous width container so navbar is well-proportioned and never looks cramped or small */}
@@ -286,7 +292,7 @@ export default function Navbar() {
                 </>
               )}
             </AnimatePresence>
-          </motion.nav>
+          </NavTag>
         )}
       </AnimatePresence>
 

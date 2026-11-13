@@ -1,7 +1,6 @@
 import { DATA } from "@/data/resume";
 import Link from "next/link";
 import BlurFade from "@/components/magicui/blur-fade";
-import BlurFadeText from "@/components/magicui/blur-fade-text";
 
 import Image from "next/image";
 import { ResumeCard } from "@/components/resume-card";
@@ -10,8 +9,7 @@ import { PersonSchema } from "@/components/schema/person-schema";
 import { Metadata } from 'next';
 import { AgeCounter } from "@/components/age-counter";
 import { FlipAvatar } from "@/components/flip-avatar";
-import { BirthdayHat } from "@/components/birthday-hat";
-import { VisitorCounter, BirthdayFireworks, GitHubCalendarSection, XHoverCard, ScrollRail, TechStackSection, ProjectsSection } from "@/components/lazy-client";
+import { VisitorCounter, BirthdayFireworks, BirthdayHat, GitHubCalendarSection, XHoverCard, ScrollRail, TechStackSection, ProjectsSection } from "@/components/lazy-client";
 import { SocialGlowLink } from "@/components/social-glow-link";
 import { DecryptedText } from "@/components/decrypted-text";
 import { StarBorder } from "@/components/ui/star-border";

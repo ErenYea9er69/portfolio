@@ -5,7 +5,7 @@ import { DATA } from "@/data/resume";
 import BlurFade from "@/components/magicui/blur-fade";
 import { ProjectCard } from "@/components/project-card";
 import Link from "next/link";
-import { ArrowRight, Sparkles, FolderGit2 } from "lucide-react";
+import { ArrowRight, FolderGit2 } from "lucide-react";
 import { DecryptedText } from "@/components/decrypted-text";
 import { StarBorder } from "@/components/ui/star-border";
 

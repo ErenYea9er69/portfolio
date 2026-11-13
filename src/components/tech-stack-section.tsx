@@ -2,10 +2,6 @@
 
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { config } from "@fortawesome/fontawesome-svg-core";
-import "@fortawesome/fontawesome-svg-core/styles.css";
-config.autoAddCss = false;
 import { DATA } from "@/data/resume";
 import BlurFade from "@/components/magicui/blur-fade";
 import { Sparkles } from "lucide-react";
@@ -215,21 +211,10 @@ function SkillPill({
 }
 
 function SkillIcon({ skill, brandColor }: { skill: any; brandColor: string }) {
-  if (skill.customIcon) {
-    const CustomIcon = skill.customIcon;
+  const IconComponent = skill.customIcon || skill.icon;
+  if (IconComponent) {
     return (
-      <CustomIcon
-        className="size-4 transition-all duration-200 text-foreground group-hover:text-foreground"
-        style={{
-          color: brandColor !== "#000000" && brandColor !== "#ffffff" ? brandColor : undefined,
-        }}
-      />
-    );
-  }
-  if (skill.icon) {
-    return (
-      <FontAwesomeIcon
-        icon={skill.icon}
+      <IconComponent
         className="size-4 transition-all duration-200"
         style={{
           color: brandColor !== "#000000" && brandColor !== "#ffffff" ? brandColor : undefined,

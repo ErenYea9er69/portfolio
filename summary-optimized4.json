@@ -1,0 +1,113 @@
+{
+  "label": "optimized4",
+  "url": "http://localhost:3000",
+  "timestamp": "2026-11-13T13:16:17.683Z",
+  "mobile": {
+    "runs": [
+      {
+        "run": 1,
+        "score": 95,
+        "fcp": 1213.6841,
+        "fcpDisplay": "1.2 s",
+        "lcp": 1213.6841,
+        "lcpDisplay": "1.2 s",
+        "tbt": 267.5,
+        "tbtDisplay": "270 ms",
+        "cls": 0.00003113045248679325,
+        "clsDisplay": "0",
+        "si": 1591.0266480895261,
+        "siDisplay": "1.6 s"
+      },
+      {
+        "run": 2,
+        "score": 95,
+        "fcp": 1209.6182,
+        "fcpDisplay": "1.2 s",
+        "lcp": 1209.6182,
+        "lcpDisplay": "1.2 s",
+        "tbt": 267,
+        "tbtDisplay": "270 ms",
+        "cls": 0.00003113045248679325,
+        "clsDisplay": "0",
+        "si": 1560.9273116904499,
+        "siDisplay": "1.6 s"
+      },
+      {
+        "run": 3,
+        "score": 95,
+        "fcp": 1210.4492,
+        "fcpDisplay": "1.2 s",
+        "lcp": 1210.4492,
+        "lcpDisplay": "1.2 s",
+        "tbt": 256.5,
+        "tbtDisplay": "260 ms",
+        "cls": 0.00003113045248679325,
+        "clsDisplay": "0",
+        "si": 1687.7795291952555,
+        "siDisplay": "1.7 s"
+      }
+    ],
+    "median": {
+      "score": 95,
+      "fcp": 1210.4492,
+      "lcp": 1210.4492,
+      "tbt": 267,
+      "cls": 0,
+      "si": 1591.0266480895261
+    }
+  },
+  "desktop": {
+    "runs": [
+      {
+        "run": 1,
+        "score": 100,
+        "fcp": 328.1775,
+        "fcpDisplay": "0.3 s",
+        "lcp": 328.1775,
+        "lcpDisplay": "0.3 s",
+        "tbt": 8.5,
+        "tbtDisplay": "10 ms",
+        "cls": 0.04045911166715577,
+        "clsDisplay": "0.04",
+        "si": 823.6138991828868,
+        "siDisplay": "0.8 s"
+      },
+      {
+        "run": 2,
+        "score": 100,
+        "fcp": 329.005,
+        "fcpDisplay": "0.3 s",
+        "lcp": 329.005,
+        "lcpDisplay": "0.3 s",
+        "tbt": 9,
+        "tbtDisplay": "10 ms",
+        "cls": 0.040530485928698595,
+        "clsDisplay": "0.041",
+        "si": 830.3476113304473,
+        "siDisplay": "0.8 s"
+      },
+      {
+        "run": 3,
+        "score": 100,
+        "fcp": 326.861,
+        "fcpDisplay": "0.3 s",
+        "lcp": 326.861,
+        "lcpDisplay": "0.3 s",
+        "tbt": 8,
+        "tbtDisplay": "10 ms",
+        "cls": 0.04045641729972716,
+        "clsDisplay": "0.04",
+        "si": 806.0218669183275,
+        "siDisplay": "0.8 s"
+      }
+    ],
+    "median": {
+      "score": 100,
+      "fcp": 328.1775,
+      "lcp": 328.1775,
+      "tbt": 9,
+      "cls": 0.04,
+      "si": 823.6138991828868
+    }
+  }
+}

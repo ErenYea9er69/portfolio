@@ -9,8 +9,7 @@ import "./globals.css";
 import { JsonLd } from "@/components/json-ld";
 import { PageBackground } from "@/components/page-background";
 import { DomainGuardedAnalytics } from "@/components/domain-guarded-analytics";
-import { CommandPalette, BackToTop, ScrollProgress, SwarmCursor } from "@/components/lazy-client";
-import { Toaster } from "@/components/ui/toast";
+import { CommandPalette, BackToTop, ScrollProgress, SwarmCursor, Toaster } from "@/components/lazy-client";
 
 const fontSans = FontSans({
   subsets: ["latin"],

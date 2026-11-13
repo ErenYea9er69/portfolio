@@ -8,10 +8,43 @@ export const VisitorCounter = dynamic(
   { ssr: false }
 );
 
-export const BirthdayFireworks = dynamic(
+const DynamicBirthdayFireworks = dynamic(
   () => import("@/components/birthday-fireworks").then((mod) => mod.BirthdayFireworks),
   { ssr: false }
 );
+
+export function BirthdayFireworks() {
+  const [isBirthday, setIsBirthday] = React.useState(false);
+
+  React.useEffect(() => {
+    const now = new Date();
+    if (now.getMonth() === 8 && now.getDate() === 16) {
+      setIsBirthday(true);
+    }
+  }, []);
+
+  if (!isBirthday) return null;
+  return <DynamicBirthdayFireworks />;
+}
+
+const DynamicBirthdayHat = dynamic(
+  () => import("@/components/birthday-hat").then((mod) => mod.BirthdayHat),
+  { ssr: false }
+);
+
+export function BirthdayHat() {
+  const [isBirthday, setIsBirthday] = React.useState(false);
+
+  React.useEffect(() => {
+    const now = new Date();
+    if (now.getMonth() === 8 && now.getDate() === 16) {
+      setIsBirthday(true);
+    }
+  }, []);
+
+  if (!isBirthday) return null;
+  return <DynamicBirthdayHat />;
+}
 
 const DynamicGitHubCalendarSection = dynamic(
   () => import("@/components/github-calendar-section").then((mod) => mod.GitHubCalendarSection),
@@ -30,6 +63,17 @@ export function GitHubCalendarSection() {
   const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      const handleScroll = () => {
+        if (window.scrollY > 40) {
+          setShouldLoad(true);
+        }
+      };
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+
     const el = ref.current;
     if (!el) return;
 
@@ -45,7 +89,7 @@ export function GitHubCalendarSection() {
           observer.disconnect();
         }
       },
-      { rootMargin: "600px" }
+      { rootMargin: "300px" }
     );
 
     observer.observe(el);
@@ -87,32 +131,123 @@ export const ProjectsSection = dynamic(
   }
 );
 
-export const CommandPalette = dynamic(
+const DynamicCommandPalette = dynamic(
   () => import("@/components/command-palette").then((mod) => mod.CommandPalette),
   { ssr: false }
 );
 
-export const BackToTop = dynamic(
+export function CommandPalette() {
+  const [shouldLoad, setShouldLoad] = React.useState(false);
+
+  React.useEffect(() => {
+    if (window.innerWidth < 768) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        setShouldLoad(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+
+    if ("requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(() => setShouldLoad(true), { timeout: 3500 });
+    } else {
+      setTimeout(() => setShouldLoad(true), 2000);
+    }
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  if (!shouldLoad) return null;
+  return <DynamicCommandPalette />;
+}
+
+const DynamicBackToTop = dynamic(
   () => import("@/components/back-to-top").then((mod) => mod.BackToTop),
   { ssr: false }
 );
 
-export const ScrollProgress = dynamic(
-  () => import("@/components/scroll-progress").then((mod) => mod.ScrollProgress),
-  { ssr: false }
-);
+export function BackToTop() {
+  const [shouldLoad, setShouldLoad] = React.useState(false);
 
-export const ScrollRail = dynamic(
+  React.useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShouldLoad(true);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  if (!shouldLoad) return null;
+  return <DynamicBackToTop />;
+}
+
+export { ScrollProgress } from "@/components/scroll-progress";
+
+const DynamicScrollRail = dynamic(
   () => import("@/components/scroll-rail").then((mod) => mod.ScrollRail),
   { ssr: false }
 );
 
-export const XHoverCard = dynamic(
+export function ScrollRail(props: any) {
+  const [isDesktop, setIsDesktop] = React.useState(false);
+
+  React.useEffect(() => {
+    if (window.innerWidth >= 1024) {
+      setIsDesktop(true);
+    }
+  }, []);
+
+  if (!isDesktop) return null;
+  return <DynamicScrollRail {...props} />;
+}
+
+const DynamicXHoverCard = dynamic(
   () => import("@/components/x-hover-card").then((mod) => mod.XHoverCard),
   { ssr: false }
 );
 
-export const SwarmCursor = dynamic(
+export function XHoverCard({ children }: { children: React.ReactNode }) {
+  const [isDesktop, setIsDesktop] = React.useState(false);
+
+  React.useEffect(() => {
+    if (window.innerWidth >= 768 && window.matchMedia("(hover: hover)").matches) {
+      setIsDesktop(true);
+    }
+  }, []);
+
+  if (!isDesktop) return <>{children}</>;
+  return <DynamicXHoverCard>{children}</DynamicXHoverCard>;
+}
+
+const DynamicSwarmCursor = dynamic(
   () => import("@/components/ui/swarm-cursor").then((mod) => mod.SwarmCursor),
+  { ssr: false }
+);
+
+export function SwarmCursor(props: any) {
+  const [shouldLoad, setShouldLoad] = React.useState(false);
+
+  React.useEffect(() => {
+    if (
+      window.innerWidth >= 768 &&
+      window.matchMedia("(pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      if ("requestIdleCallback" in window) {
+        (window as any).requestIdleCallback(() => setShouldLoad(true), { timeout: 2000 });
+      } else {
+        setTimeout(() => setShouldLoad(true), 1000);
+      }
+    }
+  }, []);
+
+  if (!shouldLoad) return null;
+  return <DynamicSwarmCursor {...props} />;
+}
+
+export const Toaster = dynamic(
+  () => import("@/components/ui/toast").then((mod) => mod.Toaster),
   { ssr: false }
 );

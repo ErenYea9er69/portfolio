@@ -1,7 +1,31 @@
 import { Icons } from "@/components/icons";
 import { HomeIcon, NotebookIcon, FolderIcon, Settings, Wrench, Zap } from "lucide-react";
-import { faReact, faNodeJs, faGitAlt, faTypescript, faTailwindCss, faDocker, faFigma, faGithub, faFirefoxBrowser, faBrave, faNotion, faPython, faJava, faJs, faHtml5, faCss3Alt } from "@fortawesome/free-brands-svg-icons";
-import { faLeaf, faPlug, faBolt, faTerminal, faRocket, faServer, faDatabase, faCode } from "@fortawesome/free-solid-svg-icons";
+import {
+  faReact,
+  faNodeJs,
+  faGitAlt,
+  faTypescript,
+  faTailwindCss,
+  faDocker,
+  faFigma,
+  faGithub,
+  faFirefoxBrowser,
+  faBrave,
+  faNotion,
+  faPython,
+  faJava,
+  faJs,
+  faHtml5,
+  faCss3Alt,
+  faLeaf,
+  faPlug,
+  faBolt,
+  faTerminal,
+  faRocket,
+  faServer,
+  faDatabase,
+  faCode,
+} from "@/components/tech-icons";
 
 export const DATA = {
   name: "Rayen Ben Aissa",

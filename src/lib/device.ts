@@ -1,6 +1,32 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { toast } from "@/components/ui/toast";
+
+const mobileQuery =
+  typeof window !== "undefined" ? window.matchMedia("(max-width: 767px)") : null;
+
+function subscribe(callback: () => void) {
+  if (!mobileQuery) return () => {};
+  mobileQuery.addEventListener("change", callback);
+  return () => mobileQuery.removeEventListener("change", callback);
+}
+
+function getSnapshot() {
+  return mobileQuery ? mobileQuery.matches : false;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
+/**
+ * Shared zero-overhead mobile detection hook powered by useSyncExternalStore.
+ * Avoids cascading useState/useEffect re-renders across dozens of components.
+ */
+export function useIsMobile(): boolean {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
 
 /**
  * Detects whether the current client is a mobile phone device.
