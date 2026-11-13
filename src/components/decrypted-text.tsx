@@ -10,6 +10,7 @@ import React, {
 import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/lib/device";
+import { useInitialLoader } from "@/components/initial-loader";
 
 export interface DecryptedTextProps extends HTMLMotionProps<"span"> {
   text: string;
@@ -170,6 +171,7 @@ function DesktopDecryptedText({
   ...props
 }: DecryptedTextProps) {
   const chars = useMemo(() => Array.from(String(text ?? "")), [text]);
+  const { isLoaded } = useInitialLoader();
 
   const pool = useMemo(() => {
     const letters = chars.filter((char) => !isSpace(char));
@@ -586,12 +588,24 @@ function DesktopDecryptedText({
         visibleRef.current = visible;
         if (!visible) return;
         if (viewTrigger && !playedRef.current) {
-          playedRef.current = true;
-          engineRef.current?.startRun(true);
+          if (!isLoaded) {
+            // Defer execution until the initial loading screen has lifted
+            pendingRef.current = () => {
+              if (!playedRef.current) {
+                playedRef.current = true;
+                engineRef.current?.startRun(true);
+              }
+            };
+          } else {
+            playedRef.current = true;
+            engineRef.current?.startRun(true);
+          }
         }
         const resume = pendingRef.current;
-        pendingRef.current = null;
-        resume?.();
+        if (isLoaded) {
+          pendingRef.current = null;
+          resume?.();
+        }
         if (once || !loop) observer.disconnect();
       },
       { threshold: 0.1 }
@@ -601,7 +615,16 @@ function DesktopDecryptedText({
       observer.disconnect();
       visibleRef.current = true;
     };
-  }, [animateOn, loop, chars, once]);
+  }, [animateOn, loop, chars, once, isLoaded]);
+
+  // When isLoaded transitions to true, flush any deferred animation
+  useEffect(() => {
+    if (isLoaded && pendingRef.current) {
+      const task = pendingRef.current;
+      pendingRef.current = null;
+      task();
+    }
+  }, [isLoaded]);
 
   useIsomorphicLayoutEffect(() => {
     const previous = previousRef.current;

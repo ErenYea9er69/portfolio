@@ -9,7 +9,7 @@ import "./globals.css";
 import { JsonLd } from "@/components/json-ld";
 import { PageBackground } from "@/components/page-background";
 import { DomainGuardedAnalytics } from "@/components/domain-guarded-analytics";
-import { CommandPalette, BackToTop, ScrollProgress, SwarmCursor, Toaster } from "@/components/lazy-client";
+import { CommandPalette, BackToTop, ScrollProgress, SwarmCursor, Toaster, InitialLoader } from "@/components/lazy-client";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -125,16 +125,17 @@ export default function RootLayout({
 
 
         {/* Main content */}
-        <div className="relative z-10 max-w-4xl mx-auto pt-20 sm:pt-24 pb-24 px-4 sm:px-6">
-          <DomainGuardedAnalytics gaId="G-XVF0SFD4GW" />
-          <JsonLd />
-          <ScrollProgress />
-          <ThemeProvider
-            attribute={["class", "data-theme"]}
-            defaultTheme="dark"
-            enableSystem={false}
-            disableTransitionOnChange
-          >
+        <ThemeProvider
+          attribute={["class", "data-theme"]}
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <InitialLoader>
+            <div className="relative z-10 max-w-4xl mx-auto pt-20 sm:pt-24 pb-24 px-4 sm:px-6">
+              <DomainGuardedAnalytics gaId="G-XVF0SFD4GW" />
+              <JsonLd />
+              <ScrollProgress />
               <TooltipProvider delayDuration={0}>
                 <SwarmCursor global count={180} size={2.5} spread={85} swirl={0.6} clickEffect="burst" />
                 {children}
@@ -143,8 +144,9 @@ export default function RootLayout({
                 <BackToTop />
                 <Toaster />
               </TooltipProvider>
-          </ThemeProvider>
-        </div>
+            </div>
+          </InitialLoader>
+        </ThemeProvider>
       </body>
     </html>
   );

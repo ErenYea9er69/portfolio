@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import React from "react";
+import { useInitialLoader } from "@/components/initial-loader";
 
 export const VisitorCounter = dynamic(
   () => import("@/components/visitor-counter"),
@@ -224,9 +225,11 @@ const DynamicSwarmCursor = dynamic(
 );
 
 export function SwarmCursor(props: any) {
+  const { isLoaded } = useInitialLoader();
   const [shouldLoad, setShouldLoad] = React.useState(false);
 
   React.useEffect(() => {
+    if (!isLoaded) return;
     if (
       window.innerWidth >= 768 &&
       window.matchMedia("(pointer: fine)").matches &&
@@ -238,7 +241,7 @@ export function SwarmCursor(props: any) {
         setTimeout(() => setShouldLoad(true), 1000);
       }
     }
-  }, []);
+  }, [isLoaded]);
 
   if (!shouldLoad) return null;
   return <DynamicSwarmCursor {...props} />;
@@ -248,3 +251,6 @@ export const Toaster = dynamic(
   () => import("@/components/ui/toast").then((mod) => mod.Toaster),
   { ssr: false }
 );
+
+// InitialLoader is eager — it's the first thing the user sees
+export { InitialLoader, useInitialLoader } from "@/components/initial-loader";
