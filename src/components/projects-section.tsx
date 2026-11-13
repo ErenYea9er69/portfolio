@@ -11,10 +11,10 @@ import { StarBorder } from "@/components/ui/star-border";
 
 const BLUR_FADE_DELAY = 0.04;
 
-export function ProjectsSection() {
-  // Only display the 4 projects with visual screenshot previews on the landing page
-  const landingProjects = DATA.projects.filter((p) => Boolean(p.image)).slice(0, 4);
+// Hoisted static reference: Only display the 4 projects with visual screenshot previews on the landing page
+const LANDING_PROJECTS = DATA.projects.filter((p) => Boolean(p.image)).slice(0, 4);
 
+export function ProjectsSection() {
   return (
     <div className="flex min-h-0 flex-col gap-y-6">
       {/* Header section */}
@@ -53,7 +53,7 @@ export function ProjectsSection() {
 
       {/* Grid of 4 Projects with pictures */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-1">
-        {landingProjects.map((project, idx) => (
+        {LANDING_PROJECTS.map((project, idx) => (
           <ProjectCard key={project.title} project={project as any} index={idx} />
         ))}
       </div>

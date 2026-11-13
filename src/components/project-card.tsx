@@ -47,30 +47,37 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
   const primaryHref = websiteLink || sourceLink || project.href;
   const isMobile = useIsMobile();
 
-  const CardContainer = isMobile ? "div" : motion.div;
+  // Consistent motion.div tag prevents DOM node unmounting / hydration swaps.
+  // Delay is paired per-column ((index % 2) * 0.08) so subsequent scrolled rows animate instantly without artificial lag.
   const motionProps = isMobile
-    ? {}
+    ? { initial: false }
     : {
         initial: { opacity: 0, y: 16 },
         whileInView: { opacity: 1, y: 0 },
-        viewport: { once: true, margin: "-40px" },
-        transition: { duration: 0.4, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] },
+        viewport: { once: true, margin: "0px 0px -20px 0px" },
+        transition: {
+          duration: 0.35,
+          delay: (index % 2) * 0.08,
+          ease: [0.22, 1, 0.36, 1],
+        },
       };
 
   return (
-    <CardContainer
+    <motion.div
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      whileHover={isMobile ? undefined : { y: -4 }}
       {...(motionProps as any)}
       className={cn(
-        "group/card relative flex flex-col justify-between overflow-hidden rounded-2xl transition-all duration-300",
+        "group/card relative flex flex-col justify-between overflow-hidden rounded-2xl",
+        // Transition scoped to colors/shadow to prevent CSS fighting with Framer Motion transform/opacity
+        "transition-[border-color,box-shadow,background-color] duration-300",
         // Calm, premium liquid glass surface
         "bg-card/95 dark:bg-zinc-950/90 md:bg-card/75 md:dark:bg-zinc-950/70 md:backdrop-blur-xl",
         "border border-border/70 dark:border-white/[0.08]",
-        "shadow-xs hover:shadow-md",
-        "hover:-translate-y-1 hover:border-foreground/20"
+        "shadow-xs hover:shadow-md hover:border-foreground/20"
       )}
     >
       {/* Gentle Subtle Cursor Spotlight (Desktop only, 0-rerender via CSS variable) */}
@@ -93,6 +100,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
               src={project.image}
               alt={project.title}
               fill
+              priority={index < 4}
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover object-top transition-transform duration-500 ease-out group-hover/card:scale-105"
             />
@@ -279,7 +287,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
           )}
         </div>
       </div>
-    </CardContainer>
+    </motion.div>
   );
 }
 

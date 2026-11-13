@@ -78,7 +78,7 @@ function useLazySection(ref: React.RefObject<HTMLDivElement | null>, anchorKeywo
           observer.disconnect();
         }
       },
-      { rootMargin: "350px" }
+      { rootMargin: "500px" }
     );
 
     observer.observe(el);
@@ -169,7 +169,7 @@ const DynamicProjectsSection = dynamic(
   () => import("@/components/projects-section").then((mod) => mod.ProjectsSection),
   {
     loading: () => (
-      <div className="w-full h-72 rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+      <div className="w-full min-h-[480px] rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
         Loading projects...
       </div>
     ),
@@ -185,7 +185,7 @@ export function ProjectsSection() {
       {shouldLoad ? (
         <DynamicProjectsSection />
       ) : (
-        <div className="w-full h-72 rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+        <div className="w-full min-h-[480px] rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
           Loading projects...
         </div>
       )}
