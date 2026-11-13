@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/lib/device";
 import { ArrowUpRight, Globe, Sparkles, Tv, Monitor, BookOpen, Layers, ShieldCheck, FileText, Terminal, Search, Code, Radio, Volume2 } from "lucide-react";
 
 export interface ProjectItem {
@@ -44,17 +45,25 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
   const websiteLink = project.links.find((l) => l.type.toLowerCase() === "website")?.href;
   const sourceLink = project.links.find((l) => l.type.toLowerCase() === "source")?.href;
   const primaryHref = websiteLink || sourceLink || project.href;
+  const isMobile = useIsMobile();
+
+  const CardContainer = isMobile ? "div" : motion.div;
+  const motionProps = isMobile
+    ? {}
+    : {
+        initial: { opacity: 0, y: 16 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: "-40px" },
+        transition: { duration: 0.4, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] },
+      };
 
   return (
-    <motion.div
+    <CardContainer
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.4, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      {...(motionProps as any)}
       className={cn(
         "group/card relative flex flex-col justify-between overflow-hidden rounded-2xl transition-all duration-300",
         // Calm, premium liquid glass surface
@@ -270,7 +279,7 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
           )}
         </div>
       </div>
-    </motion.div>
+    </CardContainer>
   );
 }
 

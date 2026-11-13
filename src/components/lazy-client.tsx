@@ -63,19 +63,16 @@ export function GitHubCalendarSection() {
   const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) {
-      const handleScroll = () => {
-        if (window.scrollY > 40) {
-          setShouldLoad(true);
-        }
-      };
-      window.addEventListener("scroll", handleScroll, { passive: true });
-      return () => window.removeEventListener("scroll", handleScroll);
-    }
-
     const el = ref.current;
     if (!el) return;
+
+    if ("requestIdleCallback" in window) {
+      const idleId = (window as any).requestIdleCallback(
+        () => setShouldLoad(true),
+        { timeout: 3500 }
+      );
+      return () => (window as any).cancelIdleCallback(idleId);
+    }
 
     if (!("IntersectionObserver" in window)) {
       setShouldLoad(true);
@@ -89,7 +86,7 @@ export function GitHubCalendarSection() {
           observer.disconnect();
         }
       },
-      { rootMargin: "300px" }
+      { rootMargin: "50px" }
     );
 
     observer.observe(el);

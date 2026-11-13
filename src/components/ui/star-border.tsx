@@ -238,6 +238,8 @@ export function StarBorder<T extends React.ElementType = 'button'>({
 
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    if (isMobile || reduce) return undefined;
+
     const point: Point = { x: 0, y: 0, nx: 0, ny: -1 };
     const state = {
       width: 0,
@@ -660,7 +662,7 @@ export function StarBorder<T extends React.ElementType = 'button'>({
       {...(Component === 'button' && (rest as any).type === undefined ? { type: 'button' } : null)}
       {...rest}
     >
-      <canvas ref={canvasRef} className="star-border__light" aria-hidden="true" />
+      <canvas ref={canvasRef} className="star-border__light hidden md:block" aria-hidden="true" />
       {children}
     </Component>
   );

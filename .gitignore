@@ -19,6 +19,9 @@
 # misc
 .DS_Store
 *.pem
+audit-*.json
+baseline-*.json
+summary-*.json
 
 # debug
 npm-debug.log*

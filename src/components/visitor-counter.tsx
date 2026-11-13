@@ -15,6 +15,8 @@ export default function VisitorCounter() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchVisitorCount = async () => {
       try {
         const response = await fetch('/api/visitor-count', {
@@ -22,19 +24,31 @@ export default function VisitorCounter() {
           credentials: 'include',
         });
         
-        if (response.ok) {
+        if (response.ok && !cancelled) {
           const data = await response.json();
           setCount(data.count);
         }
       } catch (error) {
         console.error('Error fetching visitor count:', error);
-        setCount(0);
+        if (!cancelled) setCount(0);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
 
-    fetchVisitorCount();
+    if ("requestIdleCallback" in window) {
+      const id = (window as any).requestIdleCallback(fetchVisitorCount, { timeout: 3500 });
+      return () => {
+        cancelled = true;
+        (window as any).cancelIdleCallback(id);
+      };
+    } else {
+      const id = setTimeout(fetchVisitorCount, 2000);
+      return () => {
+        cancelled = true;
+        clearTimeout(id);
+      };
+    }
   }, []);
 
   // Show placeholder until mounted

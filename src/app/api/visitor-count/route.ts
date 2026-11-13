@@ -19,30 +19,40 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ count: 0, error: 'DATABASE_URL not configured' });
     }
 
-    await sql`
-      CREATE TABLE IF NOT EXISTS site_stats (
-        key VARCHAR(50) PRIMARY KEY,
-        count BIGINT NOT NULL DEFAULT 0
-      );
-    `;
-
     const alreadyCounted = request.cookies.get(COOKIE_NAME)?.value === 'true';
 
+    let rows: any;
     if (alreadyCounted) {
-      const rows = await sql`
-        SELECT count FROM site_stats WHERE key = 'visitors' LIMIT 1;
-      `;
+      try {
+        rows = await sql`
+          SELECT count FROM site_stats WHERE key = 'visitors' LIMIT 1;
+        `;
+      } catch {
+        await sql`CREATE TABLE IF NOT EXISTS site_stats (key VARCHAR(50) PRIMARY KEY, count BIGINT NOT NULL DEFAULT 0);`;
+        rows = await sql`SELECT count FROM site_stats WHERE key = 'visitors' LIMIT 1;`;
+      }
       const currentCount = rows[0]?.count ? Number(rows[0].count) : 0;
       return NextResponse.json({ count: currentCount, incremented: false });
     }
 
-    const rows = await sql`
-      INSERT INTO site_stats (key, count)
-      VALUES ('visitors', 1)
-      ON CONFLICT (key)
-      DO UPDATE SET count = site_stats.count + 1
-      RETURNING count;
-    `;
+    try {
+      rows = await sql`
+        INSERT INTO site_stats (key, count)
+        VALUES ('visitors', 1)
+        ON CONFLICT (key)
+        DO UPDATE SET count = site_stats.count + 1
+        RETURNING count;
+      `;
+    } catch {
+      await sql`CREATE TABLE IF NOT EXISTS site_stats (key VARCHAR(50) PRIMARY KEY, count BIGINT NOT NULL DEFAULT 0);`;
+      rows = await sql`
+        INSERT INTO site_stats (key, count)
+        VALUES ('visitors', 1)
+        ON CONFLICT (key)
+        DO UPDATE SET count = site_stats.count + 1
+        RETURNING count;
+      `;
+    }
 
     const newCount = rows[0]?.count ? Number(rows[0].count) : 1;
 

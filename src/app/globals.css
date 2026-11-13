@@ -384,14 +384,4 @@
     overflow-x: clip;
     -webkit-overflow-scrolling: touch;
   }
-
-  /* Below-fold content rendering optimization — skip layout/paint for sections not yet scrolled to */
-  #github-activity,
-  #skills,
-  #projects,
-  #experience-education,
-  #contact {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 500px;
-  }
 }
