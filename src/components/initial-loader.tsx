@@ -3,8 +3,6 @@
 import React, {
   useState,
   useEffect,
-  useRef,
-  useCallback,
   createContext,
   useContext,
 } from "react";
@@ -30,108 +28,156 @@ export function useInitialLoader() {
 // ─── Critical resources to preload ───
 const CRITICAL_IMAGES = [
   DATA.avatarUrl,
-];
+].filter(Boolean) as string[];
 
-const MIN_DISPLAY_MS = 2900; // ~3 seconds on first visit
-const MAX_WAIT_MS = 7000;    // Safety fallback
-const SESSION_KEY = "portfolio_session_initialized";
+const MIN_DISPLAY_MS = 2900; // ~3 seconds on first visit / reload
+const MAX_WAIT_MS = 6500;    // Sensible safety fallback to prevent infinite hanging
+const RESOURCE_TIMEOUT_MS = 3000;
 
 function preloadImage(src: string): Promise<void> {
   return new Promise((resolve) => {
-    if (typeof window === "undefined") {
+    if (typeof window === "undefined" || !src) {
       resolve();
       return;
     }
+
+    let settled = false;
+    const finish = () => {
+      if (!settled) {
+        settled = true;
+        resolve();
+      }
+    };
+
+    // Timeout per image so broken or slow assets never block
+    const timer = setTimeout(finish, RESOURCE_TIMEOUT_MS);
+
     const img = new Image();
-    img.onload = () => resolve();
-    img.onerror = () => resolve(); // Non-blocking
+    img.onload = () => {
+      clearTimeout(timer);
+      finish();
+    };
+    img.onerror = () => {
+      clearTimeout(timer);
+      finish();
+    };
     img.src = src;
+
+    // Fast-path: image already in memory or disk cache (warm cache / reload)
+    if (img.complete) {
+      clearTimeout(timer);
+      finish();
+    }
+  });
+}
+
+function preloadFonts(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof document === "undefined" || !document.fonts?.ready) {
+      resolve();
+      return;
+    }
+
+    let settled = false;
+    const finish = () => {
+      if (!settled) {
+        settled = true;
+        resolve();
+      }
+    };
+
+    const timer = setTimeout(finish, RESOURCE_TIMEOUT_MS);
+
+    document.fonts.ready
+      .then(() => {
+        clearTimeout(timer);
+        finish();
+      })
+      .catch(() => {
+        clearTimeout(timer);
+        finish();
+      });
   });
 }
 
 export function InitialLoader({ children }: { children: React.ReactNode }) {
-  // Synchronous initial state check to prevent flash
-  const [phase, setPhase] = useState<"loading" | "revealing" | "done">(() => {
-    if (typeof window !== "undefined") {
-      try {
-        if (sessionStorage.getItem(SESSION_KEY) === "true") {
-          return "done";
-        }
-      } catch {}
-    }
-    return "loading";
-  });
-
-  const [isLoaded, setIsLoaded] = useState(() => phase === "done");
+  // Always initialize synchronously to "loading" on both SSR and client to guarantee 0 hydration mismatch
+  const [phase, setPhase] = useState<"loading" | "revealing" | "done">("loading");
+  const [isLoaded, setIsLoaded] = useState(false);
   const [progress, setProgress] = useState(0);
   const [stepLabel, setStepLabel] = useState("INITIALIZING CORE");
 
-  const criticalReady = useRef(false);
-  const timerFired = useRef(false);
-  const skippedRef = useRef(phase === "done");
-
-  const tryReveal = useCallback(() => {
-    if (skippedRef.current) return;
-    if (criticalReady.current && timerFired.current) {
-      setProgress(100);
-      setStepLabel("SYSTEM READY");
-
-      // Brief hold at 100% for visual completion
-      setTimeout(() => {
-        setPhase("revealing");
-        setIsLoaded(true);
-        try {
-          sessionStorage.setItem(SESSION_KEY, "true");
-        } catch {}
-      }, 250);
-    }
-  }, []);
-
-  // Mount effect: handle preloading, timing, and progress interpolation
   useEffect(() => {
-    if (phase === "done") {
-      setIsLoaded(true);
-      return;
-    }
+    let isMounted = true;
+    let animFrame: number | null = null;
+    let minTimer: ReturnType<typeof setTimeout> | null = null;
+    let safetyTimer: ReturnType<typeof setTimeout> | null = null;
+    let holdTimer: ReturnType<typeof setTimeout> | null = null;
+    let revealTimer: ReturnType<typeof setTimeout> | null = null;
 
-    try {
-      if (sessionStorage.getItem(SESSION_KEY) === "true") {
-        skippedRef.current = true;
-        setPhase("done");
-        setIsLoaded(true);
-        return;
-      }
-    } catch {}
+    let criticalReady = false;
+    let minTimeElapsed = false;
+    let isRevealing = false;
 
     // Lock body scroll while loader is visible
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // 1. Preload hero avatar assets
-    const imgPromises = Promise.all(CRITICAL_IMAGES.map(preloadImage));
+    const triggerReveal = () => {
+      if (!isMounted || isRevealing) return;
+      isRevealing = true;
 
-    // 2. Preload webfonts
-    const fontPromise =
-      typeof document !== "undefined" && document.fonts?.ready
-        ? document.fonts.ready
-        : Promise.resolve();
+      if (animFrame !== null) {
+        cancelAnimationFrame(animFrame);
+        animFrame = null;
+      }
 
-    // Mark critical resources ready
-    Promise.all([imgPromises, fontPromise]).then(() => {
-      criticalReady.current = true;
-      tryReveal();
+      setProgress(100);
+      setStepLabel("SYSTEM READY");
+
+      // Brief hold at 100% for visual completion
+      holdTimer = setTimeout(() => {
+        if (!isMounted) return;
+        setPhase("revealing");
+        setIsLoaded(true);
+        document.body.style.overflow = originalOverflow;
+
+        // Transition from revealing to done
+        revealTimer = setTimeout(() => {
+          if (!isMounted) return;
+          setPhase("done");
+        }, 700);
+      }, 250);
+    };
+
+    const checkReadiness = () => {
+      if (criticalReady && minTimeElapsed) {
+        triggerReveal();
+      }
+    };
+
+    // 1. Preload hero avatar & webfonts in parallel with individual resilience timeouts
+    const imagePreloadPromise = Promise.all(CRITICAL_IMAGES.map(preloadImage));
+    const fontPreloadPromise = preloadFonts();
+
+    Promise.all([imagePreloadPromise, fontPreloadPromise]).then(() => {
+      if (!isMounted) return;
+      criticalReady = true;
+      checkReadiness();
     });
 
-    // 4. Smooth progress easing across MIN_DISPLAY_MS
+    // 2. Smooth progress easing across MIN_DISPLAY_MS (0% -> 98%)
     const startTime = Date.now();
-    let animFrame: number;
 
     const tick = () => {
+      if (!isMounted || isRevealing) return;
+
       const elapsed = Date.now() - startTime;
       const t = Math.min(elapsed / MIN_DISPLAY_MS, 1);
       // Cubic ease-out
       const eased = 1 - Math.pow(1 - t, 3);
       const currentPct = Math.min(Math.round(eased * 98), 98);
+
       setProgress(currentPct);
 
       if (currentPct < 25) {
@@ -151,38 +197,31 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
 
     animFrame = requestAnimationFrame(tick);
 
-    // Minimum display timer
-    const minTimer = setTimeout(() => {
-      timerFired.current = true;
-      tryReveal();
+    // 3. Minimum display timer
+    minTimer = setTimeout(() => {
+      if (!isMounted) return;
+      minTimeElapsed = true;
+      checkReadiness();
     }, MIN_DISPLAY_MS);
 
-    // Safety fallback timer to prevent infinite loading
-    const safetyTimer = setTimeout(() => {
-      criticalReady.current = true;
-      timerFired.current = true;
-      tryReveal();
+    // 4. Maximum safety fallback: unconditionally trigger reveal if anything hung
+    safetyTimer = setTimeout(() => {
+      if (!isMounted) return;
+      criticalReady = true;
+      minTimeElapsed = true;
+      triggerReveal();
     }, MAX_WAIT_MS);
 
     return () => {
-      cancelAnimationFrame(animFrame);
-      clearTimeout(minTimer);
-      clearTimeout(safetyTimer);
+      isMounted = false;
+      if (animFrame !== null) cancelAnimationFrame(animFrame);
+      if (minTimer !== null) clearTimeout(minTimer);
+      if (safetyTimer !== null) clearTimeout(safetyTimer);
+      if (holdTimer !== null) clearTimeout(holdTimer);
+      if (revealTimer !== null) clearTimeout(revealTimer);
       document.body.style.overflow = originalOverflow;
     };
-  }, [phase, tryReveal]);
-
-  // Transition from revealing to done
-  useEffect(() => {
-    if (phase !== "revealing") return;
-    document.body.style.overflow = "";
-
-    const timer = setTimeout(() => {
-      setPhase("done");
-    }, 700);
-
-    return () => clearTimeout(timer);
-  }, [phase]);
+  }, []); // Run ONCE on mount
 
   return (
     <InitialLoaderContext.Provider
