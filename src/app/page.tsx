@@ -9,7 +9,7 @@ import { PersonSchema } from "@/components/schema/person-schema";
 import { Metadata } from 'next';
 import { AgeCounter } from "@/components/age-counter";
 import { FlipAvatar } from "@/components/flip-avatar";
-import { VisitorCounter, BirthdayFireworks, BirthdayHat, GitHubCalendarSection, XHoverCard, ScrollRail, TechStackSection, ProjectsSection } from "@/components/lazy-client";
+import { VisitorTracker, VisitorCounter, BirthdayFireworks, BirthdayHat, GitHubCalendarSection, XHoverCard, ScrollRail, TechStackSection, ProjectsSection } from "@/components/lazy-client";
 import { SocialGlowLink } from "@/components/social-glow-link";
 import { DecryptedText } from "@/components/decrypted-text";
 import { StarBorder } from "@/components/ui/star-border";
@@ -56,6 +56,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
+      <VisitorTracker />
       <BirthdayFireworks />
       <ScrollRail
         chapters={[

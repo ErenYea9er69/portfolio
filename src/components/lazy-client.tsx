@@ -9,6 +9,15 @@ export const VisitorCounter = dynamic(
   { ssr: false }
 );
 
+export function VisitorTracker() {
+  React.useEffect(() => {
+    import("@/lib/visitor-tracker").then((mod) => {
+      mod.trackVisitor();
+    });
+  }, []);
+  return null;
+}
+
 const DynamicBirthdayFireworks = dynamic(
   () => import("@/components/birthday-fireworks").then((mod) => mod.BirthdayFireworks),
   { ssr: false }

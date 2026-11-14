@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { neon } from '@neondatabase/serverless';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-const COOKIE_NAME = 'visitor_counted';
-const COOKIE_MAX_AGE = 60 * 60 * 24; // 24 hours
+const COOKIE_NAME = 'site_visitor_session_v3';
+const COOKIE_MAX_AGE = 60 * 3; // 3-minute session cooldown
 const BASELINE_VISITORS = 290;
 
 function getDb() {
@@ -18,20 +19,40 @@ function getDb() {
   return neon(databaseUrl);
 }
 
+function setNoCacheHeaders(response: NextResponse) {
+  response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  response.headers.set('CDN-Cache-Control', 'no-store');
+  response.headers.set('Vercel-CDN-Cache-Control', 'no-store');
+  response.headers.set('Pragma', 'no-cache');
+  response.headers.set('Expires', '0');
+  return response;
+}
+
+function clearLegacyCookies(response: NextResponse) {
+  // Clear any legacy 24-hour cookies that might be blocking test devices
+  response.cookies.delete('visitor_counted');
+  response.cookies.delete('visitor_session');
+  response.cookies.delete('site_visitor_session');
+  response.cookies.delete('site_visitor_session_v2');
+  return response;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const sql = getDb();
     if (!sql) {
-      // Graceful fallback to baseline if environment variable is not yet applied
-      return NextResponse.json({
+      const fallbackResponse = NextResponse.json({
         count: BASELINE_VISITORS,
         incremented: false,
         fallback: true,
         warning: 'DATABASE_URL / POSTGRES_URL not configured in environment',
       });
+      clearLegacyCookies(fallbackResponse);
+      return setNoCacheHeaders(fallbackResponse);
     }
 
-    const alreadyCounted = request.cookies.get(COOKIE_NAME)?.value === 'true';
+    const forceIncrement = request.nextUrl.searchParams.get('force') === '1';
+    const alreadyCounted = !forceIncrement && request.cookies.get(COOKIE_NAME)?.value === 'true';
 
     let rows: any;
     if (alreadyCounted) {
@@ -51,15 +72,14 @@ export async function GET(request: NextRequest) {
         `;
       }
 
-      let currentCount = rows[0]?.count ? Number(rows[0].count) : 0;
+      let currentCount = rows[0]?.count ? Number(rows[0].count) : BASELINE_VISITORS;
       if (currentCount < BASELINE_VISITORS) {
-        // Ensure baseline 290 is established in database
         try {
           const updateRows = await sql`
             INSERT INTO site_stats (key, count)
             VALUES ('visitors', ${BASELINE_VISITORS})
             ON CONFLICT (key)
-            DO UPDATE SET count = GREATEST(site_stats.count, ${BASELINE_VISITORS})
+            DO UPDATE SET count = GREATEST(COALESCE(site_stats.count, ${BASELINE_VISITORS}), ${BASELINE_VISITORS})
             RETURNING count;
           `;
           currentCount = updateRows[0]?.count ? Number(updateRows[0].count) : BASELINE_VISITORS;
@@ -68,16 +88,18 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      return NextResponse.json({ count: currentCount, incremented: false });
+      const response = NextResponse.json({ count: currentCount, incremented: false });
+      clearLegacyCookies(response);
+      return setNoCacheHeaders(response);
     }
 
-    // New visitor: increment from at least BASELINE_VISITORS
+    // New visitor session: increment count
     try {
       rows = await sql`
         INSERT INTO site_stats (key, count)
         VALUES ('visitors', ${BASELINE_VISITORS + 1})
         ON CONFLICT (key)
-        DO UPDATE SET count = GREATEST(site_stats.count + 1, ${BASELINE_VISITORS + 1})
+        DO UPDATE SET count = GREATEST(COALESCE(site_stats.count, ${BASELINE_VISITORS}) + 1, ${BASELINE_VISITORS + 1})
         RETURNING count;
       `;
     } catch {
@@ -91,7 +113,7 @@ export async function GET(request: NextRequest) {
         INSERT INTO site_stats (key, count)
         VALUES ('visitors', ${BASELINE_VISITORS + 1})
         ON CONFLICT (key)
-        DO UPDATE SET count = GREATEST(site_stats.count + 1, ${BASELINE_VISITORS + 1})
+        DO UPDATE SET count = GREATEST(COALESCE(site_stats.count, ${BASELINE_VISITORS}) + 1, ${BASELINE_VISITORS + 1})
         RETURNING count;
       `;
     }
@@ -107,15 +129,17 @@ export async function GET(request: NextRequest) {
       path: '/',
     });
 
-    return response;
+    clearLegacyCookies(response);
+    return setNoCacheHeaders(response);
   } catch (error) {
     console.error('Visitor count error:', error);
-    // Return baseline count on connection / cold start error so UI never breaks
-    return NextResponse.json({
+    const errorResponse = NextResponse.json({
       count: BASELINE_VISITORS,
       incremented: false,
       fallback: true,
       error: 'Database connection failed',
     });
+    clearLegacyCookies(errorResponse);
+    return setNoCacheHeaders(errorResponse);
   }
 }
