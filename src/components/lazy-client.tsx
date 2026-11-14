@@ -87,7 +87,7 @@ function useLazySection(ref: React.RefObject<HTMLDivElement | null>, anchorKeywo
           observer.disconnect();
         }
       },
-      { rootMargin: "500px" }
+      { rootMargin: "800px" }
     );
 
     observer.observe(el);
@@ -177,6 +177,7 @@ export function TechStackSection() {
 const DynamicProjectsSection = dynamic(
   () => import("@/components/projects-section").then((mod) => mod.ProjectsSection),
   {
+    ssr: false,
     loading: () => (
       <div className="w-full min-h-[480px] rounded-2xl border border-border/40 bg-muted/20 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
         Loading projects...

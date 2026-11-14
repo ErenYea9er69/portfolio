@@ -182,7 +182,7 @@ export default function Page() {
         </section>
 
         {/* ─── FEATURED PROJECTS ─── */}
-        <section id="projects">
+        <section id="projects" className="scroll-mt-20 sm:scroll-mt-24">
           <ProjectsSection />
         </section>
 
