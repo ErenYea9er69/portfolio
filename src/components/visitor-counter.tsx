@@ -11,21 +11,22 @@ function getOrdinalSuffix(n: number): string {
 }
 
 const SESSION_COUNT_KEY = 'site_visitor_count_cache';
+const BASELINE_COUNT = 290;
 
 export default function VisitorCounter() {
-  const [count, setCount] = useState<number | null>(() => {
+  const [count, setCount] = useState<number>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const cached = sessionStorage.getItem(SESSION_COUNT_KEY);
+        const cached = sessionStorage.getItem(SESSION_COUNT_KEY) || localStorage.getItem(SESSION_COUNT_KEY);
         if (cached) {
           const parsed = Number(cached);
-          if (!isNaN(parsed) && parsed > 0) return parsed;
+          if (!isNaN(parsed) && parsed > 0) return Math.max(parsed, BASELINE_COUNT);
         }
       } catch {}
     }
-    return null;
+    return BASELINE_COUNT;
   });
-  const [isLoading, setIsLoading] = useState(() => count === null);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const fetchedRef = useRef(false);
 
@@ -33,8 +34,9 @@ export default function VisitorCounter() {
     const el = containerRef.current;
     if (!el) return;
 
+    // Accommodate Neon serverless cold start latency (up to 10s)
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     const fetchVisitorCount = async () => {
       if (fetchedRef.current) return;
@@ -49,10 +51,12 @@ export default function VisitorCounter() {
 
         if (response.ok) {
           const data = await response.json();
-          if (typeof data.count === 'number') {
-            setCount(data.count);
+          if (typeof data.count === 'number' && data.count > 0) {
+            const resolvedCount = Math.max(data.count, BASELINE_COUNT);
+            setCount(resolvedCount);
             try {
-              sessionStorage.setItem(SESSION_COUNT_KEY, String(data.count));
+              sessionStorage.setItem(SESSION_COUNT_KEY, String(resolvedCount));
+              localStorage.setItem(SESSION_COUNT_KEY, String(resolvedCount));
             } catch {}
           }
         }
@@ -61,7 +65,6 @@ export default function VisitorCounter() {
           console.error('Error fetching visitor count:', error);
         }
       } finally {
-        setIsLoading(false);
         clearTimeout(timeoutId);
       }
     };
@@ -92,16 +95,6 @@ export default function VisitorCounter() {
       controller.abort();
     };
   }, []);
-
-  // Show placeholder until mounted or loaded
-  if (isLoading || count === null || count <= 0) {
-    return (
-      <div ref={containerRef} className="text-sm text-muted-foreground flex items-center gap-2">
-        <Eye className="size-4" />
-        <span className="opacity-50">{isLoading ? "Loading..." : "Visitors"}</span>
-      </div>
-    );
-  }
 
   return (
     <div ref={containerRef}>
