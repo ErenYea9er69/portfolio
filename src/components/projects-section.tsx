@@ -20,20 +20,15 @@ const LANDING_PROJECTS = DATA.projects.filter((p) => Boolean(p.image)).slice(0, 
 
 export function ProjectsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const pair1Ref = useRef<HTMLDivElement>(null);
   const pair2Ref = useRef<HTMLDivElement>(null);
-  const card0Ref = useRef<HTMLDivElement>(null);
-  const card1Ref = useRef<HTMLDivElement>(null);
-  const card2Ref = useRef<HTMLDivElement>(null);
-  const card3Ref = useRef<HTMLDivElement>(null);
 
   const [activePair, setActivePair] = useState<0 | 1>(0);
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
-  // Sync stage min-height so absolute overlay never clips or causes layout shift
-  const updateStageHeight = useCallback(() => {
+  // Measure and synchronize stage min-height so absolute overlay never clips or causes layout shift
+  const syncStageHeight = useCallback(() => {
     if (!stageRef.current) return;
     if (window.innerWidth < 768) {
       stageRef.current.style.minHeight = "";
@@ -53,37 +48,34 @@ export function ProjectsSection() {
 
       const mm = gsap.matchMedia();
 
-      // Desktop & large tablet with adequate viewport height: enable pinned scrollytelling
+      // Desktop & large tablet (>= 768px wide and >= 600px tall)
+      // Uses CSS sticky for rock-solid zero-bleed pinning, and GSAP scrollTrigger scrub for the liquid transition
       mm.add("(min-width: 768px) and (min-height: 600px)", () => {
-        // Measure initial stage height
-        updateStageHeight();
+        syncStageHeight();
 
-        // 1. Initial visual states
-        gsap.set(pair1Ref.current, { autoAlpha: 1, pointerEvents: "auto" });
-        gsap.set(pair2Ref.current, { autoAlpha: 0, pointerEvents: "none" });
-        gsap.set([card0Ref.current, card1Ref.current], {
+        // 1. Initial visual states: Pair 1 visible & active, Pair 2 hidden & inactive
+        gsap.set(pair1Ref.current, {
+          autoAlpha: 1,
           y: 0,
           scale: 1,
-          autoAlpha: 1,
+          pointerEvents: "auto",
           force3D: true,
         });
-        gsap.set([card2Ref.current, card3Ref.current], {
-          y: 28,
-          scale: 0.96,
+        gsap.set(pair2Ref.current, {
           autoAlpha: 0,
+          y: 28,
+          scale: 0.97,
+          pointerEvents: "none",
           force3D: true,
         });
 
-        // 2. Timeline with ScrollTrigger pin & scrub
+        // 2. Timeline connected directly to container scroll progress
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
-            pin: pinRef.current,
-            start: "top 72px",
-            end: "+=1150",
-            scrub: 0.8,
-            anticipatePin: 1,
-            pinSpacing: true,
+            start: "top 80px",
+            end: "bottom bottom",
+            scrub: 0.6,
             snap: {
               snapTo: [0, 1],
               duration: { min: 0.2, max: 0.4 },
@@ -95,91 +87,55 @@ export function ProjectsSection() {
               setActivePair((curr) => (curr !== next ? next : curr));
             },
             onRefresh: () => {
-              updateStageHeight();
+              syncStageHeight();
             },
           },
         });
 
-        scrollTriggerRef.current = tl.scrollTrigger || null;
+        // ── Timeline Choreography (duration normalized across container scroll distance) ──
+        // 0.00 - 0.22: Hold Pair 1 (User enters section and observes first pair at rest)
+        // 0.22 - 0.65: Pair 1 smoothly transitions out (floats up subtly, scales to 0.97, fades)
+        // 0.50: Midpoint pointerEvents swap so newly visible cards become immediately interactive
+        // 0.42 - 0.82: Pair 2 smoothly transitions in (floats in from y: 28 to 0, scales to 1.0, fades in)
+        // 0.82 - 1.00: Hold Pair 2 (User observes second pair at rest)
 
-        // ── Choreographed Timeline ──
-        // 0.00 - 0.35: Hold Pair 1 (User observes first pair at rest)
-        // 0.35 - 1.15: Smooth cross-transition between Pair 1 and Pair 2
-        // 1.45 - 1.95: Hold Pair 2 (User observes second pair at rest)
-
-        // Pair 1 Exit (Card 0 leads, Card 1 follows with slight stagger)
+        // Exit Pair 1
         tl.to(
-          card0Ref.current,
+          pair1Ref.current,
           {
-            y: -28,
-            scale: 0.96,
             autoAlpha: 0,
-            duration: 0.68,
+            y: -28,
+            scale: 0.97,
+            duration: 0.45,
             ease: "power2.inOut",
           },
-          0.35
+          0.22
         );
+
+        // Swap pointer events at midpoint
+        tl.set(pair1Ref.current, { pointerEvents: "none" }, 0.5);
+        tl.set(pair2Ref.current, { pointerEvents: "auto" }, 0.5);
+
+        // Enter Pair 2
         tl.to(
-          card1Ref.current,
+          pair2Ref.current,
           {
-            y: -28,
-            scale: 0.96,
-            autoAlpha: 0,
-            duration: 0.68,
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.45,
             ease: "power2.inOut",
           },
           0.42
         );
 
-        // Midpoint pointerEvents swap so active cards receive clicks/hover
-        tl.set(pair1Ref.current, { pointerEvents: "none" }, 0.85);
-        tl.set(pair2Ref.current, { pointerEvents: "auto" }, 0.85);
-
-        // Pair 2 Entrance (Card 2 enters, Card 3 follows with slight stagger)
-        tl.to(
-          card2Ref.current,
-          {
-            y: 0,
-            scale: 1,
-            autoAlpha: 1,
-            duration: 0.68,
-            ease: "power2.inOut",
-          },
-          0.68
-        );
-        tl.to(
-          card3Ref.current,
-          {
-            y: 0,
-            scale: 1,
-            autoAlpha: 1,
-            duration: 0.68,
-            ease: "power2.inOut",
-          },
-          0.75
-        );
-
         // Buffer holding Pair 2 comfortably in place before unpinning
-        tl.to({}, { duration: 0.45 }, 1.5);
-
-        return () => {
-          scrollTriggerRef.current = null;
-        };
+        tl.to({}, { duration: 0.18 }, 0.82);
       });
 
-      // Mobile / compact screens: Clean fallback without scroll-trapping
+      // Mobile / compact screens fallback: Natural vertical flow without pinning or scroll trap
       mm.add("(max-width: 767px), (max-height: 599px)", () => {
-        gsap.set(
-          [
-            pair1Ref.current,
-            pair2Ref.current,
-            card0Ref.current,
-            card1Ref.current,
-            card2Ref.current,
-            card3Ref.current,
-          ],
-          { clearProps: "all" }
-        );
+        gsap.set([pair1Ref.current, pair2Ref.current], { clearProps: "all" });
         if (stageRef.current) {
           stageRef.current.style.minHeight = "";
         }
@@ -192,28 +148,38 @@ export function ProjectsSection() {
     { scope: containerRef }
   );
 
-  // Re-measure on window resize and image load
+  // Re-measure on window resize, image load, and after short delays for font/asset hydration
   useEffect(() => {
-    const handleResize = () => {
-      updateStageHeight();
+    const handleRefresh = () => {
+      syncStageHeight();
       ScrollTrigger.refresh();
     };
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("load", handleResize);
+    window.addEventListener("resize", handleRefresh);
+    window.addEventListener("load", handleRefresh);
+    const t1 = setTimeout(handleRefresh, 100);
+    const t2 = setTimeout(handleRefresh, 500);
     return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("load", handleResize);
+      window.removeEventListener("resize", handleRefresh);
+      window.removeEventListener("load", handleRefresh);
+      clearTimeout(t1);
+      clearTimeout(t2);
     };
-  }, [updateStageHeight]);
+  }, [syncStageHeight]);
 
   // Clickable indicator allows jumping smoothly between pairs
   const scrollToPair = useCallback((targetIndex: 0 | 1) => {
-    const st = scrollTriggerRef.current;
-    if (!st) return;
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    const rect = container.getBoundingClientRect();
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const containerTop = rect.top + scrollTop;
+    const scrollableDistance = container.offsetHeight - window.innerHeight + 80;
+
     const targetY =
       targetIndex === 0
-        ? st.start + 2
-        : st.start + (st.end - st.start) * 0.88;
+        ? containerTop - 70
+        : containerTop - 70 + Math.max(0, scrollableDistance * 0.9);
+
     window.scrollTo({
       top: targetY,
       behavior: "smooth",
@@ -221,9 +187,15 @@ export function ProjectsSection() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full">
-      {/* Pinned Viewport Container */}
-      <div ref={pinRef} className="relative w-full flex min-h-0 flex-col gap-y-6">
+    <div
+      ref={containerRef}
+      className="relative w-full md:h-[220vh]"
+    >
+      {/* Pinned / Sticky Viewport Presentation Container */}
+      <div
+        ref={stickyRef}
+        className="w-full flex min-h-0 flex-col gap-y-6 md:sticky md:top-20 z-10"
+      >
         {/* Header section with Scrollytelling Pair Pill */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <BlurFade delay={BLUR_FADE_DELAY * 11}>
@@ -258,7 +230,7 @@ export function ProjectsSection() {
                   aria-selected={activePair === 0}
                   aria-label="View first pair of projects"
                   className={cn(
-                    "px-2 py-0.5 rounded-full transition-all duration-200 cursor-pointer font-medium",
+                    "px-2.5 py-0.5 rounded-full transition-all duration-200 cursor-pointer font-medium",
                     activePair === 0
                       ? "bg-foreground text-background shadow-xs font-semibold"
                       : "text-muted-foreground hover:text-foreground"
@@ -274,7 +246,7 @@ export function ProjectsSection() {
                   aria-selected={activePair === 1}
                   aria-label="View second pair of projects"
                   className={cn(
-                    "px-2 py-0.5 rounded-full transition-all duration-200 cursor-pointer font-medium",
+                    "px-2.5 py-0.5 rounded-full transition-all duration-200 cursor-pointer font-medium",
                     activePair === 1
                       ? "bg-foreground text-background shadow-xs font-semibold"
                       : "text-muted-foreground hover:text-foreground"
@@ -302,16 +274,16 @@ export function ProjectsSection() {
           {/* Pair 1: Projects 0 & 1 */}
           <div
             ref={pair1Ref}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full items-stretch"
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full items-stretch will-change-transform"
           >
-            <div ref={card0Ref} className="h-full flex flex-col will-change-transform">
+            <div className="h-full flex flex-col">
               <ProjectCard
                 project={LANDING_PROJECTS[0] as any}
                 index={0}
                 enableInViewAnimation={false}
               />
             </div>
-            <div ref={card1Ref} className="h-full flex flex-col will-change-transform">
+            <div className="h-full flex flex-col">
               <ProjectCard
                 project={LANDING_PROJECTS[1] as any}
                 index={1}
@@ -323,16 +295,16 @@ export function ProjectsSection() {
           {/* Pair 2: Projects 2 & 3 (Absolute overlay on desktop, vertical flow on mobile) */}
           <div
             ref={pair2Ref}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full items-stretch md:absolute md:inset-0 pt-4 md:pt-0"
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full items-stretch md:absolute md:inset-0 pt-4 md:pt-0 will-change-transform"
           >
-            <div ref={card2Ref} className="h-full flex flex-col will-change-transform">
+            <div className="h-full flex flex-col">
               <ProjectCard
                 project={LANDING_PROJECTS[2] as any}
                 index={2}
                 enableInViewAnimation={false}
               />
             </div>
-            <div ref={card3Ref} className="h-full flex flex-col will-change-transform">
+            <div className="h-full flex flex-col">
               <ProjectCard
                 project={LANDING_PROJECTS[3] as any}
                 index={3}
