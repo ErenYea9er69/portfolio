@@ -61,7 +61,6 @@ export function AgeCounter() {
 
   return (
     <div className="text-xs sm:text-sm font-medium text-muted-foreground min-h-[20px] flex items-center gap-1.5 select-none">
-      <span className="inline-block size-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
       <span className="tabular-nums text-foreground font-semibold">
         {years}
       </span>

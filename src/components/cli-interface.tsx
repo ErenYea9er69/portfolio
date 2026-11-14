@@ -339,7 +339,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
         </div>
 
         {/* Mobile: Sleek, compact identity card that does not crowd the small screen */}
-        <div className="flex md:hidden items-center justify-between p-3 rounded-xl bg-zinc-950/90 border border-zinc-800/90 shadow-sm select-none">
+        <div className="flex md:hidden items-center p-3 rounded-xl bg-zinc-950/90 border border-zinc-800/90 shadow-sm select-none">
           <div className="flex items-center gap-2.5">
             <div className="size-9 rounded-lg bg-zinc-500/15 border border-zinc-500/30 flex items-center justify-center text-zinc-300 font-bold font-mono text-xs">
               RP
@@ -353,10 +353,6 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
                 Tunisia • Full Stack Engineer
               </div>
             </div>
-          </div>
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-zinc-500/10 border border-zinc-500/20">
-            <span className="size-1.5 rounded-full bg-zinc-400 animate-pulse" />
-            <span className="text-[9px] text-zinc-400 font-mono font-medium">ONLINE</span>
           </div>
         </div>
 
@@ -501,7 +497,7 @@ export function CliInterface({ onGuiCommand }: CliInterfaceProps) {
       <header className="shrink-0 relative z-20 flex items-center justify-between px-3 sm:px-4 py-2.5 border-b border-zinc-800/80 bg-zinc-950/95 backdrop-blur-md">
         <div className="flex items-center gap-2.5">
           <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-zinc-400 animate-pulse" />
+            <span className="size-2 rounded-full bg-zinc-500/80" />
             <span className="text-xs font-semibold tracking-wide text-zinc-200">
               rayen@portfolio: ~
             </span>

@@ -112,7 +112,7 @@ export function ProjectCard({
               src={project.image}
               alt={project.title}
               fill
-              priority={index < 4}
+              priority={false}
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover object-top transition-transform duration-500 ease-out group-hover/card:scale-105"
             />
@@ -122,30 +122,24 @@ export function ProjectCard({
         ) : (
           <ProjectVisualArt slug={project.slug || project.title.toLowerCase()} isHovered={isHovered} />
         )}
-
-        {/* Category & Status Overlay Floating Pills (Quiet, Calm) */}
-        <div className="absolute top-2.5 sm:top-3 inset-x-2.5 sm:inset-x-3.5 flex items-center justify-between pointer-events-none z-10">
-          <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium tracking-wider uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
-            {project.category || "Project"}
-          </span>
-
-          {websiteLink ? (
-            <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-foreground shadow-xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500" />
-              Live Demo
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono font-medium uppercase bg-background/95 dark:bg-zinc-900/95 md:backdrop-blur-md border border-border/60 text-muted-foreground shadow-xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
-              Source Only
-            </span>
-          )}
-        </div>
       </div>
 
       {/* ─── Content Body ─── */}
       <div className="flex flex-col flex-1 p-4 sm:p-6 z-10">
+        {/* Category & Date Metadata */}
+        <div className="flex items-center justify-between gap-2 mb-1">
+          {project.category && (
+            <span className="text-xs font-medium text-muted-foreground">
+              {project.category}
+            </span>
+          )}
+          {project.dates && (
+            <span className="text-[11px] font-mono text-muted-foreground/70 shrink-0">
+              {project.dates}
+            </span>
+          )}
+        </div>
+
         {/* Title & External Link */}
         <div className="flex items-start justify-between gap-3 mb-1.5">
           <a
@@ -157,11 +151,6 @@ export function ProjectCard({
             <span>{project.title}</span>
             <ArrowUpRight className="size-4 opacity-40 transition-all duration-200 group-hover/title:opacity-100 group-hover/title:translate-x-0.5 group-hover/title:-translate-y-0.5" />
           </a>
-          {project.dates && (
-            <span className="text-[10px] sm:text-[11px] font-mono text-muted-foreground/70 bg-muted/40 px-2 py-0.5 rounded-md shrink-0">
-              {project.dates}
-            </span>
-          )}
         </div>
 
         {/* Tagline */}

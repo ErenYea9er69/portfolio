@@ -27,10 +27,10 @@ export function ProjectsSection() {
 
   const [activePair, setActivePair] = useState<0 | 1>(0);
 
-  // Measure and synchronize stage min-height so absolute overlay never clips or causes layout shift
+  // Sync stage min-height on desktop resize without forced synchronous layout on initial load
   const syncStageHeight = useCallback(() => {
     if (!stageRef.current) return;
-    if (window.innerWidth < 768) {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
       stageRef.current.style.minHeight = "";
       return;
     }
@@ -49,27 +49,9 @@ export function ProjectsSection() {
       const mm = gsap.matchMedia();
 
       // Desktop & large tablet (>= 768px wide and >= 600px tall)
-      // Uses CSS sticky for rock-solid zero-bleed pinning, and GSAP scrollTrigger scrub for the liquid transition
+      // Uses CSS sticky for zero-bleed pinning, and lightweight GSAP scroll scrub for the transition
       mm.add("(min-width: 768px) and (min-height: 600px)", () => {
-        syncStageHeight();
-
-        // 1. Initial visual states: Pair 1 visible & active, Pair 2 hidden & inactive
-        gsap.set(pair1Ref.current, {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          pointerEvents: "auto",
-          force3D: true,
-        });
-        gsap.set(pair2Ref.current, {
-          autoAlpha: 0,
-          y: 28,
-          scale: 0.97,
-          pointerEvents: "none",
-          force3D: true,
-        });
-
-        // 2. Timeline connected directly to container scroll progress
+        // Timeline connected directly to container scroll progress
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
@@ -85,9 +67,6 @@ export function ProjectsSection() {
             onUpdate: (self) => {
               const next = self.progress >= 0.5 ? 1 : 0;
               setActivePair((curr) => (curr !== next ? next : curr));
-            },
-            onRefresh: () => {
-              syncStageHeight();
             },
           },
         });
@@ -117,8 +96,13 @@ export function ProjectsSection() {
         tl.set(pair2Ref.current, { pointerEvents: "auto" }, 0.5);
 
         // Enter Pair 2
-        tl.to(
+        tl.fromTo(
           pair2Ref.current,
+          {
+            autoAlpha: 0,
+            y: 28,
+            scale: 0.97,
+          },
           {
             autoAlpha: 1,
             y: 0,
@@ -148,21 +132,20 @@ export function ProjectsSection() {
     { scope: containerRef }
   );
 
-  // Re-measure on window resize, image load, and after short delays for font/asset hydration
+  // Passive, debounced resize listener: zero overhead on page load
   useEffect(() => {
-    const handleRefresh = () => {
-      syncStageHeight();
-      ScrollTrigger.refresh();
+    let timeoutId: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        syncStageHeight();
+        ScrollTrigger.refresh();
+      }, 150);
     };
-    window.addEventListener("resize", handleRefresh);
-    window.addEventListener("load", handleRefresh);
-    const t1 = setTimeout(handleRefresh, 100);
-    const t2 = setTimeout(handleRefresh, 500);
+    window.addEventListener("resize", handleResize, { passive: true });
     return () => {
-      window.removeEventListener("resize", handleRefresh);
-      window.removeEventListener("load", handleRefresh);
-      clearTimeout(t1);
-      clearTimeout(t2);
+      clearTimeout(timeoutId);
+      window.removeEventListener("resize", handleResize);
     };
   }, [syncStageHeight]);
 
@@ -212,47 +195,42 @@ export function ProjectsSection() {
                   encryptedClassName="text-zinc-500/80 dark:text-zinc-400/80 font-mono"
                 />
               </h2>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 dark:bg-muted/40 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/70">
-                <span className="size-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
-                {DATA.projects.length} Shipped
-              </span>
 
-              {/* Scrollytelling Presentation Indicator (Desktop) */}
+              {/* Project Pair Tab Control (Desktop) */}
               <div
-                className="hidden md:inline-flex items-center gap-1 p-0.5 rounded-full bg-muted/70 dark:bg-zinc-900/70 border border-border/70 text-[10px] font-mono select-none"
+                className="hidden md:inline-flex items-center p-0.5 rounded-lg bg-muted/60 dark:bg-zinc-900/60 border border-border/60 text-xs select-none"
                 role="tablist"
-                aria-label="Project presentation sets"
+                aria-label="Featured project pairs"
               >
                 <button
                   type="button"
                   role="tab"
                   onClick={() => scrollToPair(0)}
                   aria-selected={activePair === 0}
-                  aria-label="View first pair of projects"
+                  aria-label="View projects 1 and 2"
                   className={cn(
-                    "px-2.5 py-0.5 rounded-full transition-all duration-200 cursor-pointer font-medium",
+                    "px-2.5 py-1 rounded-md transition-all duration-200 cursor-pointer font-medium text-xs",
                     activePair === 0
-                      ? "bg-foreground text-background shadow-xs font-semibold"
+                      ? "bg-background text-foreground shadow-xs font-semibold"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  01
+                  1 – 2
                 </button>
-                <span className="text-muted-foreground/30" aria-hidden="true">•</span>
                 <button
                   type="button"
                   role="tab"
                   onClick={() => scrollToPair(1)}
                   aria-selected={activePair === 1}
-                  aria-label="View second pair of projects"
+                  aria-label="View projects 3 and 4"
                   className={cn(
-                    "px-2.5 py-0.5 rounded-full transition-all duration-200 cursor-pointer font-medium",
+                    "px-2.5 py-1 rounded-md transition-all duration-200 cursor-pointer font-medium text-xs",
                     activePair === 1
-                      ? "bg-foreground text-background shadow-xs font-semibold"
+                      ? "bg-background text-foreground shadow-xs font-semibold"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  02
+                  3 – 4
                 </button>
               </div>
             </div>
@@ -274,7 +252,8 @@ export function ProjectsSection() {
           {/* Pair 1: Projects 0 & 1 */}
           <div
             ref={pair1Ref}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full items-stretch will-change-transform"
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full items-stretch"
+            style={{ opacity: 1, pointerEvents: "auto" }}
           >
             <div className="h-full flex flex-col">
               <ProjectCard
@@ -295,7 +274,8 @@ export function ProjectsSection() {
           {/* Pair 2: Projects 2 & 3 (Absolute overlay on desktop, vertical flow on mobile) */}
           <div
             ref={pair2Ref}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full items-stretch md:absolute md:inset-0 pt-4 md:pt-0 will-change-transform"
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full items-stretch md:absolute md:inset-0 pt-4 md:pt-0"
+            style={{ opacity: 0, pointerEvents: "none" }}
           >
             <div className="h-full flex flex-col">
               <ProjectCard

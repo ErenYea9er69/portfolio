@@ -87,7 +87,7 @@ function useLazySection(ref: React.RefObject<HTMLDivElement | null>, anchorKeywo
           observer.disconnect();
         }
       },
-      { rootMargin: "800px" }
+      { rootMargin: "300px" }
     );
 
     observer.observe(el);

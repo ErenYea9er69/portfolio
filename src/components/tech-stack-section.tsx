@@ -53,7 +53,7 @@ export function TechStackSection() {
       {/* Header section */}
       <div className="flex flex-col gap-1.5 sm:flex-row sm:items-end sm:justify-between">
         <BlurFade delay={BLUR_FADE_DELAY * 10}>
-          <div className="flex items-center gap-2">
+          <div className="flex items-baseline gap-2.5">
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               <DecryptedText
                 text="Tech Stack"
@@ -66,9 +66,8 @@ export function TechStackSection() {
                 encryptedClassName="text-zinc-500/80 dark:text-zinc-400/80 font-mono"
               />
             </h2>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 dark:bg-muted/40 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/70">
-              <span className="size-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
-              {DATA.skills.length} Technologies
+            <span className="text-xs text-muted-foreground font-medium">
+              ({DATA.skills.length} technologies)
             </span>
           </div>
         </BlurFade>
@@ -107,15 +106,8 @@ export function TechStackSection() {
                 <span className="relative z-10">
                   {cat.label}
                 </span>
-                <span
-                  className={cn(
-                    "relative z-10 text-[10px] px-1.5 py-0.2 rounded-full tabular-nums transition-colors",
-                    isActive
-                      ? "bg-muted text-foreground font-bold"
-                      : "bg-muted/60 text-muted-foreground"
-                  )}
-                >
-                  {count}
+                <span className="relative z-10 text-[11px] font-mono opacity-60 tabular-nums">
+                  ({count})
                 </span>
               </button>
             );

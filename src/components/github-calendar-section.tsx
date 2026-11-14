@@ -316,10 +316,6 @@ export function GitHubCalendarSection() {
                     <span>@{username}</span>
                     <ArrowUpRight className="h-3.5 w-3.5 opacity-50 group-hover/link:opacity-100 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-all" />
                   </a>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 dark:bg-muted/40 border border-border/70 px-2 py-0.5 text-[10px] font-mono font-medium text-muted-foreground">
-                    <span className="size-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
-                    LIVE FEED
-                  </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   GitHub Open Source Activity
@@ -389,9 +385,8 @@ export function GitHubCalendarSection() {
                 </span>
                 <span className="text-xs font-medium text-muted-foreground">days</span>
               </div>
-              <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground/80">
-                <span className={cn("inline-block h-1.5 w-1.5 rounded-full", currentStreak > 0 ? "bg-orange-500 animate-pulse" : "bg-muted-foreground/50")} />
-                <span className="text-muted-foreground/80">
+              <div className="mt-1 text-[10px] sm:text-[11px] text-muted-foreground/80">
+                <span>
                   {currentStreak > 0 ? "Active streak" : "Ready"}
                 </span>
               </div>
@@ -413,9 +408,8 @@ export function GitHubCalendarSection() {
                 </span>
                 <span className="text-xs font-medium text-muted-foreground">days</span>
               </div>
-              <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground/80">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500" />
-                <span className="text-muted-foreground/80">
+              <div className="mt-1 text-[10px] sm:text-[11px] text-muted-foreground/80">
+                <span>
                   Personal record
                 </span>
               </div>
@@ -466,7 +460,7 @@ export function GitHubCalendarSection() {
                 {/* Matrix Telemetry Top Bar */}
                 <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 mb-4 text-xs">
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <Activity className="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500 animate-pulse" />
+                    <Activity className="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" />
                     <span className="font-semibold text-foreground">{totalContributions.toLocaleString()}</span>
                     <span>
                       contributions in {selectedYear === "last" ? "the past year" : selectedYear}
@@ -477,19 +471,17 @@ export function GitHubCalendarSection() {
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 text-[11px] font-mono">
+                  <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={scrollToLatest}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 hover:bg-muted text-foreground px-2.5 py-1 transition-all border border-border/70 cursor-pointer text-[10px] font-semibold tracking-tight"
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-muted/60 hover:bg-muted text-foreground px-2.5 py-1 transition-all border border-border/70 cursor-pointer text-xs font-medium"
                       title="Jump to Today's contributions"
                     >
-                      <span className="h-1.5 w-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
                       <span>
                         Today ({todayContributions !== null ? `${todayContributions} commits` : "10/09"})
                       </span>
                     </button>
-                    <span className="text-muted-foreground/60 hidden sm:inline">INTERACTIVE MATRIX</span>
                     <span className="text-muted-foreground/60 text-[10px] inline sm:hidden">Swipe ➔</span>
                   </div>
                 </div>

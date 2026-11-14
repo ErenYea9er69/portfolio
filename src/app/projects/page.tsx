@@ -82,10 +82,6 @@ export default function ProjectsPage() {
                 encryptedClassName="text-zinc-500/80 dark:text-zinc-400/80 font-mono"
               />
             </h1>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/80 dark:bg-muted/40 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/70">
-              <span className="size-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-pulse" />
-              {DATA.projects.length} Repositories
-            </span>
           </div>
         </BlurFade>
 
@@ -181,16 +177,16 @@ export default function ProjectsPage() {
                       className="absolute inset-0 rounded-xl bg-background/95 dark:bg-card/95 border border-border/70 shadow-sm backdrop-blur-lg"
                     />
                   )}
-                  <span className="relative z-10">
-                    {category}
-                  </span>
-                  <span
-                    className={cn(
-                      "relative z-10 text-[10px] px-1.5 py-0.2 rounded-full tabular-nums",
-                      isActive ? "bg-muted text-foreground font-bold" : "bg-muted/60 text-muted-foreground"
-                    )}
-                  >
-                    {count}
+                  <span className="relative z-10 flex items-center gap-1.5">
+                    <span>{category}</span>
+                    <span
+                      className={cn(
+                        "text-xs tabular-nums",
+                        isActive ? "text-foreground font-semibold" : "text-muted-foreground"
+                      )}
+                    >
+                      ({count})
+                    </span>
                   </span>
                 </button>
               );
