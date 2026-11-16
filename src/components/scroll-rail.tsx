@@ -17,14 +17,14 @@ import { usePathname } from "next/navigation";
  * for a fixed rail and still leaves room for content.
  */
 
-interface Chapter {
+export interface Chapter {
   /** The label displayed on the rail */
   label: string;
   /** CSS selector for the chapter element (must match a single element) */
   selector: string;
 }
 
-interface ScrollRailProps {
+export interface ScrollRailProps {
   chapters: Chapter[];
   /** "right" (default) or "left" */
   side?: "right" | "left";
@@ -613,14 +613,15 @@ export function ScrollRail({
       wake(api);
     });
 
-    const endScrub = (e: PointerEvent) => {
-      if (!scrub || e.pointerId !== scrub.id) return;
+    const endScrub = (e: Event) => {
+      const pe = e as PointerEvent;
+      if (!scrub || pe.pointerId !== scrub.id) return;
       scrub = null;
       if (!hover) M.g = 0;
       wake(api);
     };
-    grip.addEventListener("pointerup", endScrub as any);
-    grip.addEventListener("pointercancel", endScrub as any);
+    grip.addEventListener("pointerup", endScrub);
+    grip.addEventListener("pointercancel", endScrub);
 
     // ── Observers ──
     const mo = new MutationObserver((ms) => {
@@ -646,7 +647,10 @@ export function ScrollRail({
       ro.observe(document.body);
     }
 
-    (nav as any).__vsSr = api;
+    interface NavWithScrollRail extends HTMLElement {
+      __vsSr?: typeof api;
+    }
+    (nav as NavWithScrollRail).__vsSr = api;
     buildTicks();
 
     // Initialize visual state
@@ -673,7 +677,7 @@ export function ScrollRail({
         delete el.dataset.railLabel;
       });
       nav.innerHTML = "";
-      delete (nav as any).__vsSr;
+      delete (nav as NavWithScrollRail).__vsSr;
     };
   }, [chapters]);
 

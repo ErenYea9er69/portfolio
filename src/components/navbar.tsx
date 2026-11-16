@@ -76,23 +76,15 @@ export default function Navbar() {
     return null;
   }
 
-  const NavTag = isMobile ? "nav" : motion.nav;
-  const navMotionProps = isMobile
-    ? {}
-    : {
-        initial: isMounted ? { y: 0, opacity: 1 } : { y: -20, opacity: 0 },
-        animate: { y: 0, opacity: 1 },
-        exit: { y: -20, opacity: 0 },
-        transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
-      };
-
   return (
     <>
-      {/* ─── Expanded navbar (top of page / always on mobile) ─── */}
       <AnimatePresence>
         {(!isScrolled || isMobile) && (
-          <NavTag
-            {...(navMotionProps as any)}
+          <motion.nav
+            initial={isMobile || isMounted ? { y: 0, opacity: 1 } : { y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={isMobile ? undefined : { y: -20, opacity: 0 }}
+            transition={isMobile ? { duration: 0 } : { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="fixed top-0 left-0 right-0 z-50"
           >
             {/* Generous width container so navbar is well-proportioned and never looks cramped or small */}
@@ -292,7 +284,7 @@ export default function Navbar() {
                 </>
               )}
             </AnimatePresence>
-          </NavTag>
+          </motion.nav>
         )}
       </AnimatePresence>
 

@@ -5,7 +5,6 @@ import BlurFade from "@/components/magicui/blur-fade";
 import Image from "next/image";
 import { ResumeCard } from "@/components/resume-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { PersonSchema } from "@/components/schema/person-schema";
 import { Metadata } from 'next';
 import { AgeCounter } from "@/components/age-counter";
 import { FlipAvatar } from "@/components/flip-avatar";
@@ -69,8 +68,6 @@ export default function Page() {
         ]}
       />
       <main className="flex min-h-[100dvh] flex-col space-y-12 sm:space-y-14">
-        <PersonSchema />
-
         {/* ─── HERO ─── */}
         <section id="hero">
           <div className="mx-auto w-full space-y-8">
@@ -222,7 +219,6 @@ export default function Page() {
                       badges={work.badges}
                       period={work.start ? `${work.start} - ${work.end}` : work.end}
                       description={work.description}
-                      redacted={(work as any).redacted}
                       type="work"
                     />
                   </BlurFade>

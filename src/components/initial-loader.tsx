@@ -135,14 +135,12 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
       setProgress(100);
       setStepLabel("SYSTEM READY");
 
-      // Brief hold at 100% for visual completion
       holdTimer = setTimeout(() => {
         if (!isMounted) return;
         setPhase("revealing");
         setIsLoaded(true);
         document.body.style.overflow = originalOverflow;
 
-        // Transition from revealing to done
         revealTimer = setTimeout(() => {
           if (!isMounted) return;
           setPhase("done");
@@ -156,7 +154,6 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
       }
     };
 
-    // 1. Preload hero avatar & webfonts in parallel with individual resilience timeouts
     const imagePreloadPromise = Promise.all(CRITICAL_IMAGES.map(preloadImage));
     const fontPreloadPromise = preloadFonts();
 
@@ -166,7 +163,6 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
       checkReadiness();
     });
 
-    // 2. Smooth progress easing across MIN_DISPLAY_MS (0% -> 98%)
     const startTime = Date.now();
 
     const tick = () => {
@@ -174,7 +170,6 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
 
       const elapsed = Date.now() - startTime;
       const t = Math.min(elapsed / MIN_DISPLAY_MS, 1);
-      // Cubic ease-out
       const eased = 1 - Math.pow(1 - t, 3);
       const currentPct = Math.min(Math.round(eased * 98), 98);
 
@@ -197,14 +192,12 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
 
     animFrame = requestAnimationFrame(tick);
 
-    // 3. Minimum display timer
     minTimer = setTimeout(() => {
       if (!isMounted) return;
       minTimeElapsed = true;
       checkReadiness();
     }, MIN_DISPLAY_MS);
 
-    // 4. Maximum safety fallback: unconditionally trigger reveal if anything hung
     safetyTimer = setTimeout(() => {
       if (!isMounted) return;
       criticalReady = true;

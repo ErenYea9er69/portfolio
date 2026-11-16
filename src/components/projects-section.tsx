@@ -48,10 +48,7 @@ export function ProjectsSection() {
 
       const mm = gsap.matchMedia();
 
-      // Desktop & large tablet (>= 768px wide and >= 600px tall)
-      // Uses CSS sticky for zero-bleed pinning, and lightweight GSAP scroll scrub for the transition
       mm.add("(min-width: 768px) and (min-height: 600px)", () => {
-        // Timeline connected directly to container scroll progress
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
@@ -71,14 +68,6 @@ export function ProjectsSection() {
           },
         });
 
-        // ── Timeline Choreography (duration normalized across container scroll distance) ──
-        // 0.00 - 0.22: Hold Pair 1 (User enters section and observes first pair at rest)
-        // 0.22 - 0.65: Pair 1 smoothly transitions out (floats up subtly, scales to 0.97, fades)
-        // 0.50: Midpoint pointerEvents swap so newly visible cards become immediately interactive
-        // 0.42 - 0.82: Pair 2 smoothly transitions in (floats in from y: 28 to 0, scales to 1.0, fades in)
-        // 0.82 - 1.00: Hold Pair 2 (User observes second pair at rest)
-
-        // Exit Pair 1
         tl.to(
           pair1Ref.current,
           {
@@ -91,11 +80,9 @@ export function ProjectsSection() {
           0.22
         );
 
-        // Swap pointer events at midpoint
         tl.set(pair1Ref.current, { pointerEvents: "none" }, 0.5);
         tl.set(pair2Ref.current, { pointerEvents: "auto" }, 0.5);
 
-        // Enter Pair 2
         tl.fromTo(
           pair2Ref.current,
           {
@@ -113,11 +100,9 @@ export function ProjectsSection() {
           0.42
         );
 
-        // Buffer holding Pair 2 comfortably in place before unpinning
         tl.to({}, { duration: 0.18 }, 0.82);
       });
 
-      // Mobile / compact screens fallback: Natural vertical flow without pinning or scroll trap
       mm.add("(max-width: 767px), (max-height: 599px)", () => {
         gsap.set([pair1Ref.current, pair2Ref.current], { clearProps: "all" });
         if (stageRef.current) {
@@ -132,7 +117,6 @@ export function ProjectsSection() {
     { scope: containerRef }
   );
 
-  // Passive, debounced resize listener: zero overhead on page load
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     const handleResize = () => {
@@ -149,7 +133,6 @@ export function ProjectsSection() {
     };
   }, [syncStageHeight]);
 
-  // Clickable indicator allows jumping smoothly between pairs
   const scrollToPair = useCallback((targetIndex: 0 | 1) => {
     if (!containerRef.current) return;
     const container = containerRef.current;
@@ -257,14 +240,14 @@ export function ProjectsSection() {
           >
             <div className="h-full flex flex-col">
               <ProjectCard
-                project={LANDING_PROJECTS[0] as any}
+                project={LANDING_PROJECTS[0]}
                 index={0}
                 enableInViewAnimation={false}
               />
             </div>
             <div className="h-full flex flex-col">
               <ProjectCard
-                project={LANDING_PROJECTS[1] as any}
+                project={LANDING_PROJECTS[1]}
                 index={1}
                 enableInViewAnimation={false}
               />
@@ -279,14 +262,14 @@ export function ProjectsSection() {
           >
             <div className="h-full flex flex-col">
               <ProjectCard
-                project={LANDING_PROJECTS[2] as any}
+                project={LANDING_PROJECTS[2]}
                 index={2}
                 enableInViewAnimation={false}
               />
             </div>
             <div className="h-full flex flex-col">
               <ProjectCard
-                project={LANDING_PROJECTS[3] as any}
+                project={LANDING_PROJECTS[3]}
                 index={3}
                 enableInViewAnimation={false}
               />

@@ -30,6 +30,30 @@ export interface ProjectItem {
   video?: string;
 }
 
+function TechBadge({ tech, isHiddenOnMobile = false }: { tech: string; isHiddenOnMobile?: boolean }) {
+  const meta = getTechMeta(tech);
+  const isNext = tech.toLowerCase().includes("next");
+  return (
+    <span
+      className={cn(
+        "items-center gap-1.5 rounded-lg font-medium border select-none transition-colors",
+        isHiddenOnMobile
+          ? "hidden sm:inline-flex px-2.5 py-1 text-[11px]"
+          : "inline-flex px-2 sm:px-2.5 py-0.5 sm:py-1 text-[10px] sm:text-[11px]",
+        isNext
+          ? "bg-zinc-500/10 dark:bg-zinc-400/10 border-zinc-500/20 dark:border-zinc-400/20 text-foreground"
+          : "text-foreground"
+      )}
+      style={!isNext ? { backgroundColor: `${meta.color}15`, borderColor: `${meta.color}35` } : undefined}
+    >
+      <span className="flex shrink-0 items-center justify-center" style={{ color: !isNext ? meta.color : undefined }}>
+        {meta.icon}
+      </span>
+      <span className="text-foreground">{tech}</span>
+    </span>
+  );
+}
+
 export function ProjectCard({
   project,
   index = 0,
@@ -56,22 +80,7 @@ export function ProjectCard({
   const sourceLink = project.links.find((l) => l.type.toLowerCase() === "source")?.href;
   const primaryHref = websiteLink || sourceLink || project.href;
   const isMobile = useIsMobile();
-
-  // Consistent motion.div tag prevents DOM node unmounting / hydration swaps.
-  // Delay is paired per-column ((index % 2) * 0.08) so subsequent scrolled rows animate instantly without artificial lag.
-  const motionProps =
-    isMobile || !enableInViewAnimation
-      ? { initial: false }
-      : {
-          initial: { opacity: 0, y: 16 },
-          whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true, margin: "0px 0px -20px 0px" },
-          transition: {
-            duration: 0.35,
-            delay: (index % 2) * 0.08,
-            ease: [0.22, 1, 0.36, 1],
-          },
-        };
+  const shouldAnimate = !isMobile && enableInViewAnimation;
 
   return (
     <motion.div
@@ -80,12 +89,13 @@ export function ProjectCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileHover={isMobile ? undefined : { y: -4 }}
-      {...(motionProps as any)}
+      initial={shouldAnimate ? { opacity: 0, y: 16 } : false}
+      whileInView={shouldAnimate ? { opacity: 1, y: 0 } : undefined}
+      viewport={shouldAnimate ? { once: true, margin: "0px 0px -20px 0px" } : undefined}
+      transition={shouldAnimate ? { duration: 0.35, delay: (index % 2) * 0.08, ease: [0.22, 1, 0.36, 1] } : undefined}
       className={cn(
         "group/card relative flex flex-col justify-between overflow-hidden rounded-2xl h-full",
-        // Transition scoped to colors/shadow to prevent CSS fighting with Framer Motion transform/opacity
         "transition-[border-color,box-shadow,background-color] duration-300",
-        // Calm, premium liquid glass surface
         "bg-card/95 dark:bg-zinc-950/90 md:bg-card/75 md:dark:bg-zinc-950/70 md:backdrop-blur-xl",
         "border border-border/70 dark:border-white/[0.08]",
         "shadow-xs hover:shadow-md hover:border-foreground/20",
@@ -165,79 +175,18 @@ export function ProjectCard({
           {project.description}
         </p>
 
-        {/* Technology Badges (Curated on Mobile, Full on Desktop) */}
         <div className="flex flex-wrap gap-1.5 mb-4">
-          {project.technologies.slice(0, 4).map((tech) => {
-            const meta = getTechMeta(tech);
-            const isNext = tech.toLowerCase().includes("next");
-            return (
-              <span
-                key={tech}
-                className={cn(
-                  "inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[10px] sm:text-[11px] font-medium border select-none transition-colors",
-                  isNext
-                    ? "bg-zinc-500/10 dark:bg-zinc-400/10 border-zinc-500/20 dark:border-zinc-400/20 text-foreground"
-                    : "text-foreground"
-                )}
-                style={
-                  !isNext
-                    ? {
-                        backgroundColor: `${meta.color}15`,
-                        borderColor: `${meta.color}35`,
-                      }
-                    : undefined
-                }
-              >
-                <span
-                  className="flex shrink-0 items-center justify-center"
-                  style={{
-                    color: !isNext ? meta.color : undefined,
-                  }}
-                >
-                  {meta.icon}
-                </span>
-                <span className="text-foreground">{tech}</span>
-              </span>
-            );
-          })}
+          {project.technologies.slice(0, 4).map((tech) => (
+            <TechBadge key={tech} tech={tech} />
+          ))}
           {project.technologies.length > 4 && (
             <>
               <span className="inline-flex sm:hidden items-center px-2 py-0.5 rounded-lg text-[10px] font-mono text-muted-foreground bg-muted/60 border border-border/60">
                 +{project.technologies.length - 4}
               </span>
-              {project.technologies.slice(4).map((tech) => {
-                const meta = getTechMeta(tech);
-                const isNext = tech.toLowerCase().includes("next");
-                return (
-                  <span
-                    key={tech}
-                    className={cn(
-                      "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium border select-none transition-colors",
-                      isNext
-                        ? "bg-zinc-500/10 dark:bg-zinc-400/10 border-zinc-500/20 dark:border-zinc-400/20 text-foreground"
-                        : "text-foreground"
-                    )}
-                    style={
-                      !isNext
-                        ? {
-                            backgroundColor: `${meta.color}15`,
-                            borderColor: `${meta.color}35`,
-                          }
-                        : undefined
-                    }
-                  >
-                    <span
-                      className="flex shrink-0 items-center justify-center"
-                      style={{
-                        color: !isNext ? meta.color : undefined,
-                      }}
-                    >
-                      {meta.icon}
-                    </span>
-                    <span className="text-foreground">{tech}</span>
-                  </span>
-                );
-              })}
+              {project.technologies.slice(4).map((tech) => (
+                <TechBadge key={tech} tech={tech} isHiddenOnMobile />
+              ))}
             </>
           )}
         </div>

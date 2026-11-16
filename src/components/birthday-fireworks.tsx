@@ -1,16 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { isBirthdayToday } from "@/lib/birthday";
 
-// Module-level guard so the show plays once per full page load, not on every
-// client-side navigation back to the home page within the same session.
 let hasCelebrated = false;
 
-const BIRTHDAY_MONTH = 8; // September (0-indexed)
-const BIRTHDAY_DATE = 16;
-
-const LAUNCH_MS = 12000; // keep launching new rockets for this long
-const MAX_MS = 17000; // hard stop, letting late bursts finish
+const LAUNCH_MS = 12000;
+const MAX_MS = 17000;
 
 const PALETTES = [
   ["#ff6ec7", "#ff9a76", "#fffb96", "#a855f7"],
@@ -29,11 +25,9 @@ export function BirthdayFireworks() {
   const [show, setShow] = useState(false);
   const [opacityOn, setOpacityOn] = useState(false);
 
-  // Decide whether to celebrate after mount (avoids SSR hydration mismatch).
   useEffect(() => {
     if (hasCelebrated) return;
-    const now = new Date();
-    if (now.getMonth() !== BIRTHDAY_MONTH || now.getDate() !== BIRTHDAY_DATE) return;
+    if (!isBirthdayToday()) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     hasCelebrated = true;
     setShow(true);

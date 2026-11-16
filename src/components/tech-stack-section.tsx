@@ -22,6 +22,14 @@ const CATEGORIES: { label: string; value: CategoryType }[] = [
   { label: "Exploring", value: "Exploring" },
 ];
 
+const SKILL_COUNTS: Record<CategoryType, number> = {
+  All: DATA.skills.length,
+  Frontend: DATA.skills.filter((s) => s.category === "Frontend").length,
+  Backend: DATA.skills.filter((s) => s.category === "Backend").length,
+  Tools: DATA.skills.filter((s) => s.category === "Tools").length,
+  Exploring: DATA.skills.filter((s) => s.category === "Exploring").length,
+};
+
 export function TechStackSection() {
   const [activeCategory, setActiveCategory] = useState<CategoryType>("All");
   const [hoveredSkill, setHoveredSkill] = useState<SkillItem | null>(null);
@@ -32,15 +40,6 @@ export function TechStackSection() {
       (skill) => skill.category.toLowerCase() === activeCategory.toLowerCase()
     );
   }, [activeCategory]);
-
-  const counts = useMemo(() => {
-    const all = DATA.skills.length;
-    const fe = DATA.skills.filter((s) => s.category === "Frontend").length;
-    const be = DATA.skills.filter((s) => s.category === "Backend").length;
-    const tl = DATA.skills.filter((s) => s.category === "Tools").length;
-    const ex = DATA.skills.filter((s) => s.category === "Exploring").length;
-    return { All: all, Frontend: fe, Backend: be, Tools: tl, Exploring: ex };
-  }, []);
 
   return (
     <div className="relative flex min-h-0 flex-col gap-y-4">
@@ -82,7 +81,7 @@ export function TechStackSection() {
         >
           {CATEGORIES.map((cat) => {
             const isActive = activeCategory === cat.value;
-            const count = counts[cat.value];
+            const count = SKILL_COUNTS[cat.value];
             return (
               <button
                 key={cat.value}

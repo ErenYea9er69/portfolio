@@ -1,22 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const BIRTH_DATE = new Date("2004-09-16T16:00:00").getTime();
-const MS_PER_YEAR = 1000 * 60 * 60 * 24 * 365.2425;
-
-const calculateYears = () => {
-  const now = Date.now();
-  const ageInYears = (now - BIRTH_DATE) / MS_PER_YEAR;
-  return ageInYears.toFixed(2);
-};
+import { calculateAgeYears } from "@/lib/birthday";
 
 export function AgeCounter() {
   const [years, setYears] = useState<string | null>(null);
 
   useEffect(() => {
-    // Immediate calculation on client
-    setYears(calculateYears());
+    setYears(calculateAgeYears());
 
     let intervalId: NodeJS.Timeout | null = null;
 
@@ -24,7 +15,7 @@ export function AgeCounter() {
       if (intervalId) clearInterval(intervalId);
       intervalId = setInterval(() => {
         if (!document.hidden) {
-          setYears(calculateYears());
+          setYears(calculateAgeYears());
         }
       }, 1000);
     };
@@ -36,7 +27,7 @@ export function AgeCounter() {
           intervalId = null;
         }
       } else {
-        setYears(calculateYears());
+        setYears(calculateAgeYears());
         startTicker();
       }
     };
@@ -50,7 +41,6 @@ export function AgeCounter() {
     };
   }, []);
 
-  // Placeholder with identical layout dimensions to prevent layout shifts
   if (years === null) {
     return (
       <div className="text-xs sm:text-sm font-medium text-muted-foreground min-h-[20px] flex items-center">

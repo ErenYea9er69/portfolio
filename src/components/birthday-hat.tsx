@@ -2,9 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
-
-const BIRTHDAY_MONTH = 8; // September (0-indexed)
-const BIRTHDAY_DATE = 16;
+import { isBirthdayToday } from "@/lib/birthday";
 
 function PartyHat() {
   return (
@@ -60,10 +58,8 @@ export function BirthdayHat() {
   const [show, setShow] = useState(false);
   const reduce = useReducedMotion();
 
-  // Date check runs after mount to avoid SSR/timezone hydration mismatches.
   useEffect(() => {
-    const now = new Date();
-    setShow(now.getMonth() === BIRTHDAY_MONTH && now.getDate() === BIRTHDAY_DATE);
+    setShow(isBirthdayToday());
   }, []);
 
   if (!show) return null;

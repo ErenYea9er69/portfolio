@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { DATA } from '@/data/resume';
 import { ArrowLeft, Terminal as TerminalIcon, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { calculateUptime } from '@/lib/birthday';
 
 interface CliInterfaceProps {
   onGuiCommand?: () => void;
@@ -14,17 +15,6 @@ interface CommandOutput {
   command: string;
   type: 'text' | 'fetch' | 'projects' | 'skills' | 'error' | 'help';
   content?: React.ReactNode;
-}
-
-// Calculate uptime from birth date (2004-09-16T16:00:00)
-function calculateUptime() {
-  const birthDate = new Date('2004-09-16T16:00:00');
-  const now = new Date();
-  const diffMs = now.getTime() - birthDate.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const years = Math.floor(diffDays / 365.25);
-  const remainingDays = Math.floor(diffDays % 365.25);
-  return `${years} years, ${remainingDays} days`;
 }
 
 export function CliInterface({ onGuiCommand }: CliInterfaceProps) {

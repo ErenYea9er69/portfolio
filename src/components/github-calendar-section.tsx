@@ -504,21 +504,22 @@ export function GitHubCalendarSection() {
                       blockSize={10.5}
                       fontSize={11}
                       renderBlock={(block, activity) => {
+                        const el = block as React.ReactElement<React.SVGProps<SVGRectElement> & Record<string, unknown>>;
                         const isToday = activity.date === todayStr;
 
                         if (!isPointerFine) {
-                          if (!isToday) return block;
-                          return React.cloneElement(block as any, {
+                          if (!isToday) return el;
+                          return React.cloneElement(el, {
                             style: {
-                              ...(block as any).props?.style,
+                              ...el.props?.style,
                               stroke: "#34d399",
                               strokeWidth: 2,
                             },
                           });
                         }
 
-                        const blockStyle = {
-                          ...(block as any).props?.style,
+                        const blockStyle: React.CSSProperties = {
+                          ...el.props?.style,
                           ...(isToday
                             ? {
                                 stroke: "#34d399",
@@ -528,7 +529,7 @@ export function GitHubCalendarSection() {
                             : {}),
                         };
 
-                        return React.cloneElement(block as any, {
+                        return React.cloneElement(el, {
                           "data-tooltip-id": "github-tooltip",
                           "data-tooltip-content": JSON.stringify({
                             date: activity.date,

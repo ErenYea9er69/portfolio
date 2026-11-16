@@ -3,6 +3,25 @@
 import dynamic from "next/dynamic";
 import React from "react";
 import { useInitialLoader } from "@/components/initial-loader";
+import { isBirthdayToday } from "@/lib/birthday";
+import type { ScrollRailProps } from "@/components/scroll-rail";
+import type { SwarmCursorProps } from "@/components/ui/swarm-cursor";
+
+function runOnIdle(callback: () => void, timeout: number): () => void {
+  if (typeof window === "undefined") return () => {};
+  const win = window as Window & {
+    requestIdleCallback?: (cb: () => void, opts: { timeout: number }) => number;
+    cancelIdleCallback?: (id: number) => void;
+  };
+
+  if (typeof win.requestIdleCallback === "function") {
+    const id = win.requestIdleCallback(callback, { timeout });
+    return () => win.cancelIdleCallback?.(id);
+  }
+
+  const id = setTimeout(callback, timeout);
+  return () => clearTimeout(id);
+}
 
 export const VisitorCounter = dynamic(
   () => import("@/components/visitor-counter"),
@@ -27,10 +46,7 @@ export function BirthdayFireworks() {
   const [isBirthday, setIsBirthday] = React.useState(false);
 
   React.useEffect(() => {
-    const now = new Date();
-    if (now.getMonth() === 8 && now.getDate() === 16) {
-      setIsBirthday(true);
-    }
+    setIsBirthday(isBirthdayToday());
   }, []);
 
   if (!isBirthday) return null;
@@ -46,10 +62,7 @@ export function BirthdayHat() {
   const [isBirthday, setIsBirthday] = React.useState(false);
 
   React.useEffect(() => {
-    const now = new Date();
-    if (now.getMonth() === 8 && now.getDate() === 16) {
-      setIsBirthday(true);
-    }
+    setIsBirthday(isBirthdayToday());
   }, []);
 
   if (!isBirthday) return null;
@@ -65,7 +78,6 @@ function useLazySection(ref: React.RefObject<HTMLDivElement | null>, anchorKeywo
     const el = ref.current;
     if (!el) return;
 
-    // If anchor hash directly targets this section, load immediately
     if (
       anchorKeyword &&
       typeof window !== "undefined" &&
@@ -92,25 +104,14 @@ function useLazySection(ref: React.RefObject<HTMLDivElement | null>, anchorKeywo
 
     observer.observe(el);
 
-    // Safety fallback: once homepage is visible, gentle idle prefetch ensures section is never stuck
-    let idleTimer: any;
+    let cancelIdle: (() => void) | undefined;
     if (isLoaded) {
-      if ("requestIdleCallback" in window) {
-        idleTimer = (window as any).requestIdleCallback(() => setShouldLoad(true), { timeout: 6000 });
-      } else {
-        idleTimer = setTimeout(() => setShouldLoad(true), 6000);
-      }
+      cancelIdle = runOnIdle(() => setShouldLoad(true), 6000);
     }
 
     return () => {
       observer.disconnect();
-      if (idleTimer) {
-        if ("cancelIdleCallback" in window) {
-          (window as any).cancelIdleCallback(idleTimer);
-        } else {
-          clearTimeout(idleTimer);
-        }
-      }
+      cancelIdle?.();
     };
   }, [isLoaded, anchorKeyword, shouldLoad, ref]);
 
@@ -222,24 +223,14 @@ export function CommandPalette() {
     };
     window.addEventListener("keydown", onKey);
 
-    let idleTimer: any;
+    let cancelIdle: (() => void) | undefined;
     if (isLoaded) {
-      if ("requestIdleCallback" in window) {
-        idleTimer = (window as any).requestIdleCallback(() => setShouldLoad(true), { timeout: 4000 });
-      } else {
-        idleTimer = setTimeout(() => setShouldLoad(true), 3000);
-      }
+      cancelIdle = runOnIdle(() => setShouldLoad(true), 4000);
     }
 
     return () => {
       window.removeEventListener("keydown", onKey);
-      if (idleTimer) {
-        if ("cancelIdleCallback" in window) {
-          (window as any).cancelIdleCallback(idleTimer);
-        } else {
-          clearTimeout(idleTimer);
-        }
-      }
+      cancelIdle?.();
     };
   }, [isLoaded]);
 
@@ -276,7 +267,7 @@ const DynamicScrollRail = dynamic(
   { ssr: false }
 );
 
-export function ScrollRail(props: any) {
+export function ScrollRail(props: ScrollRailProps) {
   const [isDesktop, setIsDesktop] = React.useState(false);
 
   React.useEffect(() => {
@@ -312,7 +303,7 @@ const DynamicSwarmCursor = dynamic(
   { ssr: false }
 );
 
-export function SwarmCursor(props: any) {
+export function SwarmCursor(props: SwarmCursorProps) {
   const { isLoaded } = useInitialLoader();
   const [shouldLoad, setShouldLoad] = React.useState(false);
 
@@ -323,11 +314,8 @@ export function SwarmCursor(props: any) {
       window.matchMedia("(pointer: fine)").matches &&
       !window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
-      if ("requestIdleCallback" in window) {
-        (window as any).requestIdleCallback(() => setShouldLoad(true), { timeout: 2000 });
-      } else {
-        setTimeout(() => setShouldLoad(true), 1000);
-      }
+      const cancel = runOnIdle(() => setShouldLoad(true), 2000);
+      return cancel;
     }
   }, [isLoaded]);
 
@@ -340,5 +328,4 @@ export const Toaster = dynamic(
   { ssr: false }
 );
 
-// InitialLoader is eager — it's the first thing the user sees
 export { InitialLoader, useInitialLoader } from "@/components/initial-loader";
