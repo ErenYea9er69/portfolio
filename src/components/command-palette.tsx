@@ -58,14 +58,14 @@ export function CommandPalette() {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  // Reset search and selection when dialog closes
-  React.useEffect(() => {
-    if (!open) {
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen) {
       setSearch("");
       setSelectedIndex(0);
       setCopied(false);
     }
-  }, [open]);
+  };
 
   const copyToClipboard = React.useCallback(async (text: string) => {
     await navigator.clipboard.writeText(text);
@@ -271,11 +271,6 @@ export function CommandPalette() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open, selectedIndex, filteredCommands]);
 
-  // Reset selected index when search changes
-  React.useEffect(() => {
-    setSelectedIndex(0);
-  }, [search]);
-
   // Scroll selected item into view
   React.useEffect(() => {
     if (selectedButtonRef.current) {
@@ -302,7 +297,7 @@ export function CommandPalette() {
         </kbd>
       </button>
 
-      <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
+      <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
         <DialogPrimitive.Portal>
           <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
           <DialogPrimitive.Content className="fixed left-[50%] top-[50%] z-50 w-full max-w-2xl translate-x-[-50%] translate-y-[-50%] border bg-background shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg p-0 gap-0">
@@ -313,7 +308,10 @@ export function CommandPalette() {
               className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="Type a command or search..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setSelectedIndex(0);
+              }}
               autoFocus
             />
           </div>

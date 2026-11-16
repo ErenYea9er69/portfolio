@@ -30,9 +30,6 @@ export default function Navbar() {
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
     let rafId: number | null = null;
     const handleScroll = () => {
       if (rafId !== null) return;
